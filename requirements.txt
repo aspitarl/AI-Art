@@ -1,0 +1,7 @@
+diffusers==0.14.0
+transformers==4.27.4
+scipy==1.10.1
+ftfy==6.1.1
+accelerate==0.18.0
+ipykernel
+torch==1.13.1
