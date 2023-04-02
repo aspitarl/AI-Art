@@ -12,8 +12,5 @@
         "installCudnn": true
       }
     },
-  "hostRequirements": {
-   "storage": "64gb"
-}
   }
   
