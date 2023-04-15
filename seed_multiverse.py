@@ -1,30 +1,30 @@
 #%%
-movie_dir = r'G:\My Drive\AI-Art'
-
 import os
-files = os.listdir(movie_dir)
-
 import re
 import numpy as np
-
-
-# %%
-
 import pandas as pd
-
-
-fn = 'input_data.xlsx'
-fp = os.path.join(movie_dir, fn)
-df = pd.read_excel(fp, sheet_name='transitions_pipey')
-df = df.dropna(subset=['start'])
-
-df
 # %%
 
+import argparse
 
-folder =  r'G:\My Drive\AI-Art\pipey\transitions\s1'
+
+parser = argparse.ArgumentParser()
+parser.add_argument("scene")
+args = parser.parse_args()
+
+# args = {'scene' : 's6'}
+
+input_basedir =  r'G:\My Drive\AI-Art\pipey\scenes'
+
+#TODO: Rename this 'folder'
+folder = os.path.join(input_basedir, args.scene)
+
+if not os.path.exists(folder):
+    raise ValueError("did not find input scene folder")
 
 folder_rev = os.path.join(folder, 'rev')
+
+if not os.path.exists(folder_rev): os.mkdir(folder_rev)
 
 # folder_rev = r'G:\My Drive\AI-Art\pipey\transitions\s1\rev'
 # fp = os.path.join(movie_dir, fn)

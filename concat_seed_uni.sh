@@ -1,9 +1,13 @@
 
 
-cp videos.txt "G:\My Drive\AI-Art\pipey\transitions\s4\videos.txt"
+cp videos.txt "G:\My Drive\AI-Art\pipey\scenes\\$1\videos.txt"
 
-cd "G:\My Drive\AI-Art\pipey\transitions\s4"
+cd "G:\My Drive\AI-Art\pipey\scenes\\$1"
 
-rm output8.mp4
+rm concatenated_$1.mp4
 
-ffmpeg -f concat -safe 0 -i videos.txt -c copy output8.mp4
+ffmpeg -f concat -safe 0 -i videos.txt -c copy concatenated_$1.mp4
+
+cd ..
+
+mv "$1/concatenated_$1.mp4" "conatenated_$1.mp4"

@@ -1,21 +1,21 @@
 ,idx_1,idx_2,reverse,from_seed,to_seed,fn,output_folder,fp_out
-0,0,3,True,army blue2-8018,ascending-3286,army blue2-8018 to ascending-3286.mp4,./rev,./rev\army blue2-8018 to ascending-3286.mp4
-1,3,4,True,army blue-3713,army blue2-8018,army blue-3713 to army blue2-8018.mp4,./rev,./rev\army blue-3713 to army blue2-8018.mp4
-2,4,1,True,army blue-8340,army blue-3713,army blue-8340 to army blue-3713.mp4,./rev,./rev\army blue-8340 to army blue-3713.mp4
-3,1,3,True,army blue2-8018,army blue-8340,army blue2-8018 to army blue-8340.mp4,./rev,./rev\army blue2-8018 to army blue-8340.mp4
-4,3,1,True,army blue-8340,army blue2-8018,army blue-8340 to army blue2-8018.mp4,./rev,./rev\army blue-8340 to army blue2-8018.mp4
-5,1,4,True,army blue-3713,army blue-8340,army blue-3713 to army blue-8340.mp4,./rev,./rev\army blue-3713 to army blue-8340.mp4
-6,4,2,True,army blue exp flee-6591,army blue-3713,army blue exp flee-6591 to army blue-3713.mp4,./rev,./rev\army blue exp flee-6591 to army blue-3713.mp4
-7,2,1,True,army blue-8340,army blue exp flee-6591,army blue-8340 to army blue exp flee-6591.mp4,./rev,./rev\army blue-8340 to army blue exp flee-6591.mp4
-8,1,2,True,army blue exp flee-6591,army blue-8340,army blue exp flee-6591 to army blue-8340.mp4,./rev,./rev\army blue exp flee-6591 to army blue-8340.mp4
-9,2,4,True,army blue-3713,army blue exp flee-6591,army blue-3713 to army blue exp flee-6591.mp4,./rev,./rev\army blue-3713 to army blue exp flee-6591.mp4
-10,4,3,True,army blue2-8018,army blue-3713,army blue2-8018 to army blue-3713.mp4,./rev,./rev\army blue2-8018 to army blue-3713.mp4
-11,3,2,True,army blue exp flee-6591,army blue2-8018,army blue exp flee-6591 to army blue2-8018.mp4,./rev,./rev\army blue exp flee-6591 to army blue2-8018.mp4
-12,2,4,True,army blue-3713,army blue exp flee-6591,army blue-3713 to army blue exp flee-6591.mp4,./rev,./rev\army blue-3713 to army blue exp flee-6591.mp4
-13,4,1,True,army blue-8340,army blue-3713,army blue-8340 to army blue-3713.mp4,./rev,./rev\army blue-8340 to army blue-3713.mp4
-14,1,2,True,army blue exp flee-6591,army blue-8340,army blue exp flee-6591 to army blue-8340.mp4,./rev,./rev\army blue exp flee-6591 to army blue-8340.mp4
-15,2,3,True,army blue2-8018,army blue exp flee-6591,army blue2-8018 to army blue exp flee-6591.mp4,./rev,./rev\army blue2-8018 to army blue exp flee-6591.mp4
-16,3,2,True,army blue exp flee-6591,army blue2-8018,army blue exp flee-6591 to army blue2-8018.mp4,./rev,./rev\army blue exp flee-6591 to army blue2-8018.mp4
-17,2,1,True,army blue-8340,army blue exp flee-6591,army blue-8340 to army blue exp flee-6591.mp4,./rev,./rev\army blue-8340 to army blue exp flee-6591.mp4
-18,1,4,True,army blue-3713,army blue-8340,army blue-3713 to army blue-8340.mp4,./rev,./rev\army blue-3713 to army blue-8340.mp4
-19,4,2,True,army blue exp flee-6591,army blue-3713,army blue exp flee-6591 to army blue-3713.mp4,./rev,./rev\army blue exp flee-6591 to army blue-3713.mp4
+0,0,1,False,single combat2-4690,single combat3-5604,single combat2-4690 to single combat3-5604.mp4,.,.\single combat2-4690 to single combat3-5604.mp4
+1,1,0,True,single combat2-4690,single combat3-5604,single combat2-4690 to single combat3-5604.mp4,./rev,./rev\single combat2-4690 to single combat3-5604.mp4
+2,0,3,False,single combat2-4690,single combat3-1948,single combat2-4690 to single combat3-1948.mp4,.,.\single combat2-4690 to single combat3-1948.mp4
+3,3,4,True,single combat2-7705,single combat3-1948,single combat2-7705 to single combat3-1948.mp4,./rev,./rev\single combat2-7705 to single combat3-1948.mp4
+4,4,2,False,single combat2-7705,single combat3-7584,single combat2-7705 to single combat3-7584.mp4,.,.\single combat2-7705 to single combat3-7584.mp4
+5,2,0,True,single combat2-4690,single combat3-7584,single combat2-4690 to single combat3-7584.mp4,./rev,./rev\single combat2-4690 to single combat3-7584.mp4
+6,0,2,False,single combat2-4690,single combat3-7584,single combat2-4690 to single combat3-7584.mp4,.,.\single combat2-4690 to single combat3-7584.mp4
+7,2,3,True,single combat3-1948,single combat3-7584,single combat3-1948 to single combat3-7584.mp4,./rev,./rev\single combat3-1948 to single combat3-7584.mp4
+8,3,1,False,single combat3-1948,single combat3-5604,single combat3-1948 to single combat3-5604.mp4,.,.\single combat3-1948 to single combat3-5604.mp4
+9,1,2,False,single combat3-5604,single combat3-7584,single combat3-5604 to single combat3-7584.mp4,.,.\single combat3-5604 to single combat3-7584.mp4
+10,2,3,True,single combat3-1948,single combat3-7584,single combat3-1948 to single combat3-7584.mp4,./rev,./rev\single combat3-1948 to single combat3-7584.mp4
+11,3,2,False,single combat3-1948,single combat3-7584,single combat3-1948 to single combat3-7584.mp4,.,.\single combat3-1948 to single combat3-7584.mp4
+12,2,1,True,single combat3-5604,single combat3-7584,single combat3-5604 to single combat3-7584.mp4,./rev,./rev\single combat3-5604 to single combat3-7584.mp4
+13,1,3,True,single combat3-1948,single combat3-5604,single combat3-1948 to single combat3-5604.mp4,./rev,./rev\single combat3-1948 to single combat3-5604.mp4
+14,3,0,True,single combat2-4690,single combat3-1948,single combat2-4690 to single combat3-1948.mp4,./rev,./rev\single combat2-4690 to single combat3-1948.mp4
+15,0,1,False,single combat2-4690,single combat3-5604,single combat2-4690 to single combat3-5604.mp4,.,.\single combat2-4690 to single combat3-5604.mp4
+16,1,3,True,single combat3-1948,single combat3-5604,single combat3-1948 to single combat3-5604.mp4,./rev,./rev\single combat3-1948 to single combat3-5604.mp4
+17,3,0,True,single combat2-4690,single combat3-1948,single combat2-4690 to single combat3-1948.mp4,./rev,./rev\single combat2-4690 to single combat3-1948.mp4
+18,0,3,False,single combat2-4690,single combat3-1948,single combat2-4690 to single combat3-1948.mp4,.,.\single combat2-4690 to single combat3-1948.mp4
+19,3,2,False,single combat3-1948,single combat3-7584,single combat3-1948 to single combat3-7584.mp4,.,.\single combat3-1948 to single combat3-7584.mp4
