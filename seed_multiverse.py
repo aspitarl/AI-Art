@@ -6,42 +6,30 @@ import pandas as pd
 # %%
 
 import argparse
-
-
 parser = argparse.ArgumentParser()
+parser.add_argument("song")
 parser.add_argument("scene")
 args = parser.parse_args()
 
+song = args.song
+scene = args.scene
+
 # args = {'scene' : 's6'}
 
-input_basedir =  r'G:\My Drive\AI-Art\pipey\scenes'
+input_basedir =  r'G:\My Drive\AI-Art\{}\scenes'.format(song)
 
 #TODO: Rename this 'folder'
-folder = os.path.join(input_basedir, args.scene)
+folder = os.path.join(input_basedir, scene)
 
 if not os.path.exists(folder):
     raise ValueError("did not find input scene folder")
 
 folder_rev = os.path.join(folder, 'rev')
 
-if not os.path.exists(folder_rev): os.mkdir(folder_rev)
-
-# folder_rev = r'G:\My Drive\AI-Art\pipey\transitions\s1\rev'
-# fp = os.path.join(movie_dir, fn)
 # %%
 import re
 
-def get_clips(transition_fp):
-
-    name = os.path.splitext(transition_fp)[0]
-
-    name = os.path.split(name)[1]
-
-    # c1, c2 = re.findall('\d\d\d\d', name)
-    print(name)
-    c1, c2 = name.split(" to ")
-
-    return c1, c2
+from utils import clip_names_from_transition as get_clips
 
 
 # fn = files[0]
@@ -227,4 +215,8 @@ out_txt = 'file ' + "\nfile ".join(df_transitions['fp_out'].str.replace(' ', '\ 
 
 with open('videos.txt', 'w') as f:
     f.write(out_txt)
+
+import shutil
+
+shutil.move('videos.txt', os.path.join(folder, 'videos.txt'))
 # %%
