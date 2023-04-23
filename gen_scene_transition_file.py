@@ -44,19 +44,30 @@ df
 
 #%%
 
-sequence = [
-    (0,1),
-    (0,2),
-    (0,3),
-    (0,4),
-    (1,2),
-    (1,3),
-    (1,4),
-    (2,3),
-    (2,4),
-    (3,4),
-]
+# Generate a sequence of the form
+# sequence = [
+#     (0,1),
+#     (0,2),
+#     (0,3),
+#     (0,4),
+#     (1,2),
+#     (1,3),
+#     (1,4),
+#     (2,3),
+#     (2,4),
+#     (3,4),
+# ]
 
+num_prompts = len(df)
+
+sequence = []
+for i in range(num_prompts):
+    for j in range(i+1,num_prompts):
+        sequence.append((i,j))
+
+sequence
+
+#%%
 
 df_out = pd.DataFrame(
 index = range(len(sequence)),
