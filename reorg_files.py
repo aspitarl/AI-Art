@@ -15,7 +15,7 @@ excel_dir = r'G:\My Drive\AI-Art'
 
 fn = 'input_data.xlsx'
 fp = os.path.join(excel_dir, fn)
-df = pd.read_excel(fp, sheet_name='transitions_pipey')
+df = pd.read_excel(fp, sheet_name='transitions_{}'.format(song))
 # df = df.dropna(subset=['start'])
 
 df

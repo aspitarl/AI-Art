@@ -86,10 +86,11 @@ seed_lookup
 # %%
 
 
-#%%
+num_videos = 8 #TODO: determine
+
 def find_next_idx(cur_idx):
-    valid_idxs = [i for i in range(5) if i != cur_idx]
-    next_idx = np.random.randint(0,4)
+    valid_idxs = [i for i in range(num_videos) if i != cur_idx]
+    next_idx = np.random.randint(0,num_videos-1)
     next_idx = valid_idxs[next_idx]
     return next_idx
 
@@ -98,7 +99,7 @@ cur_idx = 0
 
 transition_idxs = []
 
-num_output_rows = 20
+num_output_rows = 50
 
 df_transitions = pd.DataFrame(columns = ['idx_1','idx_2'], index = list(range(num_output_rows)))
 
@@ -109,12 +110,7 @@ df_transitions
 for i in df_transitions.index:  
     next_idx = find_next_idx(cur_idx)
 
-    print(cur_idx, next_idx)
-
-    # transition_idxs.append((
-    #     seed_lookup[cur_idx], 
-    #     seed_lookup[next_idx])
-    #     )
+    # print(cur_idx, next_idx)
 
     df_transitions['idx_1'][i] = cur_idx
     df_transitions['idx_2'][i] = next_idx
@@ -190,7 +186,7 @@ df_transitions['fp_out'] = df_transitions['output_folder'] + '\\' +  df_transiti
 
 df_transitions['fp_out'].values
 
-df_transitions.to_csv('transitions.csv')
+# df_transitions.to_csv('transitions.csv')
 
 
 #%%
