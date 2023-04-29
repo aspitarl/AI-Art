@@ -17,7 +17,12 @@ song = args.song
 scene = args.scene
 # scene = 's5'
 
-scene_basedir = "G:\My Drive\AI-Art\{}\scene_image_input".format(song)
+from dotenv import load_dotenv, dotenv_values
+load_dotenv()  # take environment variables from .env.
+gdrive_basedir = os.getenv('base_dir')
+
+
+scene_basedir = os.path.join(gdrive_basedir,"{}\scene_image_input".format(song))
 
 # for scene in os.listdir(scene_basedir):
 

@@ -1,3 +1,7 @@
+: ${@?no positional parameters}
+# https://stackoverflow.com/questions/5228345/how-can-i-reference-a-file-for-variables-using-bash
+source .env
+
 song=$1
 scene=$2
 
