@@ -86,7 +86,7 @@ seed_lookup
 # %%
 
 
-num_videos = 8 #TODO: determine
+num_videos = len(seed_lookup)
 
 def find_next_idx(cur_idx):
     valid_idxs = [i for i in range(num_videos) if i != cur_idx]
