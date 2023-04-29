@@ -5,17 +5,17 @@ import numpy as np
 import pandas as pd
 # %%
 
-# import argparse
-# parser = argparse.ArgumentParser()
-# parser.add_argument("song")
-# parser.add_argument("scene")
-# args = parser.parse_args()
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("song")
+parser.add_argument("scene")
+args = parser.parse_args()
 
-# song = args.song
-# scene = args.scene
+song = args.song
+scene = args.scene
 
-song = 'emit'
-scene = 's3'
+# song = 'emit'
+# scene = 's3'
 
 from dotenv import load_dotenv, dotenv_values
 load_dotenv()  # take environment variables from .env.
