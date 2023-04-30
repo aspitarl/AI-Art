@@ -3,6 +3,12 @@
 Codes related to stable diffusion art
 
 
+# Setup 
+
+Create a file in the base repository directory named `.env` and inside this file add the following line 
+
+`base_dir="path/to/your/AI-Art/Gdrive/folder"`
+
 # Seed Multiverse Workflow
 
 in below: 

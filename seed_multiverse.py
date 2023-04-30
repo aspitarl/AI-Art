@@ -14,9 +14,15 @@ args = parser.parse_args()
 song = args.song
 scene = args.scene
 
-# args = {'scene' : 's6'}
+# song = 'emit'
+# scene = 's3'
 
-input_basedir =  r'G:\My Drive\AI-Art\{}\scenes'.format(song)
+from dotenv import load_dotenv, dotenv_values
+load_dotenv()  # take environment variables from .env.
+gdrive_basedir = os.getenv('base_dir')
+
+
+input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
 
 #TODO: Rename this 'folder'
 folder = os.path.join(input_basedir, scene)
@@ -86,7 +92,7 @@ seed_lookup
 # %%
 
 
-num_videos = 8 #TODO: determine
+num_videos = len(seed_lookup)
 
 def find_next_idx(cur_idx):
     valid_idxs = [i for i in range(num_videos) if i != cur_idx]

@@ -1,8 +1,7 @@
-fps=60
+: ${@?no positional parameters}
+source .env
 
-# cd "G:\My Drive\AI Music Visuals Share\New Codes\output_transitions"
-
-cd "G:\My Drive\AI-Art\\$1\scenes\\$2"
+cd "$base_dir\\$1\scenes\\$2"
 
 mkdir -p rev
 
