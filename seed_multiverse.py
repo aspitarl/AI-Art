@@ -9,10 +9,12 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("song")
 parser.add_argument("scene")
+parser.add_argument("num_output_rows")
 args = parser.parse_args()
 
 song = args.song
 scene = args.scene
+num_output_rows = int(args.num_output_rows)
 
 # song = 'emit'
 # scene = 's3'
@@ -21,7 +23,7 @@ from dotenv import load_dotenv, dotenv_values
 load_dotenv()  # take environment variables from .env.
 gdrive_basedir = os.getenv('base_dir')
 
-
+# gdrive_basedir = 'G:\My Drive\AI-Art Kyle'
 input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
 
 #TODO: Rename this 'folder'
@@ -105,7 +107,7 @@ cur_idx = 0
 
 transition_idxs = []
 
-num_output_rows = 50
+# num_output_rows = 50
 
 df_transitions = pd.DataFrame(columns = ['idx_1','idx_2'], index = list(range(num_output_rows)))
 
