@@ -1,9 +1,9 @@
 : ${@?no positional parameters}
 source .env
 
-cd "$base_dir\\$1\scenes\\$2"
+cd "$base_dir\\$1\\transitions"
 
-mkdir -p rev
+mkdir -p "$base_dir\\$1\\transitions_rev"
 
 input_files="*.mp4"
 
@@ -14,5 +14,5 @@ for f in $input_files
 do
   echo "Processing $f file..."
 
-  ffmpeg -y -i "$f" -vf reverse "rev/$f"
+  ffmpeg -n -i "$f" -vf reverse "$base_dir\\$1\\transitions_rev\\$f"
 done
