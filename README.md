@@ -21,15 +21,22 @@ Put in input_data.xlsx prompts_song tab (on Gdrive)
 use Generate_saved_Prompts.ipynb
 
 ## Generate Transitions
-Pick 5 images and put in `GDrive/AI-Art/<song>/scene_input_images/sx
+Pick images and put in `GDrive/AI-Art/<song>/scenes/<scene_name>/images
+TODO: script to Auto make these folders by prompt name
+
+After images are in scene folder
 run `gen_scene_transition_file.py song sx`
-copy data from transitions.xlsx made in that folder into Gdrive input_data.xlsx transitions_song tab
+
+after doing this for all scenes run `combine_transitions_csvs.py` to incorporate all exisiting scene transitions csvs into the orignal input_data.xlsx file. 
+TODO: write combined transitions to a separate csv file
 
 run Generate_Transitions.ipynb
 
+Run `./rev_videos.sh` to generate reverse videos for all transitions. This no longer overwrites files so to replace, manually delete. Note there will be red 'already exists' overwrite error text for existing files.
+
 ## Making Seed Multiverse movie
 
-Once transitions are complete, run `reorg_files.py song` to move files into scenes directory. 
-run `./rev_videos.sh song sx` to generate reverse videos
-run `python seed_multiverse.py song sx`
+running `make_seed_multiverse.sh song sx num_output_rows` should run all of the below automatically
+
+run `python seed_multiverse.py song sx num_output_rows`
 run `./concat_seed_uni.sh song sx`

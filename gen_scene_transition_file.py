@@ -3,47 +3,56 @@
 #%%
 import os
 import pandas as pd
-#%%
-
-
-
 import argparse
-parser = argparse.ArgumentParser()
-parser.add_argument("song")
-parser.add_argument("scene")
-args = parser.parse_args()
 
-song = args.song
-scene = args.scene
-# scene = 's5'
+USE_DEFAULT_ARGS = False
+if USE_DEFAULT_ARGS:
+    song = 'spacetrain'
+    scene = 'tram_alien'
+else:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("song")
+    parser.add_argument("scene")
+    args = parser.parse_args()
+
+    song = args.song
+    scene = args.scene
 
 from dotenv import load_dotenv, dotenv_values
 load_dotenv()  # take environment variables from .env.
 gdrive_basedir = os.getenv('base_dir')
 
+scene_basedir = os.path.join(gdrive_basedir,"{}\scenes\{}".format(song, scene))
 
-scene_basedir = os.path.join(gdrive_basedir,"{}\scene_image_input".format(song))
+scene_dir = os.path.join(scene_basedir)
 
-# for scene in os.listdir(scene_basedir):
+if not os.path.isdir(scene_dir):
+    raise ValueError("Could not find scene directory: {}".format(scene_dir))
 
-scene_dir = os.path.join(scene_basedir, scene)
-if os.path.isdir(scene_dir):
+import re
+regex = re.compile("(\S+)_(\d+).png")
 
-    fns = [f for f in os.listdir(scene_dir) if f.endswith('.png')]
-    prompts = [f.split('_')[0] for f in fns]
-    seeds = [f.split('_')[1].strip('.png') for f in fns]
+fns_images = [f for f in os.listdir(scene_dir) if f.endswith('.png')]
 
-
-
-# %%
 
 df = pd.DataFrame(
-    index = range(len(fns))
+    fns_images,
+    index = range(len(fns_images)),
+    columns = ['fn']
 )
 
-df['fn'] = fns
-df['prompt'] = prompts
-df['seed'] = seeds
+df
+
+for idx, row in df.iterrows():
+    fn = row['fn']
+    m = re.match(regex, fn)
+
+    if m:
+        prompt = m.groups()[0]
+        seed = m.groups()[1]
+    
+        df.loc[idx, 'prompt'] = prompt
+        df.loc[idx, 'seed'] = seed
 
 df
 
@@ -106,3 +115,5 @@ fp_out = os.path.join(scene_dir, 'transitions.csv')
 print("writing transitions csv to {}".format(fp_out))
 df_out.to_csv(fp_out)
 
+
+# %%

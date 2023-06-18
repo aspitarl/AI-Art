@@ -1,11 +1,12 @@
 : ${@?no positional parameters}
 # https://stackoverflow.com/questions/5228345/how-can-i-reference-a-file-for-variables-using-bash
-# source .env
+source .env
 
 
 
-cd "G:.shortcut-targets-by-id\\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle\\$1\scenes\\$2"
+# cd "G:.shortcut-targets-by-id\\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle\\$1\scenes\\$2"
 
+cd "$base_dir\\$1\scenes\\$2"
 
 
 ls

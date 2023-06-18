@@ -16,14 +16,14 @@ song = args.song
 scene = args.scene
 num_output_rows = int(args.num_output_rows)
 
-# song = 'elationstation'
-# scene = 'space_galaxy'
-# num_output_rows = 69
+# song = 'spacetrain'
+# scene = 'tram_liftoff'
+# num_output_rows = 10
 
 from dotenv import load_dotenv, dotenv_values
 load_dotenv()  # take environment variables from .env.
-# gdrive_basedir = os.getenv('base_dir')
-gdrive_basedir = r'G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle'
+gdrive_basedir = os.getenv('base_dir')
+# gdrive_basedir = r'G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle'
 
 input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
 
@@ -37,39 +37,40 @@ if not os.path.exists(folder):
 
 folder_rev = os.path.join(folder, 'rev')
 
+#%%
+
+fn = 'input_data.xlsx'
+fp = os.path.join(gdrive_basedir, fn)
+df = pd.read_excel(fp, sheet_name='transitions_{}'.format(song), index_col=0)
+
+
+df = df.where(df['scene'] == scene).dropna(how='all')
+# df = df.dropna(subset=['start'])
+
+
 # %%
 import re
 
-from utils import clip_names_from_transition as get_clips
-
-
-# fn = files[0]
-fns = os.listdir(folder)
-fns_rev = os.listdir(folder_rev)
-fns = [fn for fn in fns if os.path.splitext(fn)[1] == '.mp4']
-fns_rev = [fn for fn in fns_rev if os.path.splitext(fn)[1] == '.mp4']
-
+from utils import transition_fn_from_transition_row, clip_names_from_transition_row
 
 
 # for fn in fns:
 #     get_clips(fp)
 
-df = pd.DataFrame(index = fns)
-df.index.name = 'fn'
 
 
 c1s = []
 c2s = []
-for fn, row in df.iterrows():
-    fp = os.path.join(folder, fn)
+for idx, row in df.iterrows():
 
-    c1, c2 = get_clips(fp)
+    fn = transition_fn_from_transition_row(row)
+    c1, c2 = clip_names_from_transition_row(row)
 
-    c1s.append(c1)
-    c2s.append(c2)
+    df.loc[idx, 'c1'] = c1
+    df.loc[idx, 'c2'] = c2
+    df.loc[idx, 'fn'] = fn
 
-df['c1'] = c1s
-df['c2'] = c2s
+    # break
 
 # print(df)
 df
@@ -200,14 +201,18 @@ df_transitions["fn"]=df_transitions['from_seed']+ ' to ' +df_transitions['to_see
 
 
 # output_folder = [folder_rev if reverse else folder for reverse in df_transitions['reverse']]
-output_folder = ['./rev' if reverse else '.' for reverse in df_transitions['reverse']]
+input_folder = ['transitions_rev' if reverse else 'transitions' for reverse in df_transitions['reverse']]
+
+
+input_basedir = os.path.join(gdrive_basedir, song)
+
 
 # output_folder = ['rev' if re]
 
-df_transitions['output_folder'] = output_folder
+df_transitions['output_folder'] = input_folder
 
 
-df_transitions['fp_out'] = df_transitions['output_folder'] + '\\' +  df_transitions['fn']
+df_transitions['fp_out'] = input_basedir + '\\' + df_transitions['output_folder'] + '\\' +  df_transitions['fn']
 
 
 
@@ -222,7 +227,14 @@ df_transitions['fp_out'].values
 
 # %%
 
-df_transitions['fp_out'].apply(os.path.exists)
+df_exist = df_transitions['fp_out'].apply(os.path.exists)
+df_not_exist =df_transitions.where(df_exist == False).dropna(how='all')
+
+#TODO: move file exist checks to original for loop, such that it can keep trying to make a valid superscene with partial transitions. 
+if len(df_not_exist):
+    print("Files not existing:  ")
+    raise ValueError(df_not_exist[['output_folder', 'fn']])
+
 
 # %%
 
