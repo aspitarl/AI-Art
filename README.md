@@ -27,8 +27,10 @@ TODO: script to Auto make these folders by prompt name
 After images are in scene folder
 run `gen_scene_transition_file.py song sx`
 
-after doing this for all scenes run `combine_transitions_csvs.py` to incorporate all exisiting scene transitions csvs into the orignal input_data.xlsx file. 
-TODO: write combined transitions to a separate csv file
+After doing this for all scenes run `combine_transitions_csvs.py song` to incorporate all exisiting scene transitions csvs into a new csv file `all_transitions.csv` in the song folder. 
+
+#TODO: script to run two above for all scenes in a song. 
+
 
 run Generate_Transitions.ipynb
 
