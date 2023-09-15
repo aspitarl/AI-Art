@@ -42,6 +42,8 @@ for fold in os.listdir(allscenes_folder):
     if not os.path.exists(fp_df_transitions):
         continue
 
+    print("Copying Transitions from {}".format(fold))
+
     df = pd.read_csv(fp_df_transitions, index_col=0)
 
     dfs.append(df)

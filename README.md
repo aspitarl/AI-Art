@@ -17,11 +17,12 @@ sx = s1, s2, etc.
 
 ## Get images
 Generate images with PromptExplorer.ipynb
-Put in input_data.xlsx prompts_song tab (on Gdrive)
+
+Put promp defiintions in `prompt_image_definitions.csv` in desired song folder song
 use Generate_saved_Prompts.ipynb
 
 ## Generate Transitions
-Pick images and put in `GDrive/AI-Art/<song>/scenes/<scene_name>/images
+Pick images and put in `GDrive/AI-Art/<song>/scenes/<scene_name>
 TODO: script to Auto make these folders by prompt name
 
 After images are in scene folder
