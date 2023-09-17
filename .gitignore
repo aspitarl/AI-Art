@@ -2,3 +2,4 @@ output
 venv
 __pycache__
 .env
+model_cache
