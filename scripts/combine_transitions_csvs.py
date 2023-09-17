@@ -49,7 +49,7 @@ for fold in os.listdir(allscenes_folder):
     dfs.append(df)
 
 #%%
-df_transitions = pd.concat(dfs)
+df_transitions = pd.concat(dfs).reset_index(drop=True)
 
 fp_interscene = os.path.join(allscenes_folder, 'interscene_transitions.csv')
 
@@ -57,8 +57,6 @@ if os.path.exists(fp_interscene):
     df_transitions_interscene = pd.read_csv(fp_interscene)
 
     df_transitions = pd.concat([df_transitions, df_transitions_interscene])
-
-df_transitions.info()
 
 #%%
 
