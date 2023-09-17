@@ -30,31 +30,15 @@ if not os.path.isdir(scene_dir):
     raise ValueError("Could not find scene directory: {}".format(scene_dir))
 
 import re
-regex = re.compile("(\S+)_(\d+).png")
+
 
 fns_images = [f for f in os.listdir(scene_dir) if f.endswith('.png')]
 
 
-df = pd.DataFrame(
-    fns_images,
-    index = range(len(fns_images)),
-    columns = ['fn']
-)
+from utils import gendf_imagefn_info
 
-df
+df_imagefn_info = gendf_imagefn_info(fns_images)
 
-for idx, row in df.iterrows():
-    fn = row['fn']
-    m = re.match(regex, fn)
-
-    if m:
-        prompt = m.groups()[0]
-        seed = m.groups()[1]
-    
-        df.loc[idx, 'prompt'] = prompt
-        df.loc[idx, 'seed'] = seed
-
-df
 
 #%%
 
@@ -72,7 +56,7 @@ df
 #     (3,4),
 # ]
 
-num_prompts = len(df)
+num_prompts = len(df_imagefn_info)
 
 sequence = []
 for i in range(num_prompts):
@@ -83,37 +67,36 @@ sequence
 
 #%%
 
-df_out = pd.DataFrame(
+df_transitions = pd.DataFrame(
 index = range(len(sequence)),
 columns = ['from_name', 'from_seed','to_name', 'to_seed', 'compute','duration','scene']
 
 )
 
 for i, (start, stop) in enumerate(sequence):
-    row_from = df.loc[start]
-    row_to = df.loc[stop]
+    row_from = df_imagefn_info.loc[start]
+    row_to = df_imagefn_info.loc[stop]
 
 
-    df_out.loc[i]['from_name']  = row_from['prompt']
-    df_out.loc[i]['from_seed']  = row_from['seed']
-    df_out.loc[i]['to_name']  = row_to['prompt']
-    df_out.loc[i]['to_seed']  = row_to['seed']
+    df_transitions.loc[i]['from_name']  = row_from['prompt']
+    df_transitions.loc[i]['from_seed']  = row_from['seed']
+    df_transitions.loc[i]['to_name']  = row_to['prompt']
+    df_transitions.loc[i]['to_seed']  = row_to['seed']
 
 
 
-df_out['compute'] = 'y'
-df_out['duration'] = 5
-df_out['scene'] = scene
+df_transitions['compute'] = 'y'
+df_transitions['duration'] = 5
+df_transitions['scene'] = scene
 
-df_out
 
-df_out['from_seed'] = df_out['from_seed'].astype(str)
-df_out['to_seed'] = df_out['to_seed'].astype(str)
+df_transitions['from_seed'] = df_transitions['from_seed'].astype(str)
+df_transitions['to_seed'] = df_transitions['to_seed'].astype(str)
 
 
 fp_out = os.path.join(scene_dir, 'transitions.csv')
 print("writing transitions csv to {}".format(fp_out))
-df_out.to_csv(fp_out)
+df_transitions.to_csv(fp_out)
 
 
 # %%
