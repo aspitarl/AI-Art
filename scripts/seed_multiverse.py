@@ -9,11 +9,11 @@ from utils import transition_fn_from_transition_row, clip_names_from_transition_
 
 import argparse
 
-USE_DEFAULT_ARGS = False
+USE_DEFAULT_ARGS = True
 if USE_DEFAULT_ARGS:
     song = 'spacetrain_1024'
     scene = 's1'
-    num_output_rows = int(10)
+    num_output_rows = 5
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("song")
@@ -46,100 +46,24 @@ df_transitions = pd.read_csv(fp, index_col=0).dropna(how='all')
 df_transitions['fn'] = df_transitions.apply(transition_fn_from_transition_row, axis=1)
 df_transitions[['c1','c2']] = df_transitions.apply(clip_names_from_transition_row, axis=1, result_type='expand')
 
+
 #This gets rid of all interscene transitions
 df_transitions = df_transitions.where(df_transitions['scene'] == scene).dropna(how='all')
 
 df_transitions
 
-#%%
-
-# Make a lookup table for each clip
-
-all_cs = list(set([*df_transitions['c1'], *df_transitions['c2']]))
-
-c_id = list(range(len(all_cs)))
-
-seed_lookup = pd.Series(all_cs, index=c_id)
-seed_lookup.name ='seed_str'
-
-idx_lookup = seed_lookup.reset_index().set_index('seed_str')['index']
-idx_lookup
-
 # %%
 
-# Generate the sequence of transitions in terms of clip index
+from utils import gendf_trans_sequence
 
-num_videos = len(seed_lookup)
-
-def find_next_idx(cur_idx):
+df_trans_sequence = gendf_trans_sequence(df_transitions, num_output_rows)
     
-    valid_idxs = [i for i in range(num_videos) if i != cur_idx]
-    next_idx = np.random.randint(0,num_videos-1)
-    next_idx = valid_idxs[next_idx]
-    return next_idx
-
-cur_idx = 0
-
-transition_idxs = []
-
-df_trans_sequence = pd.DataFrame(columns = ['idx_1','idx_2'], index = list(range(num_output_rows)))
-
-trans_names_forward = df_transitions['c1'] + df_transitions['c2']
-trans_names_forward = trans_names_forward.values
-trans_names_rev = df_transitions['c2'] + df_transitions['c1']
-trans_names_rev = trans_names_rev.values
-
-for i in df_trans_sequence.index:  
-
-    found_match = False
-
-    for j in range(1000):
-        next_idx = find_next_idx(cur_idx)
-
-        cur_name = seed_lookup[cur_idx]
-        next_name = seed_lookup[next_idx]
-
-        checkstr = cur_name + next_name
-        if checkstr in trans_names_forward or checkstr in trans_names_rev:
-            found_match = True
-            break
-
-    df_trans_sequence['idx_1'][i] = cur_idx
-    df_trans_sequence['idx_2'][i] = next_idx
-
-    cur_idx=next_idx
-
-
-df_trans_sequence
-    
-#%%
-
 # lookup the clips for each transition, and whether they should the reversed clip
+forward_c_pairs = [tuple(c_pair) for c_pair in df_transitions[['c1','c2']].values]
 
-vals = df_transitions[['c1', 'c2']].values
-
-vals = [(f, t) for f, t in vals]
-
-reverse = []
-from_seed = []
-to_seed = []
-
-for transition_index, row in df_trans_sequence.iterrows():
-
-    idx_tup = (seed_lookup[row['idx_1']], seed_lookup[row['idx_2']])
-
-    if idx_tup in vals:
-        reverse.append(False)
-        from_seed.append(idx_tup[0])
-        to_seed.append(idx_tup[1])
-    else:
-        reverse.append(True)
-        from_seed.append(idx_tup[1])
-        to_seed.append(idx_tup[0])
-
-df_trans_sequence['reverse'] = reverse
-df_trans_sequence['from_seed'] = from_seed
-df_trans_sequence['to_seed'] = to_seed
+df_trans_sequence['reversed'] = [tuple(c_pair) not in forward_c_pairs  for c_pair in df_trans_sequence[['c1','c2']].values]
+df_trans_sequence['from_seed'] = df_trans_sequence.apply(lambda x: x['c1'] if not x['reversed'] else x['c2'], axis=1)
+df_trans_sequence['to_seed'] = df_trans_sequence.apply(lambda x: x['c2'] if not x['reversed'] else x['c1'], axis=1)
 
 df_trans_sequence
 
@@ -148,13 +72,10 @@ df_trans_sequence
 # Find the file path associated with each transition, which depends on whether that is reversed
 
 df_trans_sequence["fn"]=df_trans_sequence['from_seed']+ ' to ' +df_trans_sequence['to_seed']+'.mp4'
-
-input_folder = ['transitions_rev' if reverse else 'transitions' for reverse in df_trans_sequence['reverse']]
+df_trans_sequence['input_movie_folder'] = ['transitions_rev' if reverse else 'transitions' for reverse in df_trans_sequence['reversed']]
 input_basedir = os.path.join(gdrive_basedir, song)
 
-df_trans_sequence['output_folder'] = input_folder
-
-df_trans_sequence['fp_out'] = input_basedir + '\\' + df_trans_sequence['output_folder'] + '\\' +  df_trans_sequence['fn']
+df_trans_sequence['fp_out'] = input_basedir + '\\' + df_trans_sequence['input_movie_folder'] + '\\' +  df_trans_sequence['fn']
 
 df_trans_sequence['fp_out'].values
 
