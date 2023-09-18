@@ -11,17 +11,17 @@ import numpy as np
 from IPython.display import clear_output
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_basedir = os.path.join('transition_images')
+output_basedir = os.path.join('output', 'transition_images')
 if not os.path.exists(output_basedir): os.mkdir(output_basedir)
 
 # fp = os.path.join(code_folder, 'input_data.xlsx')
 # df_prompt = pd.read_excel(fp, 'prompts_{}'.format(song_name), index_col=0).dropna(how='all')
 
-fp = os.path.join('../prompt_data', 'prompt_image_definitions.csv')
+fp = os.path.join('prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
 
 # df_transitions = pd.read_excel(fp, 'transitions_{}'.format(song_name), dtype={'from_seed': str, 'to_seed': str})
-fp = os.path.join('../prompt_data', 'all_transitions.csv')
+fp = os.path.join('prompt_data', 'all_transitions.csv')
 df_transitions = pd.read_csv(fp, index_col=0).dropna(how='all')
 
 # %%
@@ -66,6 +66,10 @@ pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1
 
 
 pipe = pipe.to("cuda")
+
+# if one wants to disable `tqdm`
+# https://github.com/huggingface/diffusers/issues/1786
+pipe.set_progress_bar_config(disable=True)
 
 # %%
 
@@ -147,11 +151,13 @@ skip_existing = True
 generator = torch.Generator(device="cuda")
 
 max_seed_characters = 4 # Take the first few numbers of the seed for the name
-num_interpolation_steps = 30
-num_inference_steps = 40
+num_interpolation_steps = 50
+num_inference_steps = 50
 
 
 T = np.linspace(0.0, 1.0, num_interpolation_steps)
+
+from tqdm import tqdm
 
 for idx, row in df_transitions.iterrows():
   clear_output(wait=True)
@@ -205,11 +211,9 @@ for idx, row in df_transitions.iterrows():
   guidance_steps = np.linspace(guidance_scales[0], guidance_scales[1], num_interpolation_steps + 1)
 
 
-  for i, t in enumerate(T):
-
-      print("Transition {} out of {}".format(idx, len(df_transitions)))
-      print(output_name)
-      print("Frame {}/{}".format(i,num_interpolation_steps))
+  print("Transition {} out of {}".format(idx, len(df_transitions)))
+  print(output_name)
+  for i, t in enumerate(tqdm(T)):
 
       embeds = torch.lerp(from_text_embed, to_text_embed, t)
       # latents = torch.lerp(from_latent, to_latent, t)

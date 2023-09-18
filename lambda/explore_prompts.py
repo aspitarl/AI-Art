@@ -86,4 +86,4 @@ grid = image_grid(images, rows=rows, cols=cols)
 grid
 # %%
 
-images[0].save('test.png')
+images[0].save('output/test.png')
