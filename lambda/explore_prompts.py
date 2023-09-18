@@ -54,12 +54,8 @@ def image_grid(imgs, rows, cols):
 
 
 prompt_components = [
-    "a floating tram",
-    "descending into an alien world",
-    "Matte Painting",
-    "retrowave color scheme",
-    "purple orange yellow maroon",
-    "full view of vehicle",
+"a city with crumpbling buildings",
+"post-apocalyptic"
 ]
 
 prompt = ", ".join(prompt_components)
