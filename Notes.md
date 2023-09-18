@@ -18,4 +18,30 @@ command used to make a transition:
 
 `ffmpeg -framerate 5 -i frame%06d.png -c mjpeg -pix_fmt yuv420p -r 5 output_test.mov`
 
+for video text file
+
+`ffmpeg -f concat -i -safe 0 videos_story.txt -c mjpeg -r 10 output_test.mov`
+
 useful article: https://shotstack.io/learn/use-ffmpeg-to-convert-images-to-video/
+
+## Lambda process
+
+
+### Setup
+start lambda instance 
+
+copy ip address to .env and ssh config (TODO: automate or have filetransfer scripts pull from ssh config?)
+
+ssh into instance
+
+clone AI-Art repo 
+checkout lambda branch
+`cd lambda`
+`source setup.sh`
+
+### generate transitions
+
+on local repo
+
+`cd lambda`
+`source filetransfer_meta.sh <song_name>`
