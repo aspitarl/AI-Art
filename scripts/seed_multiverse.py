@@ -9,7 +9,7 @@ from utils import transition_fn_from_transition_row, clip_names_from_transition_
 
 import argparse
 
-USE_DEFAULT_ARGS = True
+USE_DEFAULT_ARGS = False
 if USE_DEFAULT_ARGS:
     song = 'spacetrain_1024'
     scene = 's1'
