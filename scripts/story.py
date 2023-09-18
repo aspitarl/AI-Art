@@ -117,15 +117,13 @@ df_out
 df_trans_sequence = df_out
 
 
-df_trans_sequence["fn"]=df_trans_sequence['from_seed']+ ' to ' +df_trans_sequence['to_seed']+'.mp4'
-df_trans_sequence['input_movie_folder'] = ['transitions_rev' if reverse else 'transitions' for reverse in df_trans_sequence['reversed']]
+df_trans_sequence["input_image_folder"]=df_trans_sequence['from_seed']+ ' to ' +df_trans_sequence['to_seed']
+# df_trans_sequence['input_movie_folder'] = ['transitions_rev' if reverse else 'transitions' for reverse in df_trans_sequence['reversed']]
 song_basedir = os.path.join(gdrive_basedir, song)
 
-df_trans_sequence['fp_out'] = song_basedir + '\\' + df_trans_sequence['input_movie_folder'] + '\\' +  df_trans_sequence['fn']
+df_trans_sequence['input_image_folder'] = song_basedir + '\\' + 'transition_images' + '\\' +  df_trans_sequence['input_image_folder']
 
-df_trans_sequence['fp_out'].values
-
-df_exist = df_trans_sequence['fp_out'].apply(os.path.exists)
+df_exist = df_trans_sequence['input_image_folder'].apply(os.path.exists)
 df_not_exist =df_trans_sequence.where(df_exist == False).dropna(how='all')
 
 #TODO: move file exist checks to original for loop, such that it can keep trying to make a valid superscene with partial transitions. 
@@ -134,9 +132,31 @@ if len(df_not_exist):
     print(df_not_exist[['input_movie_folder', 'fn']])
     raise ValueError()
 
-df_trans_sequence['fp_out']  = df_trans_sequence['fp_out'].str.replace('\\','/', regex=False)
 #%%
-out_txt = 'file ' + "\nfile ".join(df_trans_sequence['fp_out'].str.replace(' ', '\ '))
+
+out_txt = ''
+fps = 5
+image_duration = 1/fps
+
+for idx, row in df_trans_sequence.iterrows():
+
+    folder = row['input_image_folder']
+
+    images = [fn for fn in os.listdir(folder) if fn.endswith('.png')]
+
+    if row['reversed']: images = images[::-1]
+
+    image_fps = [os.path.join(folder, fn) for fn in images]
+    image_fps = [fp.replace('\\', '/') for fp in image_fps]
+    image_fps = [fp.replace(' ', '\ ') for fp in image_fps]
+
+    for fp in image_fps:
+        out_txt += 'file {}\nduration {}\n'.format(fp, image_duration)
+
+
+
+#%%
+# out_txt = 'file ' + "\nfile ".join(image_list)
 
 with open('videos.txt', 'w') as f:
     f.write(out_txt)
