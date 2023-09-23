@@ -15,7 +15,7 @@ from utils import gendf_imagefn_info
 
 USE_DEFAULT_ARGS = True
 if USE_DEFAULT_ARGS:
-    song = 'spacetrain_1024'
+    song = 'emitnew'
     # scene = 'tram_alien'
 else:
     parser = argparse.ArgumentParser()
@@ -58,7 +58,10 @@ for i_scene in range(len(ordered_scene_list) - 1):
     sequence = []
     for i in range(long_scene):
         #TODO: Make a good way to select specific transitions we want to happen. 
-        sequence.append((i,i%short_scene))
+        if len(df_from) >= len(df_to):
+            sequence.append((i,i%short_scene))
+        if len(df_from) < len(df_to):
+            sequence.append((i%short_scene,i))
 
 
     # make and fill transitions df info 
