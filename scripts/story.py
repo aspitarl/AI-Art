@@ -13,21 +13,17 @@ import argparse
 
 USE_DEFAULT_ARGS = True
 if USE_DEFAULT_ARGS:
-    song = 'spacetrain_1024'
-    num_output_rows = int(10)
+    song = 'emitnew'
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("song")
-    parser.add_argument("num_output_rows")
     args = parser.parse_args()
 
     song = args.song
-    num_output_rows = int(args.num_output_rows)
 
 from dotenv import load_dotenv; load_dotenv()
 gdrive_basedir = os.getenv('base_dir')
 input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
-
 #%%
 # Load list of all transitions
 
@@ -96,8 +92,13 @@ for idx, row in df_sequence.iterrows():
     valid_trans_out = trans_from_this_scene[trans_from_this_scene['c1'] == out_clip].iloc[0]
 
     start_clip = valid_trans_out['c2']
+    df_valid_trans_out = valid_trans_out.to_frame().T
+
+    #Check Reverse clip for transition. TODO: refactor with previous reverse checking
+    forward_c_pairs = [tuple(c_pair) for c_pair in df_trans_interscene[['c1','c2']].values]
+    df_valid_trans_out['reversed'] = [tuple(c_pair) not in forward_c_pairs  for c_pair in df_valid_trans_out[['c1','c2']].values]
     
-    dfs_scenes.append(valid_trans_out.to_frame().T)
+    dfs_scenes.append(df_valid_trans_out)
 
     
 
@@ -164,5 +165,5 @@ import shutil
 shutil.move('videos.txt', os.path.join(out_dir, 'videos_story.txt'))
 
 os.chdir(out_dir)
-os.system('ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -r {} output_test.mov'.format(fps))
+os.system('ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -q:v 3 -r {} output_test.mov'.format(fps))
 # %%
