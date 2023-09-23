@@ -31,35 +31,31 @@ input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
 #%%
 # Load list of all transitions
 
-fp = os.path.join(gdrive_basedir, song, 'all_transitions.csv')
-df_transitions = pd.read_csv(fp, index_col=0).dropna(how='all')
+fp = os.path.join(gdrive_basedir, song, 'intrascene_transitions.csv')
+df_trans_intrascene = pd.read_csv(fp, index_col=0).dropna(how='all')
+df_trans_intrascene[['c1','c2']] = df_trans_intrascene.apply(clip_names_from_transition_row, axis=1, result_type='expand')
+
+fp = os.path.join(gdrive_basedir, song, 'interscene_transitions.csv')
+df_trans_interscene = pd.read_csv(fp, index_col=0).dropna(how='all')
+df_trans_interscene[['c1','c2']] = df_trans_interscene.apply(clip_names_from_transition_row, axis=1, result_type='expand')
 
 # Determine clip names for each transition
-df_transitions['fn'] = df_transitions.apply(transition_fn_from_transition_row, axis=1)
-df_transitions[['c1','c2']] = df_transitions.apply(clip_names_from_transition_row, axis=1, result_type='expand')
 
 #%%
 
 # we will develop transitions to the scenese in the following order
-
-df_sequence = pd.DataFrame(
-    {
-        'scene': ['s1', 's2','s3'],
-        'duration': [3,3,3]
-    }
-)
+df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'scene_sequence.csv'), index_col=0)
 
 
 df_sequence
-# %%
 
-df_trans_intrascene = df_transitions.dropna(subset=['scene'])
-df_trans_interscene = df_transitions.dropna(subset=['scene_from'])
+# %%
 
 from utils import gendf_trans_sequence
 
-
 dfs_scenes = []
+
+start_clip = None
 
 for idx, row in df_sequence.iterrows():
     scene=row['scene']
@@ -74,50 +70,49 @@ for idx, row in df_sequence.iterrows():
     # Make series of 
 
 
-    df_trans_scene = df_transitions.where(df_transitions['scene'] == scene).dropna(how='all')
+    df_trans_scene = df_trans_intrascene.where(df_trans_intrascene['scene'] == scene).dropna(how='all')
 
-    df_trans_sequence = gendf_trans_sequence(df_trans_scene, num_output_rows=duration)
-        
+    df_trans_sequence = gendf_trans_sequence(df_trans_scene, num_output_rows=duration, start_clip=start_clip)
+    
     # lookup the clips for each transition, and whether they should the reversed clip
     forward_c_pairs = [tuple(c_pair) for c_pair in df_trans_scene[['c1','c2']].values]
 
     df_trans_sequence['reversed'] = [tuple(c_pair) not in forward_c_pairs  for c_pair in df_trans_sequence[['c1','c2']].values]
-    df_trans_sequence['from_seed'] = df_trans_sequence.apply(lambda x: x['c1'] if not x['reversed'] else x['c2'], axis=1)
-    df_trans_sequence['to_seed'] = df_trans_sequence.apply(lambda x: x['c2'] if not x['reversed'] else x['c1'], axis=1)
+    c1s = df_trans_sequence.apply(lambda x: x['c1'] if not x['reversed'] else x['c2'], axis=1)
+    c2s = df_trans_sequence.apply(lambda x: x['c2'] if not x['reversed'] else x['c1'], axis=1)
+    df_trans_sequence['c1'] = c1s
+    df_trans_sequence['c2'] = c2s
 
     dfs_scenes.append(df_trans_sequence)
 
 
+    if idx == df_sequence.index[-1]:
+        break
 
-# %%
+    # Find a valid interscene transition from this scene
+    out_clip = df_trans_sequence.iloc[-1]['c2']
 
-dfs_out = []
+    trans_from_this_scene = df_trans_interscene[df_trans_interscene['scene_from'] == scene]
+    valid_trans_out = trans_from_this_scene[trans_from_this_scene['c1'] == out_clip].iloc[0]
 
+    start_clip = valid_trans_out['c2']
+    
+    dfs_scenes.append(valid_trans_out.to_frame().T)
 
-for i in range(len(dfs_scenes) -1):
+    
 
-    df_scene_from = dfs_scenes[i]
-    df_scene_to = dfs_scenes[i+1]
+    #Now generate the interscene transition
 
-    from_seed_inteseed = df_scene_from.iloc[-1]['to_seed']
-    to_seed_interseed = df_scene_to.iloc[0]['from_seed']
-
-    df_interscene = pd.DataFrame([[None, None, False, from_seed_inteseed, to_seed_interseed]], columns = df_scene_from.columns)
-
-    dfs_out.extend([df_scene_from, df_interscene, df_scene_to])
-
-
-df_out = pd.concat(dfs_out)
-
-df_out
 
 #%%
-#TODO: improve this name 
 
-df_trans_sequence = df_out
+df_trans_sequence = pd.concat(dfs_scenes).reset_index(drop=True)
+df_trans_sequence = df_trans_sequence[['c1','c2', 'reversed']]
+df_trans_sequence
 
+#%%
 
-df_trans_sequence["input_image_folder"]=df_trans_sequence['from_seed']+ ' to ' +df_trans_sequence['to_seed']
+df_trans_sequence["input_image_folder"]=df_trans_sequence['c1']+ ' to ' +df_trans_sequence['c2']
 # df_trans_sequence['input_movie_folder'] = ['transitions_rev' if reverse else 'transitions' for reverse in df_trans_sequence['reversed']]
 song_basedir = os.path.join(gdrive_basedir, song)
 
@@ -129,13 +124,13 @@ df_not_exist =df_trans_sequence.where(df_exist == False).dropna(how='all')
 #TODO: move file exist checks to original for loop, such that it can keep trying to make a valid superscene with partial transitions. 
 if len(df_not_exist):
     print("Files not existing:  ")
-    print(df_not_exist[['input_movie_folder', 'fn']])
+    print(df_not_exist['input_image_folder'].values)
     raise ValueError()
 
 #%%
 
 out_txt = ''
-fps = 5
+fps = 10
 image_duration = 1/fps
 
 for idx, row in df_trans_sequence.iterrows():
@@ -158,10 +153,16 @@ for idx, row in df_trans_sequence.iterrows():
 #%%
 # out_txt = 'file ' + "\nfile ".join(image_list)
 
+out_dir = os.path.join(song_basedir, 'story')
+if not os.path.exists(out_dir): os.mkdir(out_dir)
+
 with open('videos.txt', 'w') as f:
     f.write(out_txt)
 
 import shutil
 
-shutil.move('videos.txt', os.path.join(song_basedir, 'videos_story.txt'))
+shutil.move('videos.txt', os.path.join(out_dir, 'videos_story.txt'))
+
+os.chdir(out_dir)
+os.system('ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -r {} output_test.mov'.format(fps))
 # %%

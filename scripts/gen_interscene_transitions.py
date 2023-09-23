@@ -12,9 +12,8 @@ gdrive_basedir = os.getenv('base_dir')
 from utils import gendf_imagefn_info
 
 # we will develop transitions to the scenese in the following order
-ordered_scene_list = ['s1','s2','s3']
 
-USE_DEFAULT_ARGS = False
+USE_DEFAULT_ARGS = True
 if USE_DEFAULT_ARGS:
     song = 'spacetrain_1024'
     # scene = 'tram_alien'
@@ -26,6 +25,13 @@ else:
     song = args.song
 
 allscenes_folder = os.path.join(gdrive_basedir, song, 'scenes')
+
+df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'scene_sequence.csv'), index_col=0)
+# We assume the scene list csv has the scenes in order 
+ordered_scene_list = df_sequence['scene'].values
+
+
+#%%
 
 dfs = []
 for i_scene in range(len(ordered_scene_list) - 1):
@@ -45,11 +51,14 @@ for i_scene in range(len(ordered_scene_list) - 1):
     df_to = gendf_imagefn_info(fns_images_to)
 
 
+    # We make sure that each clip has a interscene transition associated with it. iterate through longest scene and match to one on the shortest scene 'folding' with modulus after reaching length of shortest scene
+    short_scene = min([len(df_from), len(df_to)])
+    long_scene = max([len(df_from), len(df_to)])
     # Make sequenece
     sequence = []
-    for i in range(len(df_from)):
-        for j in range(len(df_to)):
-            sequence.append((i,j))
+    for i in range(long_scene):
+        #TODO: Make a good way to select specific transitions we want to happen. 
+        sequence.append((i,i%short_scene))
 
 
     # make and fill transitions df info 
@@ -84,13 +93,13 @@ for i_scene in range(len(ordered_scene_list) - 1):
     dfs.append(df_transitions)        
 
 
-df_transitions = pd.concat(dfs)
+df_transitions = pd.concat(dfs).reset_index(drop=True)
 
 #%%
 
 df_transitions
 
-fp_out = os.path.join(allscenes_folder, 'interscene_transitions.csv')
+fp_out = os.path.join(gdrive_basedir, song, 'interscene_transitions.csv')
 print("writing interscene transitions csv to {}".format(fp_out))
 df_transitions.to_csv(fp_out)
 # %%

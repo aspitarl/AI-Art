@@ -14,15 +14,16 @@ from IPython.display import clear_output
 output_basedir = os.path.join('output', 'transition_images')
 if not os.path.exists(output_basedir): os.mkdir(output_basedir)
 
-# fp = os.path.join(code_folder, 'input_data.xlsx')
-# df_prompt = pd.read_excel(fp, 'prompts_{}'.format(song_name), index_col=0).dropna(how='all')
-
 fp = os.path.join('prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
 
-# df_transitions = pd.read_excel(fp, 'transitions_{}'.format(song_name), dtype={'from_seed': str, 'to_seed': str})
-fp = os.path.join('prompt_data', 'all_transitions.csv')
-df_transitions = pd.read_csv(fp, index_col=0).dropna(how='all')
+fp = os.path.join('prompt_data', 'intrascene_transitions.csv')
+df_trans_intrascene = pd.read_csv(fp, index_col=0).dropna(how='all')
+fp = os.path.join('prompt_data', 'interscene_transitions.csv')
+df_trans_interscene = pd.read_csv(fp, index_col=0).dropna(how='all')
+
+df_transitions = pd.concat([df_trans_intrascene, df_trans_interscene])
+
 
 # %%
 df_transitions

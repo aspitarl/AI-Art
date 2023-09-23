@@ -69,49 +69,59 @@ def gendf_imagefn_info(fns_images):
 
 import numpy as np
 
-def gendf_trans_sequence(df_transitions, num_output_rows):
+def find_next_idx(cur_idx, num_videos):
+    valid_idxs = [i for i in range(num_videos) if i != cur_idx]
+    next_idx = np.random.randint(0,num_videos-1)
+    next_idx = valid_idxs[next_idx]
+    return next_idx
+
+
+def gendf_trans_sequence(df_transitions, num_output_rows, start_clip=None, end_clip=None, max_iter=1000):
     # Generate the sequence of transitions in terms of clip index
     seed_lookup = gen_seed_lookup(df_transitions)
     num_videos = len(seed_lookup)
 
-    def find_next_idx(cur_idx):
-        valid_idxs = [i for i in range(num_videos) if i != cur_idx]
-        next_idx = np.random.randint(0,num_videos-1)
-        next_idx = valid_idxs[next_idx]
-        return next_idx
 
-    cur_idx = 0
+    if start_clip:
+        cur_idx = seed_lookup[seed_lookup == start_clip].index[0]
+    else:
+        cur_idx = 0
 
     df_trans_sequence = pd.DataFrame(columns = ['c1','c2'], index = list(range(num_output_rows)))
 
     trans_names_forward = (df_transitions['c1'] + df_transitions['c2']).values
     trans_names_rev = (df_transitions['c2'] + df_transitions['c1']).values
+    valid_transitions = [*trans_names_forward, *trans_names_rev]
 
     for i in df_trans_sequence.index:  
+
+        if (i == len(df_trans_sequence) -1) and end_clip:
+            df_trans_sequence['c1'][i] = seed_lookup[cur_idx]
+            df_trans_sequence['c2'][i] = end_clip
+            break
+
         found_match = False
 
-        for j in range(1000):
-            next_idx = find_next_idx(cur_idx)
+        for j in range(max_iter):
+            next_idx = find_next_idx(cur_idx, num_videos)
 
             cur_name = seed_lookup[cur_idx]
             next_name = seed_lookup[next_idx]
 
             checkstr = cur_name + next_name
-            if checkstr in trans_names_forward or checkstr in trans_names_rev:
+            if checkstr in valid_transitions:
                 found_match = True
                 break
 
 
         if not found_match:
-            raise ValueError("could not find match")
+            raise ValueError("could not find match from clip: {}".format(cur_name))
         
         df_trans_sequence['c1'][i] = seed_lookup[cur_idx]
         df_trans_sequence['c2'][i] = seed_lookup[next_idx]
 
         cur_idx=next_idx
 
-
-    df_trans_sequence
     return df_trans_sequence
 
 

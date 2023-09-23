@@ -20,7 +20,7 @@ command used to make a transition:
 
 for video text file
 
-`ffmpeg -f concat -i -safe 0 videos_story.txt -c mjpeg -r 10 output_test.mov`
+`ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -r 5 output_test.mov`
 
 useful article: https://shotstack.io/learn/use-ffmpeg-to-convert-images-to-video/
 
