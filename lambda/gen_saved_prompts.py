@@ -5,6 +5,7 @@
 song_name = 'spacetrain_1024' #@param {type:"string"}
 res_height = 576 #@param
 res_width = 1024 #@param
+seed_delimiter = " "
 
 import os
 import pandas as pd
@@ -15,7 +16,7 @@ if not os.path.exists(output_folder): os.mkdir(output_folder)
 
 fp = os.path.join('prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
-
+df_prompt = df_prompt.dropna(how='any')
 
 
 # %%
@@ -37,7 +38,7 @@ pipe = pipe.to("cuda")
 
 # %%
 for name, row in df_prompt.iterrows():
-  seeds = row['seeds'].split(',')
+  seeds = row['seeds'].split(seed_delimiter)
   seeds = [s.strip() for s in seeds]
   print(seeds)
 
@@ -53,7 +54,7 @@ height = res_height
 skip_existing = True
 
 for name, row in df_prompt.iterrows():
-  seeds = row['seeds'].split(',')
+  seeds = row['seeds'].split(seed_delimiter)
   seeds = [s.strip() for s in seeds]
 
   prompt = row['prompt']
