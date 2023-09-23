@@ -38,7 +38,7 @@ def clip_names_from_transition_row(row, max_seed_characters=4):
     return c1, c2
 
 import re
-def extract_seed_prompt_fn(fn, regex = re.compile("(\S+)_(\d+).png")):
+def extract_seed_prompt_fn(fn, regex = re.compile("([\S\s]+)_(\d+).png")):
     """
     returns the prompt and seed string from an image filename
     """
