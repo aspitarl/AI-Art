@@ -11,7 +11,7 @@ from utils import transition_fn_from_transition_row, clip_names_from_transition_
 
 import argparse
 
-USE_DEFAULT_ARGS = True
+USE_DEFAULT_ARGS = False
 if USE_DEFAULT_ARGS:
     song = 'emitnew'
 else:
@@ -27,11 +27,11 @@ input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
 #%%
 # Load list of all transitions
 
-fp = os.path.join(gdrive_basedir, song, 'intrascene_transitions.csv')
+fp = os.path.join(gdrive_basedir, song, 'prompt_data', 'intrascene_transitions.csv')
 df_trans_intrascene = pd.read_csv(fp, index_col=0).dropna(how='all')
 df_trans_intrascene[['c1','c2']] = df_trans_intrascene.apply(clip_names_from_transition_row, axis=1, result_type='expand')
 
-fp = os.path.join(gdrive_basedir, song, 'interscene_transitions.csv')
+fp = os.path.join(gdrive_basedir, song, 'prompt_data', 'interscene_transitions.csv')
 df_trans_interscene = pd.read_csv(fp, index_col=0).dropna(how='all')
 df_trans_interscene[['c1','c2']] = df_trans_interscene.apply(clip_names_from_transition_row, axis=1, result_type='expand')
 
@@ -40,7 +40,7 @@ df_trans_interscene[['c1','c2']] = df_trans_interscene.apply(clip_names_from_tra
 #%%
 
 # we will develop transitions to the scenese in the following order
-df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'scene_sequence.csv'), index_col=0)
+df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence.csv'), index_col=0)
 
 
 df_sequence

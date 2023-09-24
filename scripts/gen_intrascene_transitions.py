@@ -22,7 +22,7 @@ gdrive_basedir = os.getenv('base_dir')
 import re
 from utils import gendf_imagefn_info
 
-df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'scene_sequence.csv'), index_col=0)
+df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence.csv'), index_col=0)
 # We assume the scene list csv has the scenes in order 
 ordered_scene_list = df_sequence['scene'].values
 
@@ -95,7 +95,7 @@ for scene in ordered_scene_list:
 
 df_all = pd.concat(dfs).reset_index(drop=True)
 
-fp_out = os.path.join(gdrive_basedir, song, 'intrascene_transitions.csv')
+fp_out = os.path.join(gdrive_basedir, song, 'prompt_data', 'intrascene_transitions.csv')
 print("writing transitions csv to {}".format(fp_out))
 df_all.to_csv(fp_out)
 

@@ -13,7 +13,7 @@ from utils import gendf_imagefn_info
 
 # we will develop transitions to the scenese in the following order
 
-USE_DEFAULT_ARGS = True
+USE_DEFAULT_ARGS = False
 if USE_DEFAULT_ARGS:
     song = 'emitnew'
     # scene = 'tram_alien'
@@ -26,7 +26,7 @@ else:
 
 allscenes_folder = os.path.join(gdrive_basedir, song, 'scenes')
 
-df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'scene_sequence.csv'), index_col=0)
+df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence.csv'), index_col=0)
 # We assume the scene list csv has the scenes in order 
 ordered_scene_list = df_sequence['scene'].values
 
@@ -102,7 +102,7 @@ df_transitions = pd.concat(dfs).reset_index(drop=True)
 
 df_transitions
 
-fp_out = os.path.join(gdrive_basedir, song, 'interscene_transitions.csv')
+fp_out = os.path.join(gdrive_basedir, song, 'prompt_data', 'interscene_transitions.csv')
 print("writing interscene transitions csv to {}".format(fp_out))
 df_transitions.to_csv(fp_out)
 # %%
