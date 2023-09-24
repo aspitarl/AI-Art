@@ -5,7 +5,7 @@
 song_name = 'spacetrain_1024' #@param {type:"string"}
 res_height = 576 #@param
 res_width = 1024 #@param
-seed_delimiter = " "
+seed_delimiter = ","
 
 import os
 import pandas as pd
