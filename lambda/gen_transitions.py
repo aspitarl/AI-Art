@@ -152,8 +152,8 @@ skip_existing = True
 generator = torch.Generator(device="cuda")
 
 max_seed_characters = 4 # Take the first few numbers of the seed for the name
-num_interpolation_steps = 20
-num_inference_steps = 40
+num_interpolation_steps = 40
+num_inference_steps = 50
 
 
 T = np.linspace(0.0, 1.0, num_interpolation_steps)
