@@ -2,13 +2,15 @@
 song_name = 'spacetrain_1024' #@param {type:"string"}
 res_height = 564 #@param
 res_width = 1024 #@param
-create_mp4_files = False #@param {type:"boolean"}
 
 
 import os
 import pandas as pd
 import numpy as np
 from IPython.display import clear_output
+from utils import generate_latent, get_text_embed, slerp
+import torch
+from diffusers import StableDiffusionPipeline
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
 output_basedir = os.path.join('output', 'transition_images')
@@ -54,9 +56,6 @@ df_prompt = df_prompt.astype({
 
 df_transitions
 
-#%%
-import torch
-from diffusers import StableDiffusionPipeline
 
 # %%
 pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1",
@@ -81,70 +80,6 @@ height = res_height
 latent_width = width // 8
 latent_height = height // 8
 
-
-def generate_latent(generator, seed, device='cuda'):
-
-    generator.manual_seed(int(seed))
-
-    latent = torch.randn(
-        (1, pipe.unet.in_channels, height // 8, width // 8),
-        generator = generator,
-        device = device
-    )
-
-    return latent
-
-def make_latent_steps(start_latent, stop_latent, steps):
-    delta_latent = (stop_latent - start_latent)/steps
-    latent_steps = [start_latent + delta_latent*i for i in range(steps + 1)]
-
-    #Check that start and end values are equal to targets within rounding errors
-    # assert torch.isclose(latent_steps[0], from_latent, atol=1e-4).all()
-    # assert torch.isclose(latent_steps[-1], to_latent, atol=1e-2).all()
-
-    return latent_steps
-
-def get_text_embed(prompt):
-    text_input = pipe.tokenizer(
-                prompt,
-                padding="max_length",
-                max_length=pipe.tokenizer.model_max_length,
-                truncation=True,
-                return_tensors="pt",
-            )
-
-    embed = pipe.text_encoder(text_input.input_ids.to('cuda'))[0]
-
-    return embed
-
-if not os.path.exists(output_basedir): os.makedirs(output_basedir)
-
-# %%
-def slerp(t, v0, v1, DOT_THRESHOLD=0.9995):
-    """helper function to spherically interpolate two arrays v1 v2"""
-
-    inputs_are_torch = isinstance(v0, torch.Tensor)
-    if inputs_are_torch:
-        input_device = v0.device
-        v0 = v0.cpu().numpy()
-        v1 = v1.cpu().numpy()
-
-    dot = np.sum(v0 * v1 / (np.linalg.norm(v0) * np.linalg.norm(v1)))
-    if np.abs(dot) > DOT_THRESHOLD:
-        v2 = (1 - t) * v0 + t * v1
-    else:
-        theta_0 = np.arccos(dot)
-        sin_theta_0 = np.sin(theta_0)
-        theta_t = theta_0 * t
-        sin_theta_t = np.sin(theta_t)
-        s0 = np.sin(theta_0 - theta_t) / sin_theta_0
-        s1 = sin_theta_t / sin_theta_0
-        v2 = s0 * v0 + s1 * v1
-
-    if inputs_are_torch:
-        v2 = torch.from_numpy(v2).to(input_device)
-
-    return v2
 
 # %%
 skip_existing = True
@@ -200,11 +135,11 @@ for idx, row in df_transitions.iterrows():
   duration = row['duration']
   fps = num_interpolation_steps/duration
 
-  from_latent = generate_latent(generator, seeds[0])
-  to_latent = generate_latent(generator, seeds[1])
+  from_latent = generate_latent(generator, seeds[0], pipe, latent_height, latent_width)
+  to_latent = generate_latent(generator, seeds[1], pipe, latent_height, latent_width)
 
-  from_text_embed = get_text_embed(prompts[0])
-  to_text_embed = get_text_embed(prompts[1])
+  from_text_embed = get_text_embed(prompts[0], pipe)
+  to_text_embed = get_text_embed(prompts[1], pipe)
 
   # The tensor steps are len(num_interpolation_steps) + 1
   # latent_steps = make_latent_steps(from_latent, to_latent, num_interpolation_steps)
@@ -234,13 +169,6 @@ for idx, row in df_transitions.iterrows():
 
       output_number_string = str(i).zfill(6)
       output_image.save(os.path.join(output_dir, "frame{}.png".format(output_number_string)))
-
-  if create_mp4_files:
-      make_video_pyav(output_dir,
-                      output_filepath=output_filepath,
-                      fps=fps
-                      )
-
 
 
 # %%
