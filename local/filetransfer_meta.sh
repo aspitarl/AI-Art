@@ -14,4 +14,4 @@ ssh-agent
 
 # to cloud #TODO: why have to cd? 
 cd "$base_dir\\$song_name"
-scp -r -i $ssh_key_path prompt_data $ssh_user@$ssh_ip_address:~/AI-Art/lambda/
+scp -r -i $ssh_key_path prompt_data $ssh_user@$ssh_ip_address:~/AI-Art/cloud/
