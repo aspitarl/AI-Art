@@ -13,8 +13,8 @@ import torch
 from diffusers import StableDiffusionPipeline
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_basedir = os.path.join('output', 'transition_images')
-if not os.path.exists(output_basedir): os.mkdir(output_basedir)
+output_basedir = os.path.join('output', song_name, 'transition_images')
+if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
 fp = os.path.join('prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
