@@ -5,6 +5,8 @@ import os
 import pandas as pd
 import argparse
 
+LIMIT_PROMPTS = 3# Artificually limit number of images, set to None to not use. 
+
 USE_DEFAULT_ARGS = False
 if USE_DEFAULT_ARGS:
     song = 'spacetrain'
@@ -56,7 +58,10 @@ for scene in ordered_scene_list:
     #     (3,4),
     # ]
 
-    num_prompts = len(df_imagefn_info)
+    if LIMIT_PROMPTS:
+        num_prompts = LIMIT_PROMPTS 
+    else:
+        num_prompts = len(df_imagefn_info)
 
     sequence = []
     for i in range(num_prompts):

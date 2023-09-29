@@ -30,6 +30,12 @@ df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'sce
 # We assume the scene list csv has the scenes in order 
 ordered_scene_list = df_sequence['scene'].values
 
+#Find the prompts and seed present in the intrascene tranisitions file, only generating transitions including prompt seed combost that exist here. 
+df_intrascene_ts = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'intrascene_transitions.csv'), index_col=0)
+existing_from = [tuple(v) for v in df_intrascene_ts[['from_name', 'from_seed']].values]
+existing_to = [tuple(v) for v in df_intrascene_ts[['to_name', 'to_seed']].values]
+existing_prompts = set([*existing_from, *existing_to])
+
 
 #%%
 
@@ -45,10 +51,18 @@ for i_scene in range(len(ordered_scene_list) - 1):
     #     continue
 
     fns_images_from = [f for f in os.listdir(scene_dir_from) if f.endswith('.png')]
-    df_from = gendf_imagefn_info(fns_images_from)
+    df_from = gendf_imagefn_info(fns_images_from).set_index(['prompt','seed'])
+
+    #Downselect to include only prompt/seeds in the intrascene transitions file 
+    df_from = df_from.loc[[idx for idx in df_from.index if idx in existing_prompts]]
+    df_from = df_from.reset_index()
 
     fns_images_to = [f for f in os.listdir(scene_dir_to) if f.endswith('.png')]
-    df_to = gendf_imagefn_info(fns_images_to)
+    df_to = gendf_imagefn_info(fns_images_to).set_index(['prompt','seed'])
+
+    #Downselect to include only prompt/seeds in the intrascene transitions file 
+    df_to = df_to.loc[[idx for idx in df_to.index if idx in existing_prompts]]
+    df_to = df_to.reset_index()
 
 
     # We make sure that each clip has a interscene transition associated with it. iterate through longest scene and match to one on the shortest scene 'folding' with modulus after reaching length of shortest scene

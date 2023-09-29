@@ -47,7 +47,7 @@ def extract_seed_prompt_fn(fn, regex = re.compile("([\S\s]+)_(\d+).png")):
 
     if m:
         prompt = m.groups()[0]
-        seed = m.groups()[1]
+        seed = int(m.groups()[1])
         return prompt, seed
     else:
         return None, None
