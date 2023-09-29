@@ -11,8 +11,8 @@ import os
 import pandas as pd
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_folder = os.path.join('output', 'prompt_images')
-if not os.path.exists(output_folder): os.mkdir(output_folder)
+output_folder = os.path.join('output', song_name, 'prompt_images')
+if not os.path.exists(output_folder): os.makedirs(output_folder)
 
 fp = os.path.join('prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
@@ -25,7 +25,8 @@ from diffusers import StableDiffusionPipeline
 
 pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1",
                                                torch_dtype=torch.float16,
-                                               safety_checker=None
+                                               safety_checker=None,
+                                               cache_dir='model_cache'
                                                )
 
 
