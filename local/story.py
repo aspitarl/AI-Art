@@ -68,16 +68,14 @@ for idx, row in df_sequence.iterrows():
 
     df_trans_scene = df_trans_intrascene.where(df_trans_intrascene['scene'] == scene).dropna(how='all')
 
+    #TODO: Believe 'reversed' determination can be done in here. 
     df_trans_sequence = gendf_trans_sequence(df_trans_scene, num_output_rows=duration, start_clip=start_clip)
     
     # lookup the clips for each transition, and whether they should the reversed clip
     forward_c_pairs = [tuple(c_pair) for c_pair in df_trans_scene[['c1','c2']].values]
 
     df_trans_sequence['reversed'] = [tuple(c_pair) not in forward_c_pairs  for c_pair in df_trans_sequence[['c1','c2']].values]
-    c1s = df_trans_sequence.apply(lambda x: x['c1'] if not x['reversed'] else x['c2'], axis=1)
-    c2s = df_trans_sequence.apply(lambda x: x['c2'] if not x['reversed'] else x['c1'], axis=1)
-    df_trans_sequence['c1'] = c1s
-    df_trans_sequence['c2'] = c2s
+
 
     dfs_scenes.append(df_trans_sequence)
 
@@ -113,7 +111,13 @@ df_trans_sequence
 
 #%%
 
-df_trans_sequence["input_image_folder"]=df_trans_sequence['c1']+ ' to ' +df_trans_sequence['c2']
+
+df_trans_sequence['input_image_folder'] = df_trans_sequence.apply(
+    lambda x: x['c1']+ ' to ' + x['c2'] if not x['reversed'] else 
+    x['c2']+ ' to ' + x['c1'],
+    axis=1
+    )
+
 # df_trans_sequence['input_movie_folder'] = ['transitions_rev' if reverse else 'transitions' for reverse in df_trans_sequence['reversed']]
 song_basedir = os.path.join(gdrive_basedir, song)
 
@@ -139,6 +143,7 @@ for idx, row in df_trans_sequence.iterrows():
     folder = row['input_image_folder']
 
     images = [fn for fn in os.listdir(folder) if fn.endswith('.png')]
+    images = sorted(images)
 
     if row['reversed']: images = images[::-1]
 
@@ -162,6 +167,7 @@ with open('videos.txt', 'w') as f:
 
 import shutil
 
+df_trans_sequence.to_csv(os.path.join(out_dir, 'trans_sequence.csv'))
 shutil.move('videos.txt', os.path.join(out_dir, 'videos_story.txt'))
 
 os.chdir(out_dir)
