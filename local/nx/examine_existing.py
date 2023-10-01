@@ -32,14 +32,10 @@ input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
 #%%
 
 scene_dir = pjoin(gdrive_basedir, song, 'scenes')
-
-scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
-
-# build a list with a random element of scene_dict for each key in scene_sequence
+# scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
 
 scene_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence.csv'), index_col=0)['scene'].values.tolist()
 
-scene_sequence
 # Make a mapping from file to folder name for each scene folder in scene dir
 
 regex = re.compile("([\S\s]+_\d\d\d\d)\d+.png")
@@ -51,6 +47,15 @@ for scene in scene_sequence:
     scene_dict[scene] = [regex.match(fn).groups()[0].replace("_","-") for fn in scene_dict[scene]]
 
 scene_dict
+
+#%%
+
+dir_transitions = os.path.join(gdrive_basedir, song, 'transition_images')
+
+trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
+trans_list = [image_names_from_transition(t) for t in trans_list]
+
+trans_list
 
 
 #%%
@@ -75,33 +80,6 @@ for i in range(len(scene_names) - 1):
 
 #%%
 
-dir_transitions = os.path.join(gdrive_basedir, song, 'transition_images')
-
-trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
-trans_list = [image_names_from_transition(t) for t in trans_list]
-
-trans_list
-
-#%%
-
-list(G.edges())
-
-any([t in trans_list for t in G.edges()])
-
-#%%
-
-# color edges that are in trans_list differently
-
-
-# nx.draw(G, node_color=colors, edge_color=edge_colors, with_labels=True, node_size=50, labels=nx.get_node_attributes(G,'label'))
-
-
-# G.add_nodes_from(nodes)
-# G.add_edges_from(trans_list)
-
-
-#%%
-
 plt.figure(figsize=(10,10))
 
 # Make a color map with a different color for each scene based on the scene of each node
@@ -111,26 +89,31 @@ plt.figure(figsize=(10,10))
 from itertools import count
 # get unique groups
 
-groups = set(nx.get_node_attributes(G,'scene').values())
-mapping = dict(zip(sorted(groups),count()))
+groups = scene_sequence
+mapping = dict(zip(groups,count()))
 nodes = G.nodes()
 colors = [mapping[G.nodes[n]['scene']] for n in nodes]
 
 edge_colors = []
+alphas = []
 
 for edge in G.edges():
     if edge in trans_list:
         edge_colors.append('green')
+        alphas.append(1)
     else:
         edge_colors.append('red')
+        alphas.append(0.1)
 
 # drawing nodes and edges separately so we can capture collection for colobar
 
 pos = nx.spring_layout(G)
-ec = nx.draw_networkx_edges(G, pos, edge_color= edge_colors, alpha=0.2)
+ec = nx.draw_networkx_edges(G, pos, edge_color= edge_colors, alpha=alphas)
 nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=100, cmap=plt.cm.jet)
 
 plt.colorbar(nc)
 plt.axis('off')
 
 
+
+# %%
