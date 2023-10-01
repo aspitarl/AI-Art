@@ -1,7 +1,7 @@
 #%%
 import os
 import pandas as pd
-from utils import image_grid
+from aa_utils.sd import image_grid
 
 song_name = 'spacetrain_1024' #@param {type:"string"}
 res_height = 576 #@param

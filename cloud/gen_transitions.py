@@ -8,7 +8,7 @@ import os
 import pandas as pd
 import numpy as np
 from IPython.display import clear_output
-from utils import generate_latent, get_text_embed, slerp
+from aa_utils.sd import generate_latent, get_text_embed, slerp
 import torch
 from diffusers import StableDiffusionPipeline
 

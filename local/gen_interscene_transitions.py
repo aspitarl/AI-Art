@@ -9,7 +9,7 @@ from dotenv import load_dotenv, dotenv_values
 load_dotenv()  # take environment variables from .env.
 gdrive_basedir = os.getenv('base_dir')
 
-from utils import gendf_imagefn_info
+from aa_utils.local import gendf_imagefn_info
 
 # we will develop transitions to the scenese in the following order
 

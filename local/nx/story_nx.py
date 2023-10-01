@@ -9,7 +9,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from local.utils import transition_fn_from_transition_row, clip_names_from_transition_row, image_names_from_transition
+from aa_utils.local import transition_fn_from_transition_row, clip_names_from_transition_row, image_names_from_transition
 # %%
 
 import argparse

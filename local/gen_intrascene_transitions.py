@@ -22,7 +22,7 @@ load_dotenv()  # take environment variables from .env.
 gdrive_basedir = os.getenv('base_dir')
 
 import re
-from utils import gendf_imagefn_info
+from aa_utils.local import gendf_imagefn_info
 
 df_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence.csv'), index_col=0)
 # We assume the scene list csv has the scenes in order 

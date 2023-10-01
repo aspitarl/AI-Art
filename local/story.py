@@ -6,7 +6,7 @@ import re
 import numpy as np
 import pandas as pd
 
-from utils import transition_fn_from_transition_row, clip_names_from_transition_row
+from aa_utils.local import transition_fn_from_transition_row, clip_names_from_transition_row
 # %%
 
 import argparse
@@ -47,7 +47,7 @@ df_sequence
 
 # %%
 
-from utils import gendf_trans_sequence
+from aa_utils.local import gendf_trans_sequence
 
 dfs_scenes = []
 
