@@ -2,17 +2,18 @@ import os
 
 
 
+def image_names_from_transition(transition_name):
 
-def clip_names_from_transition(transition_fp):
+    # c1, c2 = name.split(" to ")
 
-    name = os.path.splitext(transition_fp)[0]
+    #TODO: This could be used to separate out 
+    # regex = "(.+?)-(\d+) to (.+?)-(\d+)"
+    regex = "(.+?-\d+) to (.+?-\d+)"
 
-    name = os.path.split(name)[1]
+    m = re.match(regex, transition_name)
+    im1, im2 = m.groups()
 
-    # c1, c2 = re.findall('\d\d\d\d', name)
-    c1, c2 = name.split(" to ")
-
-    return c1, c2
+    return im1, im2
 
 
 def transition_fn_from_transition_row(row, max_seed_characters=4):
