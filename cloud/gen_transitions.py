@@ -27,6 +27,8 @@ df_trans_interscene = pd.read_csv(fp, index_col=0).dropna(how='all')
 df_transitions = pd.concat([df_trans_intrascene, df_trans_interscene])
 
 
+
+
 # %%
 df_transitions
 
@@ -87,8 +89,8 @@ skip_existing = True
 generator = torch.Generator(device="cuda")
 
 max_seed_characters = 4 # Take the first few numbers of the seed for the name
-num_interpolation_steps = 40
-num_inference_steps = 50
+num_interpolation_steps = 20
+num_inference_steps = 40
 
 
 T = np.linspace(0.0, 1.0, num_interpolation_steps)
@@ -106,8 +108,6 @@ for idx, row in df_transitions.iterrows():
       )
 
   output_dir = os.path.join(output_basedir, output_name)
-  output_filepath = os.path.join(output_basedir,  "{}.mp4".format(output_name))
-
 
   if os.path.exists(output_dir):
       if skip_existing:
