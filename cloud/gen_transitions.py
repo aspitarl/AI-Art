@@ -26,11 +26,44 @@ df_trans_interscene = pd.read_csv(fp, index_col=0).dropna(how='all')
 
 df_transitions = pd.concat([df_trans_intrascene, df_trans_interscene])
 
+df_existing = pd.read_csv(os.path.join('prompt_data', 'existing_transitions.csv'), index_col=0)
+
+
+#%%
+
+def get_output_name(row, max_seed_characters=4):
+    output_name = "{}-{} to {}-{}".format(
+      row['from_name'],
+      str(row['from_seed'])[:max_seed_characters],
+      row['to_name'],
+      str(row['to_seed'])[:max_seed_characters]
+      )
+    
+    return output_name
+
+# make a new column that is the string returned from get_output_name
+
+df_transitions['output_name'] = [get_output_name(row) for idx, row in df_transitions.iterrows()]
+df_existing['output_name'] = [get_output_name(row) for idx, row in df_existing.iterrows()]
+
+df_transitions = df_transitions.set_index('output_name')
+df_existing = df_existing.set_index('output_name')
 
 
 
 # %%
-df_transitions
+
+# remove transitions that already exist, and print those that were removed 
+
+len_before = len(df_transitions)
+
+df_transitions = df_transitions[~df_transitions.index.isin(df_existing.index)]
+
+len_after = len(df_transitions)
+
+print("Removed {} transitions that already exist".format(len_before - len_after))
+
+
 
 # %%
 df_transitions = df_transitions.where(df_transitions['compute'] == 'y').dropna(how='all')
@@ -73,15 +106,6 @@ pipe = pipe.to("cuda")
 # https://github.com/huggingface/diffusers/issues/1786
 pipe.set_progress_bar_config(disable=True)
 
-# %%
-
-#TODO: replace below
-width = res_width
-height = res_height
-
-latent_width = width // 8
-latent_height = height // 8
-
 
 # %%
 skip_existing = True
@@ -100,12 +124,7 @@ from tqdm import tqdm
 for idx, row in df_transitions.iterrows():
   clear_output(wait=True)
 
-  output_name = "{}-{} to {}-{}".format(
-      row['from_name'],
-      str(row['from_seed'])[:max_seed_characters],
-      row['to_name'],
-      str(row['to_seed'])[:max_seed_characters]
-      )
+  output_name = row.name
 
   output_dir = os.path.join(output_basedir, output_name)
 
@@ -134,6 +153,10 @@ for idx, row in df_transitions.iterrows():
 
   duration = row['duration']
   fps = num_interpolation_steps/duration
+
+
+  latent_width = res_width // 8
+  latent_height = res_height // 8
 
   from_latent = generate_latent(generator, seeds[0], pipe, latent_height, latent_width)
   to_latent = generate_latent(generator, seeds[1], pipe, latent_height, latent_width)
