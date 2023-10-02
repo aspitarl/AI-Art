@@ -13,7 +13,7 @@ from aa_utils.local import gendf_imagefn_info
 
 # we will develop transitions to the scenese in the following order
 
-USE_DEFAULT_ARGS = True
+USE_DEFAULT_ARGS = False
 if USE_DEFAULT_ARGS:
     song = 'spacetrain_1024'
     # scene = 'tram_alien'

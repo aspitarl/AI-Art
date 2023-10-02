@@ -182,23 +182,87 @@ scene_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', '
 
 scene_sequence
 #%%
-# after N_repeats, find a path to a random node in the next scene and repeat the above process
-from aa_utils.local import find_path_edges
 
-N_repeats = 0
+# # make a list of edges that go from one scene to another, in the order of scene_sequence, only visiting each scene once
 
-# refactor the below into a function
-#TODO: find_path_edges needs to be able to find the node to go to that has a valid edge to the next scene
-path_edges = find_path_edges(G, scene_sequence, N_repeats, node_from='crumbles_aerial_higher-5640')
+# path_edges = []
 
-# len(path_edges)
+# node_from = np.random.choice([n for n in G.nodes() if G.nodes[n]['scene'] == scene_sequence[0]])
+# node_to = None
+
+# for i in range(len(scene_sequence)-1):
+#     scene_from = scene_sequence[i]
+#     scene_to = scene_sequence[i+1]
+
+#     scene_from_nodes = [n for n in G.nodes() if G.nodes[n]['scene'] == scene_from]
+#     scene_to_nodes = [n for n in G.nodes() if G.nodes[n]['scene'] == scene_to]
+
+#     # get a random node from scene_from
+#     if node_to is not None: node_from = node_to 
+
+#     if i < len(scene_sequence) - 2: 
+#         scene_beyond = scene_sequence[i+2]
+#         scene_beyond_nodes = [n for n in G.nodes() if G.nodes[n]['scene'] == scene_beyond]
+
+#         # find a node in scene_to that is connected to scene_beyond
+
+#         scene_to_neighbors = list(G.neighbors(scene_to_nodes[0]))
+
+#         # get the nodes connected to scene_beyond
+#         scene_beyond_neighbors = list(G.neighbors(scene_beyond_nodes[0]))
+
+#         # find the intersection of these two lists
+
+#         scene_to_neighbors = [n for n in scene_to_neighbors if n in scene_beyond_neighbors]
+
+#         # if there are no nodes in scene_to that are connected to scene_beyond, then just pick a random node from scene_to
+
+#         if len(scene_to_neighbors) == 0:
+#             print(scene_beyond)
+#             scene_to_neighbors = scene_to_nodes
+
+#         # get a random node from scene_to_neighbors
+#         node_to = np.random.choice(scene_to_neighbors)
+
+#     else:
+#         # get a random node from scene_to
+#         node_to = np.random.choice(scene_to_nodes)
+
+#     # find a path between the two nodes
+#     path = nx.shortest_path(G, node_from, node_to)
+    
+#     print(node_from)
+#     print(node_to)
+#     print(len(path))
+
+#     # add the path to the list of path edges
+#     path_edges.extend([(path[i], path[i+1]) for i in range(len(path)-1)])
+
+#%%
+
+first_scene = scene_sequence[0]
+last_scene = scene_sequence[-1]
+
+# find the most connected node in the first scene
+
+def most_connected_node(G, scene):
+    scene_nodes = [n for n in G.nodes() if G.nodes[n]['scene'] == scene]
+    scene_G = G.subgraph(scene_nodes)
+
+    # get the node with the highest degree
+    node = max(scene_G.degree, key=lambda x: x[1])[0]
+
+    return node
+
+first_node = most_connected_node(G, first_scene)
+last_node = most_connected_node(G, last_scene)
+
+path = nx.shortest_path(G, first_node, last_node)
+
+path_edges = [(path[i], path[i+1]) for i in range(len(path)-1)]
+
+
 path_edges
-
-
-print("Path edges: {}".format(path_edges))
-
-
-
 # %%
 plt.figure(figsize=(6,6))
 

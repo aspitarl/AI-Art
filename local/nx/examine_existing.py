@@ -16,7 +16,7 @@ import argparse
 
 USE_DEFAULT_ARGS = True
 if USE_DEFAULT_ARGS:
-    song = 'emitnew'
+    song = 'spacetrain_1024'
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("song")
@@ -44,7 +44,26 @@ scene_dict = {}
 for scene in scene_sequence:
     scene_dict[scene] = [fn for fn in os.listdir(pjoin(scene_dir, scene)) if fn.endswith('.png')]
 
-    scene_dict[scene] = [regex.match(fn).groups()[0].replace("_","-") for fn in scene_dict[scene]]
+    # scene_dict[scene] = [regex.match(fn).groups()[0].replace("_","-") for fn in scene_dict[scene]]
+
+
+    scene_dict[scene] = [fn.rsplit('_', 1)[0] + '-' + fn.rsplit('_', 1)[1] for fn in scene_dict[scene]]
+
+    # remove the .png extension from each filename with a regular expression
+
+    scene_dict[scene] = [re.sub(r'\.png$', '', fn) for fn in scene_dict[scene]]
+
+    # truncate the digits after each hypen to 4 digits
+
+    scene_dict[scene] = [re.sub(r'-(\d+)$', lambda m: '-' + m.group(1)[:4], fn) for fn in scene_dict[scene]]
+
+
+
+
+
+    
+
+
 
 scene_dict
 
@@ -69,14 +88,22 @@ for scene in scene_dict:
 
 scene_names = list(scene_dict.keys())
 
-for i in range(len(scene_names) - 1):
+for i in range(len(scene_names)):
     scene_from = scene_names[i]
-    scene_to = scene_names[i+1]
 
-    # add edges between all pairs of nodes in the two scenes
+    # add eges between all pairs of nodes in scene_from
+
     for node_from in scene_dict[scene_from]:
-        for node_to in scene_dict[scene_to]:
-            G.add_edge(node_from, node_to)
+        for node_to in scene_dict[scene_from]:
+            if node_from != node_to:
+                G.add_edge(node_from, node_to)
+
+    if i < len(scene_names) - 1:
+        scene_to = scene_names[i+1]
+        # add edges between all pairs of nodes in the two scenes
+        for node_from in scene_dict[scene_from]:
+            for node_to in scene_dict[scene_to]:
+                G.add_edge(node_from, node_to)
 
 #%%
 
@@ -98,7 +125,8 @@ edge_colors = []
 alphas = []
 
 for edge in G.edges():
-    if edge in trans_list:
+    edge_rev = (edge[1], edge[0])
+    if edge in trans_list or edge_rev in trans_list:
         edge_colors.append('green')
         alphas.append(1)
     else:
@@ -115,5 +143,35 @@ plt.colorbar(nc)
 plt.axis('off')
 
 
+plt.savefig(pjoin(gdrive_basedir, song, 'story', 'graph_existing_transitions.png'))
+
 
 # %%
+
+# Make a csv of the existing transitions
+# TODO: get full seed from each node, not just the first 4 digits
+
+
+# split each edge into two list of nodes_from and nodes_to
+
+nodes_from = [e[0] for e in trans_list]
+nodes_to = [e[1] for e in trans_list]
+# scenes_from = [G.nodes[n]['scene'] for n in nodes_from]
+# scenes_to = [G.nodes[n]['scene'] for n in nodes_to]
+
+# make a dataframe wit nodes_from and nodes_to as columns
+
+df_existing = pd.DataFrame({'nodes_from':nodes_from, 'nodes_to':nodes_to})
+
+df_existing[['from_name', 'from_seed']] = df_existing['nodes_from'].str.split('-', expand=True)
+df_existing[['to_name', 'to_seed']] = df_existing['nodes_to'].str.split('-', expand=True)
+
+
+df_existing = df_existing.drop(columns=['nodes_from', 'nodes_to'])
+
+df_existing
+
+#%%
+
+
+df_existing.to_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'existing_transitions.csv'))

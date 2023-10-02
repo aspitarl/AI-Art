@@ -134,3 +134,62 @@ def gen_seed_lookup(df_transitions):
     seed_lookup = pd.Series(all_cs, index=c_id, name='seed_str')
 
     return seed_lookup
+
+
+import networkx as nx
+
+def find_path_edges(G, scene_names, N_repeats, node_from=None):
+
+    path_edges = []
+
+    if node_from is None: node_from = np.random.choice([n for n in G.nodes() if G.nodes[n]['scene'] == scene_names[0]])
+    node_to = None
+
+    for i in range(len(scene_names)):
+        scene_from = scene_names[i]
+
+        for j in range(N_repeats):
+            # get a random node from scene_from
+
+            if node_to is not None:
+                # print('test')
+                node_from = node_to
+
+            # TODO: this is a hack to get the most connected node in the scene, need to add kwarg to find_path_edges to specify this
+
+            # # get a random node from scene_to
+            # node_to = np.random.choice([n for n in G.nodes() if G.nodes[n]['scene'] == scene_from])
+
+            # go to the most connected node in scene_from
+
+            scene_nodes = [n for n in G.nodes() if G.nodes[n]['scene'] == scene_from]
+            scene_G = G.subgraph(scene_nodes)
+
+            # get the node with the highest degree
+            node_to = max(scene_G.degree, key=lambda x: x[1])[0]
+            
+
+            # find a path between the two nodes
+            path = nx.shortest_path(G, node_from, node_to)
+
+            # add the path to the list of path edges
+            path_edges.extend([(path[i], path[i+1]) for i in range(len(path)-1)])
+
+        if i < len(scene_names) - 1:
+            
+            scene_to = scene_names[i+1]
+            # get a random node from scene_from
+            
+            if node_to is not None:
+                node_from = node_to
+
+            # get a random node from scene_to
+            node_to = np.random.choice([n for n in G.nodes() if G.nodes[n]['scene'] == scene_to])
+
+            # find a path between the two nodes
+            path = nx.shortest_path(G, node_from, node_to)
+
+            # add the path to the list of path edges
+            path_edges.extend([(path[i], path[i+1]) for i in range(len(path)-1)])
+
+    return path_edges
