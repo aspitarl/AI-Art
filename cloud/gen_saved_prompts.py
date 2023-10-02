@@ -2,7 +2,7 @@
 # This is a notebook to generate all the prompts and seeds in the prompts google sheet
 
 # %%
-song_name = 'spacetrain_1024' #@param {type:"string"}
+song_name = 'cycle' #@param {type:"string"}
 res_height = 576 #@param
 res_width = 1024 #@param
 seed_delimiter = ","
@@ -10,13 +10,15 @@ seed_delimiter = ","
 import os
 import pandas as pd
 
+from aa_utils.sd import generate_latent
+
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
 output_folder = os.path.join('output', song_name, 'prompt_images')
 if not os.path.exists(output_folder): os.makedirs(output_folder)
 
 fp = os.path.join('prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
-df_prompt = df_prompt.dropna(how='any')
+df_prompt = df_prompt.dropna(how='any', subset=['prompt', 'seeds'])
 
 
 # %%
@@ -71,11 +73,7 @@ for name, row in df_prompt.iterrows():
 
     generator.manual_seed(int(seed))
 
-    latent = torch.randn(
-        (1, pipe.unet.in_channels, height // 8, width // 8),
-        generator = generator,
-        device = device
-    )
+    latent = generate_latent(generator, seed, pipe, height // 8, width // 8)
 
     with torch.autocast(device):
       images = pipe(
