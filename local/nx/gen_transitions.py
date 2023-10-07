@@ -12,7 +12,7 @@ from aa_utils.local import transition_fn_from_transition_row, clip_names_from_tr
 
 import argparse
 
-N_repeats = 2 
+N_repeats = 1 
 
 USE_DEFAULT_ARGS = False
 if USE_DEFAULT_ARGS:
@@ -183,7 +183,7 @@ for edge in G.edges():
 
 pos = nx.spring_layout(G)
 ec = nx.draw_networkx_edges(G, pos, edge_color= edge_colors, alpha=alphas)
-nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=20, cmap=plt.cm.jet)
+nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=5, cmap=plt.cm.jet)
 
 plt.colorbar(nc)
 plt.axis('off')

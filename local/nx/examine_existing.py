@@ -71,6 +71,8 @@ scene_dict
 
 dir_transitions = os.path.join(gdrive_basedir, song, 'transition_images')
 
+if not os.path.exists(dir_transitions): os.makedirs(dir_transitions)
+
 trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
 trans_list = [image_names_from_transition(t) for t in trans_list]
 
@@ -142,6 +144,7 @@ nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size
 plt.colorbar(nc)
 plt.axis('off')
 
+if not os.path.exists(pjoin(gdrive_basedir, song, 'story')): os.makedirs(pjoin(gdrive_basedir, song, 'story'))
 
 plt.savefig(pjoin(gdrive_basedir, song, 'story', 'graph_existing_transitions.png'))
 
@@ -163,13 +166,15 @@ nodes_to = [e[1] for e in trans_list]
 
 df_existing = pd.DataFrame({'nodes_from':nodes_from, 'nodes_to':nodes_to})
 
-df_existing[['from_name', 'from_seed']] = df_existing['nodes_from'].str.split('-', expand=True)
-df_existing[['to_name', 'to_seed']] = df_existing['nodes_to'].str.split('-', expand=True)
+if len(df_existing):
+
+    df_existing[['from_name', 'from_seed']] = df_existing['nodes_from'].str.split('-', expand=True)
+    df_existing[['to_name', 'to_seed']] = df_existing['nodes_to'].str.split('-', expand=True)
 
 
-df_existing = df_existing.drop(columns=['nodes_from', 'nodes_to'])
+    df_existing = df_existing.drop(columns=['nodes_from', 'nodes_to'])
 
-df_existing
+    df_existing
 
 #%%
 

@@ -166,7 +166,11 @@ def find_path_edges(G, scene_names, N_repeats, node_from=None):
             scene_G = G.subgraph(scene_nodes)
 
             # get the node with the highest degree
-            node_to = max(scene_G.degree, key=lambda x: x[1])[0]
+            # node_to = max(scene_G.degree, key=lambda x: x[1])[0]
+
+            # get a random node
+            
+            node_to = np.random.choice([n for n in scene_G.nodes()])
             
 
             # find a path between the two nodes

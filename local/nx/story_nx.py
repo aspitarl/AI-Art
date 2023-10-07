@@ -79,12 +79,6 @@ for scene in scene_list:
 
     scene_dict[scene] = [re.sub(r'-(\d+)$', lambda m: '-' + m.group(1)[:4], fn) for fn in scene_dict[scene]]
 
-
-
-
-
-# scene_dict.pop('s_test')
-
 scene_dict
 
 #%%
@@ -132,9 +126,6 @@ for node in list(G.nodes):
         G.remove_node(node)
         #
 
-#%%
-
-file_to_scene_dict
 
 #%%
 
@@ -167,12 +158,8 @@ plt.savefig(pjoin(gdrive_basedir, song, 'story', 'story_graph_2.png'))
 
 # build a list with a random element of scene_dict for each key in scene_sequence
 
-scene_sequence = sorted(scene_list)
-# scene_sequence = list(scene)
 
 scene_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence.csv'), index_col=0)['scene'].values.tolist()
-
-
 
 # sort this list based on the zero padded number in the scene name, ignoring the first character and periods in the name 
 
@@ -182,49 +169,102 @@ scene_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', '
 
 scene_sequence
 #%%
-# after N_repeats, find a path to a random node in the next scene and repeat the above process
-from aa_utils.local import find_path_edges
 
-N_repeats = 0
+N_repeats = 3
 
-# refactor the below into a function
-#TODO: find_path_edges needs to be able to find the node to go to that has a valid edge to the next scene
-path_edges = find_path_edges(G, scene_sequence, N_repeats, node_from='crumbles_aerial_higher-5640')
+# pick a start_node that is a random node in the first scene
 
-# len(path_edges)
-path_edges
+start_node = np.random.choice([node for node in G.nodes if G.nodes[node]['scene'] == scene_sequence[0]])
+
+path = [start_node]
+
+for i, scene in enumerate(scene_sequence):
+
+    # make a subgraph of the nodes in the scene
+
+    scene_nodes = [node for node in G.nodes if G.nodes[node]['scene'] == scene]
+
+    scene_graph = G.subgraph(scene_nodes)
 
 
-print("Path edges: {}".format(path_edges))
+    # make a random path of length N_repeats edges starting at start_node
 
+    for j in range(N_repeats):
+        path.append(np.random.choice(list(scene_graph.neighbors(path[-1]))))
+
+
+
+    if i < len(scene_sequence) - 1:
+        # find a path to a node in the next scene
+
+        next_scene_nodes = [node for node in G.nodes if G.nodes[node]['scene'] == scene_sequence[i+1]]
+
+        both_scene_graph = G.subgraph([*scene_nodes, *next_scene_nodes])
+
+        # find the shortest path from the last node in the path to a node in the next scene
+
+        path_to_next_scene = nx.shortest_path(both_scene_graph, path[-1], np.random.choice(next_scene_nodes))
+
+        # add this path to the path
+
+        path.extend(path_to_next_scene[1:])
+
+        # set the start_node for the next scene to be the last node in the path
+
+        start_node = path[-1]
+
+
+#%%
+
+path
+
+    # find a 
+
+#%%
 
 
 # %%
-plt.figure(figsize=(6,6))
+# draw this path on the graph 
 
-# Add a label to each node in the path
+# draw the graph
 
-path = [edge[0] for edge in path_edges]
+plt.figure(figsize=(10,10))
 
-for i, node in enumerate(path):
-    G.nodes[node]['label'] = i
+# Make a color map with a different color for each scene based on the scene of each node
+
+# create number for each group to allow use of colormap
+
+from itertools import count
+
+# get unique groups
+
+groups = set(nx.get_node_attributes(G,'scene').values())
+
+mapping = dict(zip(sorted(groups),count()))
+
+nodes = G.nodes()
+
+colors = [mapping[G.nodes[n]['scene']] for n in nodes]
 
 
-color_map = []
 
-for node in G:
-    if node in path:
+# drawing nodes and edges separately so we can capture collection for colobar
 
-        color_map.append('green')
-    else:
-        color_map.append('red')
+pos = nx.spring_layout(G)
 
-nx.draw(G, node_color=color_map, with_labels=True, node_size=50, labels=nx.get_node_attributes(G,'label'))
+ec = nx.draw_networkx_edges(G, pos, alpha=0.2)
 
-plt.savefig(pjoin(gdrive_basedir, song, 'story', 'story_graph.png'))
+nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=100, cmap=plt.cm.jet)
 
-# %%
+plt.colorbar(nc)
 
+# color the edges in path red 
+
+path_edges = list(zip(path,path[1:]))
+
+nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='r', width=10)
+
+#%%
 df_transitions = pd.DataFrame(path_edges, columns=['c1','c2'])
 
 
@@ -301,7 +341,7 @@ import shutil
 df_trans_sequence.to_csv(os.path.join(out_dir, 'trans_sequence.csv'))
 shutil.move('videos.txt', os.path.join(out_dir, 'videos_story.txt'))
 
-fn_out = 'output_storynx.mov'
+fn_out = 'output_storynx_long.mov'
 
 os.chdir(out_dir)
 os.system('ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -q:v 3 -r {} {}'.format(fps, fn_out))
