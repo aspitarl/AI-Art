@@ -1,9 +1,11 @@
 # %%
-song_name = 'window' #@param {type:"string"}
+song_name = 'cycle_mask' #@param {type:"string"}
 res_height = 564 #@param
 res_width = 1024 #@param
 
 
+
+from PIL import Image
 import os
 import pandas as pd
 import numpy as np
@@ -11,6 +13,9 @@ from IPython.display import clear_output
 from aa_utils.sd import generate_latent, get_text_embed, slerp
 import torch
 from diffusers import StableDiffusionPipeline
+
+
+mask_image = Image.open(os.path.join('output', song_name, "cyclist_side.png"))
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
 output_basedir = os.path.join('output', song_name, 'transition_images')
@@ -24,7 +29,7 @@ df_trans_intrascene = pd.read_csv(fp, index_col=0).dropna(how='all')
 fp = os.path.join('prompt_data', 'interscene_transitions.csv')
 df_trans_interscene = pd.read_csv(fp, index_col=0).dropna(how='all')
 
-df_transitions = pd.concat([df_trans_interscene, df_trans_intrascene])
+df_transitions = pd.concat([df_trans_intrascene, df_trans_interscene])
 
 df_existing = pd.read_csv(os.path.join('prompt_data', 'existing_transitions.csv'), index_col=0)
 
@@ -93,18 +98,26 @@ df_transitions
 
 
 # %%
-pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1",
-                                               torch_dtype=torch.float16,
-                                               safety_checker=None,
-                                               cache_dir='model_cache'
-                                               )
+from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
+import torch
 
-
-pipe = pipe.to("cuda")
+controlnet = ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-scribble", torch_dtype=torch.float32)
+pipe = StableDiffusionControlNetPipeline.from_pretrained(
+    "runwayml/stable-diffusion-v1-5", controlnet=controlnet, torch_dtype=torch.float32, safety_checker=None
+)
 
 # if one wants to disable `tqdm`
 # https://github.com/huggingface/diffusers/issues/1786
 pipe.set_progress_bar_config(disable=True)
+
+from diffusers import UniPCMultistepScheduler
+
+pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
+
+# this command loads the individual model components on GPU on-demand.
+pipe.enable_model_cpu_offload()
+
+
 
 
 # %%
@@ -178,12 +191,18 @@ for idx, row in df_transitions.iterrows():
       # latents = torch.lerp(from_latent, to_latent, t)
       latents = slerp(float(t), from_latent, to_latent)
 
+      
+
       with torch.autocast('cuda'):
         images = pipe(
             prompt_embeds=embeds,
             guidance_scale=guidance_steps[i],
             latents = latents,
-            num_inference_steps = num_inference_steps
+            num_inference_steps = num_inference_steps,
+            control_guidance_start=0.1,
+            control_guidance_end=0.6,          
+            controlnet_conditioning_scale=0.8,
+            image=mask_image,
         )
 
       clear_output(wait=True)
