@@ -165,12 +165,12 @@ scene_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', '
 
 # scene_sequence = sorted(scene_sequence, key=lambda x: int(re.search(r'\d+', x).group()))
 
-# scene_sequence = scene_sequence[0:3]
+scene_sequence = scene_sequence[0:5]
 
 scene_sequence
 #%%
 
-N_repeats = 3
+N_repeats = 1
 
 # pick a start_node that is a random node in the first scene
 

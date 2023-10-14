@@ -16,7 +16,7 @@ import argparse
 
 USE_DEFAULT_ARGS = True
 if USE_DEFAULT_ARGS:
-    song = 'spacetrain_1024'
+    song = 'cycle_mask'
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("song")
@@ -143,6 +143,16 @@ nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size
 
 plt.colorbar(nc)
 plt.axis('off')
+
+# make one label of the scene name positioned near the center of each scene
+
+scene_centers = {}
+
+for scene in scene_dict:
+    scene_centers[scene] = np.mean([pos[n] for n in scene_dict[scene]], axis=0)
+
+for scene in scene_centers:
+    plt.text(scene_centers[scene][0], scene_centers[scene][1], scene, fontsize=10, horizontalalignment='center', verticalalignment='center')
 
 if not os.path.exists(pjoin(gdrive_basedir, song, 'story')): os.makedirs(pjoin(gdrive_basedir, song, 'story'))
 
