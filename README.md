@@ -7,7 +7,10 @@ Produce movies that smoothly transition from one stable diffusion prompt to anot
 
 These codes output images and movides to a specified directory. Create a file in the base repository directory named `.env` and inside this file add the following line 
 
-`base_dir="path/to/your/AI-Art/Gdrive/folder"`
+```
+base_dir="path/to/your/AI-Art/Gdrive/folder"
+REPO_DIR="path/to/this/repository"
+```
 
 The codes were designed on a combination of cloud environment (google cloud) for generation of images, as well as local machine for generating metadata and combining images into movies. The codes for each enviroment as well as python requirments are in respective folders
 

@@ -7,6 +7,7 @@ song_name = 'cycle_mask' #@param {type:"string"}
 res_height = 576 #@param
 res_width = 1024 #@param
 seed_delimiter = ","
+import dotenv; dotenv.load_dotenv()
 
 import os
 import pandas as pd
@@ -14,26 +15,31 @@ import pandas as pd
 from aa_utils.sd import generate_latent
 
 from PIL import Image
-mask_image = Image.open(os.path.join('output', song_name, "cyclist_side.png"))
+mask_image = Image.open(os.path.join('masks', "cyclist_side.png"))
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_folder = os.path.join('output', song_name, 'prompt_images')
+output_folder = os.path.join(os.getenv('REPO_DIR'), 'cloud', 'output', song_name, 'prompt_images')
 if not os.path.exists(output_folder): os.makedirs(output_folder)
 
-fp = os.path.join('prompt_data', 'prompt_image_definitions.csv')
+fp = os.path.join(os.getenv('REPO_DIR'), 'cloud', 'prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
 df_prompt = df_prompt.dropna(how='any', subset=['prompt', 'seeds'])
 
 
 # %%
 
+model_cache_dir = os.path.join(os.getenv('REPO_DIR'), 'cloud','model_cache')
 
 from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
 import torch
 
 controlnet = ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-scribble", torch_dtype=torch.float32)
 pipe = StableDiffusionControlNetPipeline.from_pretrained(
-    "runwayml/stable-diffusion-v1-5", controlnet=controlnet, torch_dtype=torch.float32, safety_checker=None
+    "runwayml/stable-diffusion-v1-5", 
+    controlnet=controlnet, 
+    torch_dtype=torch.float32, 
+    safety_checker=None,
+    cache_dir=model_cache_dir
 )
 
 # if one wants to disable `tqdm`
@@ -64,10 +70,7 @@ for name, row in df_prompt.iterrows():
 device = "cuda"
 generator = torch.Generator(device=device)
 
-
-#TODO: replace below
-width = res_width
-height = res_height
+num_inference_steps = 10
 
 skip_existing = True
 
@@ -88,15 +91,16 @@ for name, row in df_prompt.iterrows():
 
     generator.manual_seed(int(seed))
 
-    latent = generate_latent(generator, seed, pipe, height // 8, width // 8)
+    latent = generate_latent(generator, seed, pipe, res_height // 8, res_width // 8)
 
     with torch.autocast(device):
       images = pipe(
           prompt,
           guidance_scale=guidance_scale,
           latents = latent,
-          width=width,
-          height=height,
+          width=res_width,
+          height=res_height,
+          num_inference_steps=num_inference_steps,
           control_guidance_start=0.1,
           control_guidance_end=0.6,          
           controlnet_conditioning_scale=0.8,
