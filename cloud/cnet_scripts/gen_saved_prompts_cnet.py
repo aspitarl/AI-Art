@@ -17,9 +17,6 @@ from aa_utils.sd import generate_latent
 from PIL import Image
 mask_image = Image.open(os.path.join('masks', "cyclist_side.png"))
 
-# code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_folder = os.path.join(os.getenv('REPO_DIR'), 'cloud', 'output', song_name, 'prompt_images')
-if not os.path.exists(output_folder): os.makedirs(output_folder)
 
 fp = os.path.join(os.getenv('REPO_DIR'), 'cloud', 'prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
@@ -70,7 +67,13 @@ for name, row in df_prompt.iterrows():
 device = "cuda"
 generator = torch.Generator(device=device)
 
-num_inference_steps = 10
+num_inference_steps = 30
+
+# n_inferences = [5,10,20,30]
+# for num_inference_steps in n_inferences:
+
+output_folder = os.path.join(os.getenv('REPO_DIR'), 'cloud', 'output', song_name, 'prompt_images')
+if not os.path.exists(output_folder): os.makedirs(output_folder)
 
 skip_existing = True
 
@@ -83,6 +86,7 @@ for name, row in df_prompt.iterrows():
 
   for seed in seeds:
     output_fn = "{}_{}.png".format(name, seed)
+    # output_fn = "{}_{}_{}.png".format(name, seed, num_inference_steps)
 
     if os.path.exists(os.path.join(output_folder, output_fn)):
       if skip_existing:
