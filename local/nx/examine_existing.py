@@ -14,7 +14,7 @@ from aa_utils.local import transition_fn_from_transition_row, clip_names_from_tr
 
 import argparse
 
-USE_DEFAULT_ARGS = True
+USE_DEFAULT_ARGS = False
 if USE_DEFAULT_ARGS:
     song = 'cycle_mask'
 else:

@@ -297,7 +297,7 @@ if len(df_not_exist):
 #%%
 
 out_txt = ''
-fps = 10
+fps = 5
 image_duration = 1/fps
 
 for idx, row in df_trans_sequence.iterrows():
@@ -308,6 +308,10 @@ for idx, row in df_trans_sequence.iterrows():
     images = sorted(images)
 
     if row['reversed']: images = images[::-1]
+
+    # remove the last element of the list
+
+    images = images[:-1]
 
     image_fps = [os.path.join(folder, fn) for fn in images]
     image_fps = [fp.replace('\\', '/') for fp in image_fps]
