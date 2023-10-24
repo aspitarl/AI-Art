@@ -89,8 +89,14 @@ grid
 output_dir = os.path.join('output', 'explore', name_sel)
 if not os.path.exists(output_dir): os.makedirs(output_dir)
 
+# remove all files in output_dir
+
+for f in os.listdir(output_dir):
+    os.remove(os.path.join(output_dir, f))
+
 grid.save(os.path.join(output_dir, 'image_grid.png'))
 
 for i, image in enumerate(images):
-    image.save(os.path.join(output_dir, 'image_{}.png'.format(i)))
+    seed=seeds[i]
+    image.save(os.path.join(output_dir, 'image_{}.png'.format(seed)))
 # %%
