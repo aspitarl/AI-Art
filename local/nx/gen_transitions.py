@@ -12,7 +12,7 @@ from aa_utils.local import transition_fn_from_transition_row, clip_names_from_tr
 
 import argparse
 
-N_repeats = 2 
+N_repeats = 0 
 
 USE_DEFAULT_ARGS = False
 if USE_DEFAULT_ARGS:
