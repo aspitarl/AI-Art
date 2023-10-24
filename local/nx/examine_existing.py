@@ -14,15 +14,12 @@ from aa_utils.local import transition_fn_from_transition_row, clip_names_from_tr
 
 import argparse
 
-USE_DEFAULT_ARGS = False
-if USE_DEFAULT_ARGS:
-    song = 'cycle_mask'
-else:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("song")
-    args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument("song", default='cycle_mask_test', nargs='?')
+args = parser.parse_args("")
 
-    song = args.song
+song = args.song
+
 
 from dotenv import load_dotenv; load_dotenv()
 gdrive_basedir = os.getenv('base_dir')
@@ -44,28 +41,20 @@ scene_dict = {}
 for scene in scene_sequence:
     scene_dict[scene] = [fn for fn in os.listdir(pjoin(scene_dir, scene)) if fn.endswith('.png')]
 
-    # scene_dict[scene] = [regex.match(fn).groups()[0].replace("_","-") for fn in scene_dict[scene]]
-
-
     scene_dict[scene] = [fn.rsplit('_', 1)[0] + '-' + fn.rsplit('_', 1)[1] for fn in scene_dict[scene]]
 
     # remove the .png extension from each filename with a regular expression
 
     scene_dict[scene] = [re.sub(r'\.png$', '', fn) for fn in scene_dict[scene]]
 
-    # truncate the digits after each hypen to 4 digits
+pd.Series(scene_dict).to_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_dict.csv'))
 
-    scene_dict[scene] = [re.sub(r'-(\d+)$', lambda m: '-' + m.group(1)[:4], fn) for fn in scene_dict[scene]]
+# truncate the digits after each hyphen to 4 digits 
 
-
-
-
-
-    
-
-
+scene_dict = {scene: [re.sub(r'-(\d+)$', lambda m: '-' + m.group(1)[:4], fn) for fn in scene_dict[scene]] for scene in scene_dict}
 
 scene_dict
+
 
 #%%
 
@@ -131,15 +120,20 @@ for edge in G.edges():
     if edge in trans_list or edge_rev in trans_list:
         edge_colors.append('green')
         alphas.append(1)
+        # add a new attribute to the edge to indicate that it exists
+        G.edges[edge]['exists'] = True
+        G.edges[edge]['Weight'] = 1
     else:
         edge_colors.append('red')
         alphas.append(0.1)
+        G.edges[edge]['exists'] = False
+        G.edges[edge]['Weight'] = 0.1
 
 # drawing nodes and edges separately so we can capture collection for colobar
 
 pos = nx.spring_layout(G)
 ec = nx.draw_networkx_edges(G, pos, edge_color= edge_colors, alpha=alphas)
-nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=100, cmap=plt.cm.jet)
+nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=10, cmap=plt.cm.jet)
 
 plt.colorbar(nc)
 plt.axis('off')
@@ -158,6 +152,8 @@ if not os.path.exists(pjoin(gdrive_basedir, song, 'story')): os.makedirs(pjoin(g
 
 plt.savefig(pjoin(gdrive_basedir, song, 'story', 'graph_existing_transitions.png'))
 
+
+nx.write_gexf(G, pjoin(gdrive_basedir, song, 'story', 'graph_existing_transitions.gexf'))
 
 # %%
 
