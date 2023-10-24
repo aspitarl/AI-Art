@@ -14,24 +14,26 @@ from aa_utils.sd import generate_latent, get_text_embed, slerp
 import torch
 from diffusers import StableDiffusionPipeline
 
+import dotenv; dotenv.load_dotenv()
 
-mask_image = Image.open(os.path.join('output', song_name, "cyclist_side.png"))
+from PIL import Image
+mask_image = Image.open(os.path.join('masks', "cyclist_side.png"))
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_basedir = os.path.join('output', song_name, 'transition_images')
+output_basedir = os.path.join(os.getenv('REPO_DIR'), 'cloud','output', song_name, 'transition_images')
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
-fp = os.path.join('prompt_data', 'prompt_image_definitions.csv')
+fp = os.path.join(os.getenv('REPO_DIR'), 'cloud','prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
 
-fp = os.path.join('prompt_data', 'intrascene_transitions.csv')
+fp = os.path.join(os.getenv('REPO_DIR'), 'cloud','prompt_data', 'intrascene_transitions.csv')
 df_trans_intrascene = pd.read_csv(fp, index_col=0).dropna(how='all')
-fp = os.path.join('prompt_data', 'interscene_transitions.csv')
+fp = os.path.join(os.getenv('REPO_DIR'), 'cloud','prompt_data', 'interscene_transitions.csv')
 df_trans_interscene = pd.read_csv(fp, index_col=0).dropna(how='all')
 
 df_transitions = pd.concat([df_trans_intrascene, df_trans_interscene])
 
-df_existing = pd.read_csv(os.path.join('prompt_data', 'existing_transitions.csv'), index_col=0)
+df_existing = pd.read_csv(os.path.join(os.getenv('REPO_DIR'), 'cloud','prompt_data', 'existing_transitions.csv'), index_col=0)
 
 
 #%%
@@ -101,9 +103,15 @@ df_transitions
 from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
 import torch
 
+model_cache_dir = os.path.join(os.getenv('REPO_DIR'), 'cloud','model_cache')
+
 controlnet = ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-scribble", torch_dtype=torch.float32)
 pipe = StableDiffusionControlNetPipeline.from_pretrained(
-    "runwayml/stable-diffusion-v1-5", controlnet=controlnet, torch_dtype=torch.float32, safety_checker=None
+    "runwayml/stable-diffusion-v1-5", 
+    controlnet=controlnet, 
+    torch_dtype=torch.float32, 
+    safety_checker=None,
+    cache_dir=model_cache_dir
 )
 
 # if one wants to disable `tqdm`
@@ -126,8 +134,8 @@ skip_existing = True
 generator = torch.Generator(device="cuda")
 
 max_seed_characters = 4 # Take the first few numbers of the seed for the name
-num_interpolation_steps = 30
-num_inference_steps = 40
+num_interpolation_steps = 10
+num_inference_steps = 10
 
 
 T = np.linspace(0.0, 1.0, num_interpolation_steps)

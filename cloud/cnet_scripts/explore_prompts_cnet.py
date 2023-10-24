@@ -52,7 +52,7 @@ guidance_scale = df_prompt['guidance_scale'][name_sel]
 num_inference_steps = 10
 
 # rows X cols of images. Reduce for speed and memory issues.
-rows = 1
+rows = 2
 cols = 2
 
 num_images = rows*cols
@@ -65,7 +65,6 @@ generator = [torch.Generator(device="cuda").manual_seed(seed) for seed in seeds]
 
 print("Prompt: {}".format(prompt))
 print("Seeds: {}".format(seeds))
-
 
 images = pipe(
     prompt,
