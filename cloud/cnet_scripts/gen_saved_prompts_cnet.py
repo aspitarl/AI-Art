@@ -93,6 +93,12 @@ for name, row in df_prompt.iterrows():
         print("{} already exists, skipping".format(output_fn))
         continue
 
+    try:
+      seed = int(seed)
+    except ValueError:
+      raise ValueError("Seed {} for prompt {} is not an integer".format(seed, name))
+
+
     generator.manual_seed(int(seed))
 
     latent = generate_latent(generator, seed, pipe, res_height // 8, res_width // 8)
