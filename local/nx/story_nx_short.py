@@ -16,7 +16,10 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-args = parser.parse_args("")
+parser.add_argument('--ss', default='scene_sequence_B', dest='scene_sequence')
+parser.add_argument('-o', default='story_short.mov', dest='output_filename')
+args = parser.parse_args()
+# args = parser.parse_args("") # Needed for jupyter notebook
 
 
 from dotenv import load_dotenv; load_dotenv()
@@ -102,8 +105,9 @@ plt.axis('off')
 # plt.show()
 plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_graph_2.png'))
 # %%
+fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
+scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
-scene_sequence = pd.read_csv(os.path.join(gdrive_basedir, args.song, 'prompt_data', 'scene_sequence.csv'), index_col=0)['scene'].values.tolist()
 # scene_sequence = scene_sequence[0:3]
 
 scene_sequence
@@ -116,7 +120,16 @@ scene_sequence
 all_edges = list(G.edges)
 
 # only keep edges that connect nodes with pairs of scenes that are adjacent in the scene_sequence
-adjacent_edges = [edge for edge in all_edges if G.nodes[edge[0]]['scene'] in scene_sequence and G.nodes[edge[1]]['scene'] in scene_sequence and abs(scene_sequence.index(G.nodes[edge[0]]['scene']) - scene_sequence.index(G.nodes[edge[1]]['scene'])) == 1]
+
+adjacent_edges = []
+for i in range(len(scene_sequence)-1):
+    scene1 = scene_sequence[i]
+    scene2 = scene_sequence[i+1]
+
+    # keep edges that connect nodes in these two scenes in either direction
+    adjacent_edges.extend([(u,v) for u,v in all_edges if G.nodes[u]['scene'] == scene1 and G.nodes[v]['scene'] == scene2])
+    adjacent_edges.extend([(u,v) for u,v in all_edges if G.nodes[u]['scene'] == scene2 and G.nodes[v]['scene'] == scene1])
+    
 
 # also include edges that connect nodes in the same scene
 adjacent_edges.extend([edge for edge in all_edges if G.nodes[edge[0]]['scene'] == G.nodes[edge[1]]['scene']])
@@ -279,9 +292,7 @@ import shutil
 df_trans_sequence.to_csv(os.path.join(out_dir, 'trans_sequence.csv'))
 shutil.move('videos.txt', os.path.join(out_dir, 'videos_story.txt'))
 
-fn_out = 'output_storynx.mov'
-
 os.chdir(out_dir)
-os.system('ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -q:v 3 -r {} {}'.format(fps, fn_out))
+os.system('ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -q:v 3 -r {} {}'.format(fps, args.output_filename))
 # %%
 

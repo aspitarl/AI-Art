@@ -70,5 +70,5 @@ df_sequence = pd.DataFrame({'scene':list(prompt_dict.keys())})
 
 df_sequence['duration'] = 3
 
-df_sequence.to_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence.csv'))
+df_sequence.to_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence_auto.csv'))
 

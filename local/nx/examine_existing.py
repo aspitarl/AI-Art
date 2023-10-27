@@ -16,7 +16,9 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-args = parser.parse_args("")
+parser.add_argument('--ss', default='scene_sequence', dest='scene_sequence')
+args = parser.parse_args()
+# args = parser.parse_args("") # Needed for jupyter notebook
 
 song = args.song
 
@@ -31,7 +33,9 @@ input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
 scene_dir = pjoin(gdrive_basedir, song, 'scenes')
 # scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
 
-scene_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence.csv'), index_col=0)['scene'].values.tolist()
+fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
+scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
+
 
 # Make a mapping from file to folder name for each scene folder in scene dir
 
@@ -98,7 +102,7 @@ for i in range(len(scene_names)):
 
 #%%
 
-plt.figure(figsize=(10,10))
+plt.figure(figsize=(6,10))
 
 # Make a color map with a different color for each scene based on the scene of each node
 
@@ -131,22 +135,22 @@ for edge in G.edges():
 
 # drawing nodes and edges separately so we can capture collection for colobar
 
-pos = nx.spring_layout(G)
+# pos = nx.spring_layout(G)
+pos = nx.multipartite_layout(G, subset_key='scene', align='horizontal', scale=1, center=(0,0))
 ec = nx.draw_networkx_edges(G, pos, edge_color= edge_colors, alpha=alphas)
 nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=10, cmap=plt.cm.jet)
 
 plt.colorbar(nc)
 plt.axis('off')
 
-# make one label of the scene name positioned near the center of each scene
+# make one label of the scene name positioned at the top of the plot
 
 scene_centers = {}
 
 for scene in scene_dict:
-    scene_centers[scene] = np.mean([pos[n] for n in scene_dict[scene]], axis=0)
+    scene_center = np.mean([pos[n] for n in scene_dict[scene]], axis=0)
 
-for scene in scene_centers:
-    plt.text(scene_centers[scene][0], scene_centers[scene][1], scene, fontsize=10, horizontalalignment='center', verticalalignment='center')
+    plt.text(-0.2, scene_center[1], scene, fontsize=10, horizontalalignment='center', verticalalignment='center')
 
 if not os.path.exists(pjoin(gdrive_basedir, song, 'story')): os.makedirs(pjoin(gdrive_basedir, song, 'story'))
 

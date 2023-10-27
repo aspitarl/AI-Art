@@ -12,29 +12,30 @@ from aa_utils.local import transition_fn_from_transition_row, clip_names_from_tr
 
 import argparse
 
-N_repeats = 0 
 
-USE_DEFAULT_ARGS = False
-if USE_DEFAULT_ARGS:
-    song = 'spacetrain_1024'
-else:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("song")
-    args = parser.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument("song", default='cycle_mask_test', nargs='?')
+parser.add_argument('--ss', default='scene_sequence', dest='scene_sequence')
+parser.add_argument("-n", default=0, type=int, dest='N_repeats')
+args = parser.parse_args()
+# args = parser.parse_args("") # Needed for jupyter notebook
 
-    song = args.song
+N_repeats = args.N_repeats 
+
+print(args.scene_sequence)
 
 from dotenv import load_dotenv; load_dotenv()
 gdrive_basedir = os.getenv('base_dir')
 # gdrive_basedir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
-input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
+input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
 
 #%%
 
-scene_dir = pjoin(gdrive_basedir, song, 'scenes')
+scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
 # scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
 
-scene_sequence = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence.csv'), index_col=0)['scene'].values.tolist()
+fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
+scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
 # Make a mapping from file to folder name for each scene folder in scene dir
 
@@ -189,7 +190,7 @@ plt.colorbar(nc)
 plt.axis('off')
 
 
-plt.savefig(pjoin(gdrive_basedir, song, 'story', 'story_transition_gen.png'))
+plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_transition_gen.png'))
 
 # %%
 
@@ -248,7 +249,7 @@ df_inter = df_inter.sort_values('scene_from', key=lambda x: x.map(scene_sequence
 df_inter = df_inter.reset_index(drop=True)
 
 
-fp_out = os.path.join(gdrive_basedir, song, 'prompt_data', 'interscene_transitions.csv')
+fp_out = os.path.join(gdrive_basedir, args.song, 'prompt_data', 'interscene_transitions.csv')
 print("writing transitions csv to {}".format(fp_out))
 df_inter.to_csv(fp_out)
 
@@ -302,7 +303,7 @@ else:
     df_intra
 
 
-fp_out = os.path.join(gdrive_basedir, song, 'prompt_data', 'intrascene_transitions.csv')
+fp_out = os.path.join(gdrive_basedir, args.song, 'prompt_data', 'intrascene_transitions.csv')
 print("writing transitions csv to {}".format(fp_out))
 df_intra.to_csv(fp_out)
 

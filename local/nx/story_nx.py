@@ -16,7 +16,17 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-args = parser.parse_args("")
+parser.add_argument('--ss', default='scene_sequence', dest='scene_sequence')
+parser.add_argument("-n", default=0, type=int, dest='N_repeats')
+parser.add_argument('-o', default='story_long.mov', dest='output_filename')
+args = parser.parse_args()
+# args = parser.parse_args("") # Needed for jupyter notebook
+
+N_repeats = args.N_repeats 
+
+print(args.scene_sequence)
+
+
 
 from dotenv import load_dotenv; load_dotenv()
 gdrive_basedir = os.getenv('base_dir')
@@ -101,10 +111,10 @@ plt.axis('off')
 # plt.show()
 plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_graph_2.png'))
 # %%
+fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
+scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
-scene_sequence = pd.read_csv(os.path.join(gdrive_basedir, args.song, 'prompt_data', 'scene_sequence.csv'), index_col=0)['scene'].values.tolist()
-
-scene_sequence = scene_sequence[0:5]
+# scene_sequence = scene_sequence[0:5]
 
 scene_sequence
 
@@ -129,7 +139,6 @@ G_sequence = G.edge_subgraph(adjacent_edges)
 
 G_sel = G_sequence
 
-N_repeats = 0
 
 # pick a start_node that is a random node in the first scene
 
@@ -284,9 +293,7 @@ import shutil
 df_trans_sequence.to_csv(os.path.join(out_dir, 'trans_sequence.csv'))
 shutil.move('videos.txt', os.path.join(out_dir, 'videos_story.txt'))
 
-fn_out = 'output_storynx_long.mov'
-
 os.chdir(out_dir)
-os.system('ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -q:v 3 -r {} {}'.format(fps, fn_out))
+os.system('ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -q:v 3 -r {} {}'.format(fps, args.output_filename))
 # %%
 
