@@ -118,6 +118,8 @@ from aa_utils.plot import plot_scene_sequence
 
 plot_scene_sequence(G, scene_sequence, scene_dict)
 
+plt.tight_layout()
+
 plt.savefig(pjoin(gdrive_basedir, song, 'story', 'graph_existing_transitions.png'))
 
 

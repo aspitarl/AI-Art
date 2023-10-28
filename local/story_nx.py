@@ -18,8 +18,8 @@ parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('--ss', default='scene_sequence_kv3', dest='scene_sequence')
 parser.add_argument("-n", default=0, type=int, dest='N_repeats')
 parser.add_argument('-o', default='story_long.mov', dest='output_filename')
-args = parser.parse_args()
-# args = parser.parse_args("") # Needed for jupyter notebook
+# args = parser.parse_args()
+args = parser.parse_args("") # Needed for jupyter notebook
 
 N_repeats = args.N_repeats 
 
@@ -41,9 +41,6 @@ G = G.edge_subgraph(edges_to_keep)
 largest_cc = max(nx.connected_components(G), key=len)
 G = G.subgraph(largest_cc)
 
-# keep largest graph 
-largest_cc = max(nx.connected_components(G), key=len)
-G = G.subgraph(largest_cc)
 
 #%%
 
@@ -68,6 +65,13 @@ scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.to
 #%%
 
 G_sequence = downselect_to_scene_sequence(G, scene_sequence)
+
+
+#%%
+
+from aa_utils.plot import plot_scene_sequence
+
+plot_scene_sequence(G, scene_sequence, scene_dict)
 
 #%%
 

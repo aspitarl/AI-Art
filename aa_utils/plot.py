@@ -23,16 +23,25 @@ def plot_path_labels(G_sel, path_edges):
 def plot_scene_sequence(G, scene_sequence, scene_dict):
     plt.figure(figsize=(6,10))
 
-    # Make a color map with a different color for each scene based on the scene of each node
 
-    # create number for each group to allow use of colormap
+    G_plot = G.copy()
 
-    # get unique groups
+    # Fix the scene names so that they sort correctly, e.g. 01_scene1, 02_scene2, etc. 
+    # multipartite layout sorts them automatically and a key cannot be passed to the sort function
+    for i, scene in enumerate(scene_sequence):
+        for node in G_plot.nodes():
+            if G_plot.nodes[node]['scene'] == scene:
+                # zero pad the number so that it sorts correctly
 
-    groups = scene_sequence
+                i_scene = str(i+1).zfill(2)
+
+                G_plot.nodes[node]['scene'] = '{}_{}'.format(i_scene, scene)
+
+    groups = [G_plot.nodes[n]['scene'] for n in G_plot.nodes()]
     mapping = dict(zip(groups,count()))
-    nodes = G.nodes()
-    colors = [mapping[G.nodes[n]['scene']] for n in nodes]
+    nodes = G_plot.nodes()
+    colors = [mapping[G_plot.nodes[n]['scene']] for n in nodes]
+
 
     edge_colors = []
     alphas = []
@@ -51,17 +60,19 @@ def plot_scene_sequence(G, scene_sequence, scene_dict):
     # drawing nodes and edges separately so we can capture collection for colobar
 
     # pos = nx.spring_layout(G)
-    pos = nx.multipartite_layout(G, subset_key='scene', align='horizontal', scale=1, center=(0,0))
-    ec = nx.draw_networkx_edges(G, pos, edge_color= edge_colors, alpha=alphas)
-    nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=10, cmap=plt.cm.jet)
+    pos = nx.multipartite_layout(G_plot, subset_key='scene', align='horizontal', scale=1, center=(0,0))
+    ec = nx.draw_networkx_edges(G_plot, pos, edge_color= edge_colors, alpha=alphas)
+    nc = nx.draw_networkx_nodes(G_plot, pos, nodelist=nodes, node_color=colors, node_size=10, cmap=plt.cm.jet)
 
     plt.colorbar(nc)
     plt.axis('off')
 
-    # make one label of the scene name positioned at the top of the plot
+    for scene in groups:
+        nodes = [n for n in G_plot.nodes() if G_plot.nodes[n]['scene'] == scene]    
+        for n in nodes:
+            if n in pos:
+                plt.text(-0.2, pos[n][1], scene, fontsize=10, horizontalalignment='center', verticalalignment='center')
+                break
 
-    for scene in scene_dict:
-        scene_center = np.mean([pos[n] for n in scene_dict[scene]], axis=0)
 
-        plt.text(-0.2, scene_center[1], scene, fontsize=10, horizontalalignment='center', verticalalignment='center')
 
