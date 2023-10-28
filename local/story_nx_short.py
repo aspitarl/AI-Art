@@ -72,7 +72,7 @@ from aa_utils.plot import plot_path_labels, plot_scene_sequence
 
 plot_scene_sequence(G_sequence, scene_sequence, scene_dict, path=path_edges)
 
-plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_graph.png'))
+plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'storygraph_short.png'))
 # %%
 
 df_transitions = pd.DataFrame(path_edges, columns=['c1','c2'])

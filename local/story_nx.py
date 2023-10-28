@@ -18,6 +18,7 @@ parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('--ss', default='scene_sequence_kv3', dest='scene_sequence')
 parser.add_argument("-n", default=0, type=int, dest='N_repeats')
 parser.add_argument('-o', default='story_long.mov', dest='output_filename')
+parser.add_argument('-f', default=10, type=int, dest='fps')
 # args = parser.parse_args()
 args = parser.parse_args("") # Needed for jupyter notebook
 
@@ -77,12 +78,22 @@ plot_scene_sequence(G, scene_sequence, scene_dict)
 
 G_sel = G_sequence
 
+N_repeats = 1
 
+first_scene = scene_sequence[0]
+last_scene = scene_sequence[-1]
 # pick a start_node that is a random node in the first scene
 
-start_node = np.random.choice([node for node in G_sel.nodes if G_sel.nodes[node]['scene'] == scene_sequence[0]])
+start_nodes = [node for node in G_sel.nodes if G_sel.nodes[node]['scene'] == first_scene]
+end_nodes = [node for node in G_sel.nodes if G_sel.nodes[node]['scene'] == last_scene]
 
-path = [start_node]
+# node must have a path to any of end_nodes
+valid_start_nodes = []
+for node in start_nodes:
+    if any([nx.has_path(G_sel, node, end_node) for end_node in end_nodes]):
+        valid_start_nodes.append(node)
+
+path = [np.random.choice(valid_start_nodes)]
 
 for i, scene in enumerate(scene_sequence):
 
@@ -92,12 +103,19 @@ for i, scene in enumerate(scene_sequence):
 
     scene_graph = G_sel.subgraph(scene_nodes)
 
-
     # make a random path of length N_repeats edges starting at start_node
 
-    for j in range(N_repeats):
-        path.append(np.random.choice(list(scene_graph.neighbors(path[-1]))))
 
+
+    #TODO: make sure that the path is not a loop
+    for j in range(N_repeats):
+        scene_neighbors = list(scene_graph.neighbors(path[-1]))
+
+        if len(scene_neighbors) == 0:
+            print("No neighbors for node: {}, skipping".format(path[-1]))
+            break
+
+        path.append(np.random.choice(scene_neighbors))
 
 
     if i < len(scene_sequence) - 1:
@@ -109,20 +127,38 @@ for i, scene in enumerate(scene_sequence):
 
         # find the shortest path from the last node in the path to a node in the next scene
 
-        path_to_next_scene = nx.shortest_path(both_scene_graph, path[-1], np.random.choice(next_scene_nodes))
+        valid_next_nodes = [node for node in next_scene_nodes if nx.has_path(both_scene_graph, path[-1], node)]
+
+        # Make a graph of all nodes in scenes that are beyond the next scene
+
+        remaining_scenes = scene_sequence[i+1:]
+
+        remaining_nodes = [node for node in G_sel.nodes if G_sel.nodes[node]['scene'] in remaining_scenes]
+
+        remaining_graph = G_sel.subgraph(remaining_nodes)
+
+        # make sure the next node is connected to any of end_nodes within the remaining graph, i.e. we do not have to go back through the current scene
+
+        valid_next_nodes = [node for node in valid_next_nodes if any([nx.has_path(remaining_graph, node, end_node) for end_node in end_nodes])]
+
+        path_to_next_scene = nx.shortest_path(both_scene_graph, path[-1], np.random.choice(valid_next_nodes))
 
         # add this path to the path
 
         path.extend(path_to_next_scene[1:])
 
-        # set the start_node for the next scene to be the last node in the path
-
-        start_node = path[-1]
-
 
 #%%
 
+
 path_edges = list(zip(path,path[1:]))
+
+plot_scene_sequence(G_sel, scene_sequence, scene_dict, path=path_edges)
+
+plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'storygraph_long.png'))
+
+#%%
+
 
 #%%
 

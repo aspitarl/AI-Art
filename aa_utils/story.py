@@ -66,6 +66,7 @@ def gen_path_edges_short(G_sel, scene_sequence):
 
         return node
 
+    #TODO: probably need to check that there is a path between these nodes
     first_node = most_connected_node(G_sel, first_scene)
     last_node = most_connected_node(G_sel, last_scene)
 
