@@ -16,8 +16,9 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-parser.add_argument('--ss', default='scene_sequence_B', dest='scene_sequence')
+parser.add_argument('--ss', default='scene_sequence_kv3', dest='scene_sequence')
 parser.add_argument('-o', default='story_short.mov', dest='output_filename')
+parser.add_argument('-f', default=10, type=int, dest='fps')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
@@ -41,31 +42,27 @@ G = G.subgraph(largest_cc)
 
 #%%
 
-scene_dict = pd.read_csv(os.path.join(gdrive_basedir, args.song, 'prompt_data', 'scene_dict.csv'), index_col=0).to_dict()['0']
+def read_scene_dict(gdrive_basedir, song):
+    scene_dict = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_dict.csv'), index_col=0).to_dict()['0']
 
-# convert the values from strings to lists
-scene_dict = {k: v.split(',') for k,v in scene_dict.items()}
+    # Convert the values from strings to lists
+    scene_dict = {k: v.split(',') for k,v in scene_dict.items()}
 
-# remove single quotes and list brackets from each element in the list
-scene_dict = {k: [re.sub(r"['\[\]]", '', fn).strip() for fn in v] for k,v in scene_dict.items()}
+    # Remove single quotes and list brackets from each element in the list
+    scene_dict = {k: [re.sub(r"['\[\]]", '', fn).strip() for fn in v] for k,v in scene_dict.items()}
 
-# truncate the digits after each hyphen to 4 digits
-scene_dict = {scene: [re.sub(r'-(\d+)$', lambda m: '-' + m.group(1)[:4], fn) for fn in scene_dict[scene]] for scene in scene_dict}
+    # Truncate the digits after each hyphen to 4 digits
+    scene_dict = {scene: [re.sub(r'-(\d+)$', lambda m: '-' + m.group(1)[:4], fn) for fn in scene_dict[scene]] for scene in scene_dict}
 
-scene_dict
+    # Invert scene_dict to make a mapping from file to folder name
+    file_to_scene_dict = {}
+    for scene in scene_dict:
+        for fn in scene_dict[scene]:
+            file_to_scene_dict[fn] = scene
 
-scene_list = scene_dict.keys()
+    return scene_dict, file_to_scene_dict
 
-# invert scene_dict to make a mapping from file to folder name
-
-file_to_scene_dict = {}
-for scene in scene_list:
-
-    for fn in scene_dict[scene]:
-        file_to_scene_dict[fn] = scene
-
-
-file_to_scene_dict
+scene_dict, file_to_scene_dict = read_scene_dict(gdrive_basedir, args.song)
 
 #%%
 
@@ -79,31 +76,6 @@ for node in list(G.nodes):
         G.remove_node(node)
         #
 
-#%%
-
-nx.draw(G)
-
-#%%
-
-plt.figure(figsize=(10,10))
-
-# Make a color map with a different color for each scene based on the scene of each node 
-# create number for each group to allow use of colormap
-from itertools import count
-# get unique groups
-groups = set(nx.get_node_attributes(G,'scene').values())
-mapping = dict(zip(sorted(groups),count()))
-nodes = G.nodes()
-colors = [mapping[G.nodes[n]['scene']] for n in nodes]
-
-# drawing nodes and edges separately so we can capture collection for colobar
-pos = nx.spring_layout(G)
-ec = nx.draw_networkx_edges(G, pos, alpha=0.2)
-nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=100, cmap=plt.cm.jet)
-plt.colorbar(nc)
-plt.axis('off')
-# plt.show()
-plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_graph_2.png'))
 # %%
 fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
 scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
@@ -114,99 +86,85 @@ scene_sequence
 
 #%%
 
-# remove all edges from the graph that do not connect nodes in the scene_sequence
-# make a list of all edges in the graph
+def downselect_to_scene_sequence(G, scene_sequence):
+    # Remove all edges from the graph that do not connect nodes in the scene_sequence
+    # Make a list of all edges in the graph
+    all_edges = list(G.edges)
 
-all_edges = list(G.edges)
+    # Only keep edges that connect nodes with pairs of scenes that are adjacent in the scene_sequence
+    adjacent_edges = []
+    for i in range(len(scene_sequence)-1):
+        scene1 = scene_sequence[i]
+        scene2 = scene_sequence[i+1]
 
-# only keep edges that connect nodes with pairs of scenes that are adjacent in the scene_sequence
+        # Keep edges that connect nodes in these two scenes in either direction
+        adjacent_edges.extend([(u,v) for u,v in all_edges if G.nodes[u]['scene'] == scene1 and G.nodes[v]['scene'] == scene2])
+        adjacent_edges.extend([(u,v) for u,v in all_edges if G.nodes[u]['scene'] == scene2 and G.nodes[v]['scene'] == scene1])
 
-adjacent_edges = []
-for i in range(len(scene_sequence)-1):
-    scene1 = scene_sequence[i]
-    scene2 = scene_sequence[i+1]
+    # Also include edges that connect nodes in the same scene
+    adjacent_edges.extend([edge for edge in all_edges if G.nodes[edge[0]]['scene'] == G.nodes[edge[1]]['scene']])
 
-    # keep edges that connect nodes in these two scenes in either direction
-    adjacent_edges.extend([(u,v) for u,v in all_edges if G.nodes[u]['scene'] == scene1 and G.nodes[v]['scene'] == scene2])
-    adjacent_edges.extend([(u,v) for u,v in all_edges if G.nodes[u]['scene'] == scene2 and G.nodes[v]['scene'] == scene1])
+    # Downselect the graph to only include these edges and their nodes
+    G_sequence = G.edge_subgraph(adjacent_edges)
     
+    return G_sequence
 
-# also include edges that connect nodes in the same scene
-adjacent_edges.extend([edge for edge in all_edges if G.nodes[edge[0]]['scene'] == G.nodes[edge[1]]['scene']])
-
-# downselect the graph to only include these edges and their nodes
-G_sequence = G.edge_subgraph(adjacent_edges)
-
+G_sequence = downselect_to_scene_sequence(G, scene_sequence)
 
 #%%
 
 G_sel = G_sequence
 
-first_scene = scene_sequence[0]
-last_scene = scene_sequence[-1]
+def gen_path_edges_short(G_sel, scene_sequence):
+    first_scene = scene_sequence[0]
+    last_scene = scene_sequence[-1]
 
-# find the most connected node in the first scene
+    def most_connected_node(G_sel, scene):
+        scene_nodes = [n for n in G_sel.nodes() if G_sel.nodes[n]['scene'] == scene]
+        scene_G_sel = G_sel.subgraph(scene_nodes)
 
-def most_connected_node(G_sel, scene):
-    scene_nodes = [n for n in G_sel.nodes() if G_sel.nodes[n]['scene'] == scene]
-    scene_G_sel = G_sel.subgraph(scene_nodes)
+        # get the node with the highest degree
+        node = max(scene_G_sel.degree, key=lambda x: x[1])[0]
 
-    # get the node with the highest degree
-    node = max(scene_G_sel.degree, key=lambda x: x[1])[0]
+        return node
 
-    return node
+    first_node = most_connected_node(G_sel, first_scene)
+    last_node = most_connected_node(G_sel, last_scene)
 
-first_node = most_connected_node(G_sel, first_scene)
-last_node = most_connected_node(G_sel, last_scene)
+    path = nx.shortest_path(G_sel, first_node, last_node)
 
-path = nx.shortest_path(G_sel, first_node, last_node)
+    path_edges = [(path[i], path[i+1]) for i in range(len(path)-1)]
 
-path_edges = [(path[i], path[i+1]) for i in range(len(path)-1)]
+    return path_edges
 
+path_edges = gen_path_edges_short(G_sel, scene_sequence)
 
 path_edges
 
 #%%
 
-last_node = path[-1]
+# last_node = path_edges[-1][1]
+# last_scene = G_sel.nodes[last_node]['scene']
 
-# go to a random node in the last scene that is not last_node
-
-last_scene_nodes = [n for n in G_sel.nodes() if G_sel.nodes[n]['scene'] == last_scene]
-
-# last_scene_nodes = [n for n in last_scene_nodes if n != last_node]
-
-# last_node = np.random.choice(last_scene_nodes)
-
-# final_path = nx.shortest_path(G, first_node, last_node)
-
-# final_path_edges = [(final_path[i], final_path[i+1]) for i in range(len(final_path)-1)]
-
-# path_edges += final_path_edges
-
-last_scene_nodes
 
 # %%
-plt.figure(figsize=(6,6))
 
-# Add a label to each node in the path
+def plot_path_labels(G_sel, path_edges):
+    plt.figure(figsize=(6,6))
 
-path = [edge[0] for edge in path_edges]
+    # Add a label to each node in the path
+    path = [edge[0] for edge in path_edges]
+    labels = {node: i for i, node in enumerate(path)}
+    nx.set_node_attributes(G_sel, labels, 'label')
 
-for i, node in enumerate(path):
-    G_sel.nodes[node]['label'] = i
+    # Use the same layout as in examine_existing.py
+    pos = nx.multipartite_layout(G_sel, subset_key='scene', align='horizontal', scale=1, center=(0,0))
 
+    color_map = ['green' if node in path else 'red' for node in G_sel]
 
-color_map = []
+    nx.draw(G_sel, pos=pos, node_color=color_map, with_labels=True, node_size=50, labels=nx.get_node_attributes(G_sel,'label'))
 
-for node in G_sel:
-    if node in path:
-
-        color_map.append('green')
-    else:
-        color_map.append('red')
-
-nx.draw(G_sel, node_color=color_map, with_labels=True, node_size=50, labels=nx.get_node_attributes(G_sel,'label'))
+    return plt
 
 plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_graph.png'))
 
@@ -221,78 +179,73 @@ trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_
 trans_list = [image_names_from_transition(t) for t in trans_list]
 
 
-forward_c_pairs = trans_list
-df_transitions['reversed'] = [tuple(c_pair) not in forward_c_pairs  for c_pair in df_transitions[['c1','c2']].values]
 
-df_transitions
 
 # %%
 
-df_trans_sequence = df_transitions
 
-df_trans_sequence['input_image_folder'] = df_trans_sequence.apply(
-    lambda x: x['c1']+ ' to ' + x['c2'] if not x['reversed'] else 
-    x['c2']+ ' to ' + x['c1'],
-    axis=1
-    )
-
-# df_trans_sequence['input_movie_folder'] = ['transitions_rev' if reverse else 'transitions' for reverse in df_trans_sequence['reversed']]
+forward_c_pairs = trans_list
 song_basedir = os.path.join(gdrive_basedir, args.song)
 
-df_trans_sequence['input_image_folder'] = song_basedir + '\\' + 'transition_images' + '\\' +  df_trans_sequence['input_image_folder']
 
-df_exist = df_trans_sequence['input_image_folder'].apply(os.path.exists)
-df_not_exist =df_trans_sequence.where(df_exist == False).dropna(how='all')
+def construct_input_image_folder_paths(df_transitions, song_basedir, forward_c_pairs):
+    df_transitions['reversed'] = [tuple(c_pair) not in forward_c_pairs for c_pair in df_transitions[['c1', 'c2']].values]
+    df_transitions['input_image_folder'] = df_transitions.apply(
+        lambda x: f"{x['c1']} to {x['c2']}" if not x['reversed'] else f"{x['c2']} to {x['c1']}",
+        axis=1
+    )
+    # df_transitions['input_image_folder'] = os.path.join(song_basedir, 'transition_images', df_transitions['input_image_folder'])
 
-#TODO: move file exist checks to original for loop, such that it can keep trying to make a valid superscene with partial transitions. 
-if len(df_not_exist):
-    print("Files not existing:  {}".format(df_not_exist))
-    print(df_not_exist['input_image_folder'].values)
-    raise ValueError()
+    input_image_folders = [os.path.join(song_basedir, 'transition_images', folder) for folder in df_transitions['input_image_folder'].tolist()]
+    df_transitions['input_image_folder'] = input_image_folders
+    return df_transitions
 
+df_transitions = construct_input_image_folder_paths(df_transitions, song_basedir, forward_c_pairs)
 
-#%%
+def check_input_image_folders_exist(df_transitions):
+    missing_folders = df_transitions[~df_transitions['input_image_folder'].apply(os.path.exists)]
+    if not missing_folders.empty:
+        print("Files not existing:  {}".format(missing_folders))
+        print(missing_folders['input_image_folder'].values)
+        raise ValueError()
 
-out_txt = ''
-fps = 5
-image_duration = 1/fps
-
-for idx, row in df_trans_sequence.iterrows():
-
-    folder = row['input_image_folder']
-
-    images = [fn for fn in os.listdir(folder) if fn.endswith('.png')]
-    images = sorted(images)
-
-    if row['reversed']: images = images[::-1]
-
-    # remove the last element of the list
-
-    images = images[:-1]
-
-    image_fps = [os.path.join(folder, fn) for fn in images]
-    image_fps = [fp.replace('\\', '/') for fp in image_fps]
-    image_fps = [fp.replace(' ', '\ ') for fp in image_fps]
-
-    for fp in image_fps:
-        out_txt += 'file {}\nduration {}\n'.format(fp, image_duration)
-
-
-#%%
-# out_txt = 'file ' + "\nfile ".join(image_list)
+check_input_image_folders_exist(df_transitions)
 
 out_dir = os.path.join(song_basedir, 'story')
 if not os.path.exists(out_dir): os.mkdir(out_dir)
 
-with open('videos.txt', 'w') as f:
+df_transitions.to_csv(os.path.join(out_dir, 'trans_sequence.csv'))
+
+#%%
+
+def generate_text_for_ffmpeg(df_transitions, fps):
+    out_txt = ''
+    image_duration = 1/fps
+    for _, row in df_transitions.iterrows():
+        folder = row['input_image_folder']
+        images = sorted([fn for fn in os.listdir(folder) if fn.endswith('.png')])
+        if row['reversed']:
+            images = images[::-1]
+        images = images[:-1]
+        image_fps = [os.path.join(folder, fn) for fn in images]
+        image_fps = [fp.replace('\\', '/') for fp in image_fps]
+        image_fps = [fp.replace(' ', '\ ') for fp in image_fps]
+        for fp in image_fps:
+            out_txt += f"file {fp}\nduration {image_duration}\n"
+
+    return out_txt
+
+out_txt = generate_text_for_ffmpeg(df_transitions, fps=args.fps)
+
+#%%
+
+# use out_text to make a text file that can be used by ffmpeg to make a movie
+
+def generate_output_video(fps, out_dir, output_filename):
+    os.chdir(out_dir)
+    os.system(f"ffmpeg -f concat -safe 0 -i videos.txt -c mjpeg -q:v 3 -r {fps} {output_filename}")
+
+with open(os.path.join(out_dir, 'videos.txt'), 'w') as f:
     f.write(out_txt)
 
-import shutil
-
-df_trans_sequence.to_csv(os.path.join(out_dir, 'trans_sequence.csv'))
-shutil.move('videos.txt', os.path.join(out_dir, 'videos_story.txt'))
-
-os.chdir(out_dir)
-os.system('ffmpeg -f concat -safe 0 -i videos_story.txt -c mjpeg -q:v 3 -r {} {}'.format(fps, args.output_filename))
-# %%
-
+generate_output_video(args.fps, out_dir, args.output_filename)
