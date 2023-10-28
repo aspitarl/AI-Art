@@ -20,7 +20,7 @@ def plot_path_labels(G_sel, path_edges):
     nx.draw(G_sel, pos=pos, node_color=color_map, with_labels=True, node_size=50, labels=nx.get_node_attributes(G_sel,'label'))
 
 
-def plot_scene_sequence(G, scene_sequence, scene_dict):
+def plot_scene_sequence(G, scene_sequence, scene_dict, path=None):
     plt.figure(figsize=(6,10))
 
 
@@ -44,19 +44,23 @@ def plot_scene_sequence(G, scene_sequence, scene_dict):
 
 
     edge_colors = []
-    alphas = []
 
     for edge in G.edges():
+        if path is not None and edge in path:
+            edge_colors.append('blue')
+            G.edges[edge]['Weight'] = 1
+            continue
+
         if G.edges[edge]['exists']:
             edge_colors.append('green')
-            alphas.append(1)
             # add a new attribute to the edge to indicate that it exists
-            G.edges[edge]['Weight'] = 1
+            G.edges[edge]['Weight'] = 0.5
         else:
             edge_colors.append('red')
-            alphas.append(0.1)
             G.edges[edge]['Weight'] = 0.1
 
+
+    alphas = [G.edges[edge]['Weight'] for edge in G.edges()]
     # drawing nodes and edges separately so we can capture collection for colobar
 
     # pos = nx.spring_layout(G)

@@ -63,14 +63,16 @@ G_sequence = downselect_to_scene_sequence(G, scene_sequence)
 
 path_edges = gen_path_edges_short(G_sequence, scene_sequence)
 
-# %%
 
-from aa_utils.plot import plot_path_labels
+#%%
 
-plot_path_labels(G_sequence, path_edges)
+from aa_utils.plot import plot_path_labels, plot_scene_sequence
+# TODO: improve
+# plot_path_labels(G_sequence, path_edges)
+
+plot_scene_sequence(G_sequence, scene_sequence, scene_dict, path=path_edges)
 
 plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_graph.png'))
-
 # %%
 
 df_transitions = pd.DataFrame(path_edges, columns=['c1','c2'])
