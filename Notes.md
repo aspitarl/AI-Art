@@ -45,3 +45,38 @@ on local repo
 
 `cd lambda`
 `source filetransfer_meta.sh <song_name>`
+
+# 2023-10-29 clip interrogator
+
+https://pypi.org/project/clip-interrogator/0.5.4/
+
+had to change some packages to get clip-interrogator to work. testing with explore prompts cnet to make sure old functionality works
+
+```
+  Attempting uninstall: torch
+    Found existing installation: torch 2.0.1
+    Uninstalling torch-2.0.1:
+      Successfully uninstalled torch-2.0.1
+  Attempting uninstall: torchvision
+    Found existing installation: torchvision 0.15.2+cu118
+    Uninstalling torchvision-0.15.2+cu118:
+      Successfully uninstalled torchvision-0.15.2+cu118
+Successfully installed torch-2.0.0 torchvision-0.15.1
+
+```
+
+2.0.1 would probably work but didn't try
+
+had to downgrade transformers
+
+https://github.com/pharmapsychotic/clip-interrogator/issues/62
+
+```
+Installing collected packages: transformers
+  Attempting uninstall: transformers
+    Found existing installation: transformers 4.30.2
+    Uninstalling transformers-4.30.2:
+      Successfully uninstalled transformers-4.30.2
+Successfully installed transformers-4.26.1
+
+```
