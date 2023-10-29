@@ -20,9 +20,8 @@ def plot_path_labels(G_sel, path_edges):
     nx.draw(G_sel, pos=pos, node_color=color_map, with_labels=True, node_size=50, labels=nx.get_node_attributes(G_sel,'label'))
 
 
-def plot_scene_sequence(G, scene_sequence, scene_dict, path=None):
+def plot_scene_sequence(G, scene_sequence, scene_dict, path_edges=None):
     plt.figure(figsize=(6,10))
-
 
     G_plot = G.copy()
 
@@ -46,10 +45,12 @@ def plot_scene_sequence(G, scene_sequence, scene_dict, path=None):
     edge_colors = []
 
     for edge in G.edges():
-        if path is not None and edge in path:
-            edge_colors.append('blue')
-            G.edges[edge]['Weight'] = 1
-            continue
+        if path_edges:
+            edge_rev = (edge[1], edge[0])
+            if edge in path_edges or edge_rev in path_edges:
+                edge_colors.append('blue')
+                G.edges[edge]['Weight'] = 1
+                continue
 
         if G.edges[edge]['exists']:
             edge_colors.append('green')

@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('--ss', default='scene_sequence_kv3', dest='scene_sequence')
 parser.add_argument('-o', default='story_short.mov', dest='output_filename')
-parser.add_argument('-f', default=10, type=int, dest='fps')
+parser.add_argument('--fps', default=10, type=int, dest='fps')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
@@ -70,7 +70,7 @@ from aa_utils.plot import plot_path_labels, plot_scene_sequence
 # TODO: improve
 # plot_path_labels(G_sequence, path_edges)
 
-plot_scene_sequence(G_sequence, scene_sequence, scene_dict, path=path_edges)
+plot_scene_sequence(G_sequence, scene_sequence, scene_dict, path_edges=path_edges)
 
 plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'storygraph_short.png'))
 # %%

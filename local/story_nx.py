@@ -18,9 +18,9 @@ parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('--ss', default='scene_sequence_kv3', dest='scene_sequence')
 parser.add_argument("-n", default=0, type=int, dest='N_repeats')
 parser.add_argument('-o', default='story_long.mov', dest='output_filename')
-parser.add_argument('-f', default=10, type=int, dest='fps')
-# args = parser.parse_args()
-args = parser.parse_args("") # Needed for jupyter notebook
+parser.add_argument('--fps', default=10, type=int, dest='fps')
+args = parser.parse_args()
+# args = parser.parse_args("") # Needed for jupyter notebook
 
 N_repeats = args.N_repeats 
 
@@ -67,18 +67,63 @@ scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.to
 
 G_sequence = downselect_to_scene_sequence(G, scene_sequence)
 
+#TODO: believe this can be handled by using a directed graph
+
+def remove_hanging_nodes(G_sequence, scene_sequence):
+    last_scene = scene_sequence[-1]
+    end_nodes = [node for node in G_sequence.nodes if G_sequence.nodes[node]['scene'] == last_scene]
+
+    # Iterate through the scene sequence, removing all previous scenes from the graph, and remove any hanging nodes that do not have a path to the end node
+    all_valid_scene_nodes = []
+    remove_nodes = []
+    for i, scene in enumerate(scene_sequence[:-1]):
+
+        scene_nodes = [node for node in G_sequence.nodes if G_sequence.nodes[node]['scene'] == scene]
+
+        remaining_scenes = scene_sequence[i:]
+
+        remaining_nodes = [node for node in G_sequence.nodes if G_sequence.nodes[node]['scene'] in remaining_scenes]
+
+        remaining_graph = G_sequence.subgraph(remaining_nodes)
+
+        valid_scene_nodes = [node for node in scene_nodes if any([nx.has_path(remaining_graph, node, end_node) for end_node in end_nodes])]
+
+        all_valid_scene_nodes.extend(valid_scene_nodes)
+
+        remove_nodes.extend([node for node in scene_nodes if node not in valid_scene_nodes])
+
+    # add the last scene to the list of valid nodes
+
+    all_valid_scene_nodes.extend([node for node in G_sequence.nodes if G_sequence.nodes[node]['scene'] == last_scene])
+
+    G_sequence = G_sequence.subgraph(all_valid_scene_nodes)
+
+    return G_sequence
+
+# perform remove_hanging_nodes on G_sequence until it no longer changes
+
+print("Removing hanging nodes")
+for i in range(10):
+    print("Iteration: {}".format(i))
+    G_sequence_old = G_sequence.copy()
+    G_sequence = remove_hanging_nodes(G_sequence, scene_sequence)
+    if nx.is_isomorphic(G_sequence, G_sequence_old):
+        break
+
+# plot_scene_sequence(remaining_graph, scene_sequence, scene_dict)
+
 
 #%%
 
 from aa_utils.plot import plot_scene_sequence
 
-plot_scene_sequence(G, scene_sequence, scene_dict)
+plot_scene_sequence(G_sequence, scene_sequence, scene_dict)
 
 #%%
 
 G_sel = G_sequence
 
-N_repeats = 1
+# N_repeats = 2
 
 first_scene = scene_sequence[0]
 last_scene = scene_sequence[-1]
@@ -95,7 +140,9 @@ for node in start_nodes:
 
 path = [np.random.choice(valid_start_nodes)]
 
-for i, scene in enumerate(scene_sequence):
+for i, scene in enumerate(scene_sequence[:-1]):
+
+    current_node = path[-1]
 
     # make a subgraph of the nodes in the scene
 
@@ -103,65 +150,84 @@ for i, scene in enumerate(scene_sequence):
 
     scene_graph = G_sel.subgraph(scene_nodes)
 
-    # make a random path of length N_repeats edges starting at start_node
+    # find a path to a node in the next scene
+
+    next_scene_nodes = [node for node in G_sel.nodes if G_sel.nodes[node]['scene'] == scene_sequence[i+1]]
+
+    both_scene_graph = G_sel.subgraph([*scene_nodes, *next_scene_nodes])
+
+    # find the shortest path from the last node in the path to a node in the next scene
+
+    valid_next_nodes = [node for node in next_scene_nodes if nx.has_path(both_scene_graph, current_node, node)]
+
+    # Make a graph of all nodes in scenes that are beyond the next scene
+
+    if N_repeats == 0:
+        path_to_next_scene = nx.shortest_path(both_scene_graph, current_node, np.random.choice(valid_next_nodes))
+    else:
+        # Make a list of nodes that have an edge with one of the valid_next_nodes
+        valid_current_scene_ending_nodes = [node for node in scene_nodes if any([both_scene_graph.has_edge(node, next_node) for next_node in valid_next_nodes])]
+        # remove current_node from this list
+        if current_node in valid_current_scene_ending_nodes:
+            valid_current_scene_ending_nodes.remove(current_node)
+
+        all_simple_paths = [] 
+        for valid_end_node in valid_current_scene_ending_nodes:
+            simple_paths = nx.all_simple_paths(scene_graph, current_node, valid_end_node, cutoff=N_repeats)
+            simple_paths = list(simple_paths)
+            if len(simple_paths) > 0:
+                all_simple_paths.extend(simple_paths)
+
+        if len(all_simple_paths) == 0:
+            print("No simple paths found from node: {}, reverting to shortest path".format(current_node))
+            path_to_next_scene = nx.shortest_path(both_scene_graph, current_node, np.random.choice(valid_next_nodes))
+
+        else:
+            # i_max = np.argmax([len(path) for path in all_simple_paths])
+            # path_to_next_scene = all_simple_paths[i_max]
+
+            # pick a random path from all_simple_paths
+            idx_random = np.random.randint(len(all_simple_paths))
+            path_to_next_scene = all_simple_paths[idx_random]
+
+            # print("found simple path: {}".format(path_to_next_scene ))
+
+            edges_from_path = list(both_scene_graph.edges(path_to_next_scene[-1]))
+
+            # find the edge that connects to one of the valid_next_nodes
+
+            for edge in edges_from_path:
+                if edge[1] in valid_next_nodes:
+                    end_node = edge[1]
+                    break
+
+            # assert that an edge exists between path_to_next_scene[-1] and end_node
+            assert both_scene_graph.has_edge(path_to_next_scene[-1], end_node)
+
+            # add this edge to the path
+            path_to_next_scene.append(end_node)
+
+    # add this path to the path
+
+    path.extend(path_to_next_scene[1:])
 
 
+# TODO: Add intrascene for the last scene if intrascene edges exist
+#     scene_neighbors = list(scene_graph.neighbors(path[-1]))
 
-    #TODO: make sure that the path is not a loop
-    for j in range(N_repeats):
-        scene_neighbors = list(scene_graph.neighbors(path[-1]))
-
-        if len(scene_neighbors) == 0:
-            print("No neighbors for node: {}, skipping".format(path[-1]))
-            break
-
-        path.append(np.random.choice(scene_neighbors))
-
-
-    if i < len(scene_sequence) - 1:
-        # find a path to a node in the next scene
-
-        next_scene_nodes = [node for node in G_sel.nodes if G_sel.nodes[node]['scene'] == scene_sequence[i+1]]
-
-        both_scene_graph = G_sel.subgraph([*scene_nodes, *next_scene_nodes])
-
-        # find the shortest path from the last node in the path to a node in the next scene
-
-        valid_next_nodes = [node for node in next_scene_nodes if nx.has_path(both_scene_graph, path[-1], node)]
-
-        # Make a graph of all nodes in scenes that are beyond the next scene
-
-        remaining_scenes = scene_sequence[i+1:]
-
-        remaining_nodes = [node for node in G_sel.nodes if G_sel.nodes[node]['scene'] in remaining_scenes]
-
-        remaining_graph = G_sel.subgraph(remaining_nodes)
-
-        # make sure the next node is connected to any of end_nodes within the remaining graph, i.e. we do not have to go back through the current scene
-
-        valid_next_nodes = [node for node in valid_next_nodes if any([nx.has_path(remaining_graph, node, end_node) for end_node in end_nodes])]
-
-        path_to_next_scene = nx.shortest_path(both_scene_graph, path[-1], np.random.choice(valid_next_nodes))
-
-        # add this path to the path
-
-        path.extend(path_to_next_scene[1:])
 
 
 #%%
 
-
 path_edges = list(zip(path,path[1:]))
 
-plot_scene_sequence(G_sel, scene_sequence, scene_dict, path=path_edges)
+plot_scene_sequence(G_sel, scene_sequence, scene_dict, path_edges=path_edges)
+
+plt.tight_layout()
 
 plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'storygraph_long.png'))
 
 #%%
-
-
-#%%
-
 
 df_transitions = pd.DataFrame(path_edges, columns=['c1','c2'])
 
@@ -182,6 +248,11 @@ check_input_image_folders_exist(df_transitions)
 
 out_dir = os.path.join(song_basedir, 'story')
 if not os.path.exists(out_dir): os.mkdir(out_dir)
+
+
+scene_from = df_transitions['c1'].apply(lambda x: G_sel.nodes[x]['scene'])
+# insert scene_from as the first column
+df_transitions.insert(0, 'scene_from', scene_from)
 
 df_transitions.to_csv(os.path.join(out_dir, 'trans_sequence.csv'))
 
