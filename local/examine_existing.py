@@ -16,9 +16,9 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-parser.add_argument('--ss', default='scene_sequence', dest='scene_sequence')
-args = parser.parse_args()
-# args = parser.parse_args("") # Needed for jupyter notebook
+parser.add_argument('--ss', default='scene_sequence_kv3', dest='scene_sequence')
+# args = parser.parse_args()
+args = parser.parse_args("") # Needed for jupyter notebook
 
 song = args.song
 
@@ -100,64 +100,29 @@ for i in range(len(scene_names)):
             for node_to in scene_dict[scene_to]:
                 G.add_edge(node_from, node_to)
 
-#%%
-
-plt.figure(figsize=(6,10))
-
-# Make a color map with a different color for each scene based on the scene of each node
-
-# create number for each group to allow use of colormap
-
-from itertools import count
-# get unique groups
-
-groups = scene_sequence
-mapping = dict(zip(groups,count()))
-nodes = G.nodes()
-colors = [mapping[G.nodes[n]['scene']] for n in nodes]
-
-edge_colors = []
-alphas = []
-
 for edge in G.edges():
     edge_rev = (edge[1], edge[0])
     if edge in trans_list or edge_rev in trans_list:
-        edge_colors.append('green')
-        alphas.append(1)
-        # add a new attribute to the edge to indicate that it exists
         G.edges[edge]['exists'] = True
-        G.edges[edge]['Weight'] = 1
     else:
-        edge_colors.append('red')
-        alphas.append(0.1)
         G.edges[edge]['exists'] = False
-        G.edges[edge]['Weight'] = 0.1
 
-# drawing nodes and edges separately so we can capture collection for colobar
-
-# pos = nx.spring_layout(G)
-pos = nx.multipartite_layout(G, subset_key='scene', align='horizontal', scale=1, center=(0,0))
-ec = nx.draw_networkx_edges(G, pos, edge_color= edge_colors, alpha=alphas)
-nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=10, cmap=plt.cm.jet)
-
-plt.colorbar(nc)
-plt.axis('off')
-
-# make one label of the scene name positioned at the top of the plot
-
-scene_centers = {}
-
-for scene in scene_dict:
-    scene_center = np.mean([pos[n] for n in scene_dict[scene]], axis=0)
-
-    plt.text(-0.2, scene_center[1], scene, fontsize=10, horizontalalignment='center', verticalalignment='center')
 
 if not os.path.exists(pjoin(gdrive_basedir, song, 'story')): os.makedirs(pjoin(gdrive_basedir, song, 'story'))
+nx.write_gexf(G, pjoin(gdrive_basedir, song, 'story', 'graph_existing_transitions.gexf'))
+
+
+#%%
+
+from aa_utils.plot import plot_scene_sequence
+
+plot_scene_sequence(G, scene_sequence, scene_dict)
+
+plt.tight_layout()
 
 plt.savefig(pjoin(gdrive_basedir, song, 'story', 'graph_existing_transitions.png'))
 
 
-nx.write_gexf(G, pjoin(gdrive_basedir, song, 'story', 'graph_existing_transitions.gexf'))
 
 # %%
 
