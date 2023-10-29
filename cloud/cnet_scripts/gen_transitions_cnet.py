@@ -142,7 +142,7 @@ T = np.linspace(0.0, 1.0, num_interpolation_steps)
 
 from tqdm import tqdm
 
-for idx, row in df_transitions.iterrows():
+for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
   clear_output(wait=True)
 
   output_name = row.name
@@ -191,7 +191,7 @@ for idx, row in df_transitions.iterrows():
   guidance_steps = np.linspace(guidance_scales[0], guidance_scales[1], num_interpolation_steps + 1)
 
 
-  print("Transition {} out of {}".format(idx, len(df_transitions)))
+  print("Transition {} out of {}".format(i_row, len(df_transitions)))
   print(output_name)
   for i, t in enumerate(tqdm(T)):
 
