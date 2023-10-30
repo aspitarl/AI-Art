@@ -8,6 +8,9 @@ import argparse
 
 from aa_utils.local import transition_fn_from_transition_row, clip_names_from_transition_row, image_names_from_transition
 from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, construct_input_image_folder_paths, check_input_image_folders_exist, generate_text_for_ffmpeg, generate_output_video
+from aa_utils.plot import plot_path_labels, plot_scene_sequence
+
+from dotenv import load_dotenv; load_dotenv()
 # %%
 
 parser = argparse.ArgumentParser()
@@ -18,8 +21,6 @@ parser.add_argument('--fps', default=10, type=int, dest='fps')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
-
-from dotenv import load_dotenv; load_dotenv()
 gdrive_basedir = os.getenv('base_dir')
 # gdrive_basedir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
 input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
@@ -54,9 +55,6 @@ for node in list(G.nodes):
         G.remove_node(node)
         #
 
-# %%
-
-
 #%%
 
 G_sequence = downselect_to_scene_sequence(G, scene_sequence)
@@ -65,10 +63,8 @@ G_sequence = downselect_to_scene_sequence(G, scene_sequence)
 
 path_edges = gen_path_edges_short(G_sequence, scene_sequence)
 
-
 #%%
 
-from aa_utils.plot import plot_path_labels, plot_scene_sequence
 # TODO: improve
 # plot_path_labels(G_sequence, path_edges)
 
@@ -84,8 +80,6 @@ dir_transitions = os.path.join(gdrive_basedir, args.song, 'transition_images')
 
 trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
 trans_list = [image_names_from_transition(t) for t in trans_list]
-
-
 
 forward_c_pairs = trans_list
 song_basedir = os.path.join(gdrive_basedir, args.song)

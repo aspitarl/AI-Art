@@ -166,7 +166,12 @@ def gen_seed_lookup(df_transitions):
 
 import networkx as nx
 
-def find_path_edges(G, scene_names, N_repeats, node_from=None):
+def gen_transitions_path_edges(G, scene_names, N_repeats, node_from=None):
+    # Iterate through the scenes
+    # For each scene, find a random node in that scene
+    # continue to find a path to another random node in the same scene for N_repeats times
+    # Add the path to the list of path edges
+    # after N_repeats, find a path to a random node in the next scene and repeat the above process
 
     path_edges = []
 

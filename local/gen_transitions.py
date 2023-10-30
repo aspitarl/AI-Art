@@ -1,16 +1,17 @@
 #%%
 import os
 from os.path import join as pjoin
-import re
 import numpy as np
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-
-from aa_utils.local import transition_fn_from_transition_row, clip_names_from_transition_row, image_names_from_transition
-# %%
-
 import argparse
+from itertools import count
+
+from aa_utils.local import gen_scene_dicts, gen_transitions_path_edges, transition_fn_from_transition_row, clip_names_from_transition_row, image_names_from_transition
+
+from dotenv import load_dotenv; load_dotenv()
+# %%
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
@@ -19,9 +20,6 @@ parser.add_argument("-n", default=0, type=int, dest='N_repeats')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
-N_repeats = args.N_repeats 
-
-from dotenv import load_dotenv; load_dotenv()
 gdrive_basedir = os.getenv('base_dir')
 # gdrive_basedir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
 input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
@@ -34,7 +32,6 @@ scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
 fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
 scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
-from aa_utils.local import gen_scene_dicts
 scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=None)
 
 #%%
@@ -65,51 +62,10 @@ for i in range(len(scene_names)):
             for node_to in scene_dict[scene_to]:
                 G.add_edge(node_from, node_to)
 
-#%%
-
-# Generate a path from the first to last scene
-
-first_scene = scene_names[0]
-last_scene = scene_names[-1]
-
-# Fin a random node with the attribute scene=first_scene
-
-first_node = np.random.choice([n for n in G.nodes() if G.nodes[n]['scene'] == first_scene])
-
-# Find a random node with the attribute scene=last_scene
-
-last_node = np.random.choice([n for n in G.nodes() if G.nodes[n]['scene'] == last_scene])
-
-# Find a path between the two nodes
-
-path = nx.shortest_path(G, first_node, last_node)
-
-# Make a list of edges in the path
-
-path_edges = [(path[i], path[i+1]) for i in range(len(path)-1)]
-
-path_edges
 
 #%%
 
-# Iterate through the scenes
-
-# For each scene, find a random node in that scene
-
-# continue to find a path to another random node in the same scene for N_repeats times
-
-# Add the path to the list of path edges
-
-
-
-# after N_repeats, find a path to a random node in the next scene and repeat the above process
-from aa_utils.local import find_path_edges
-
-# refactor the below into a function
-path_edges = find_path_edges(G, scene_names, N_repeats)
-
-#%%
-
+path_edges = gen_transitions_path_edges(G, scene_names, args.N_repeats)
 
 #%%
 
@@ -127,23 +83,12 @@ nx.draw(G_path)
 
 #%%
 
-# find any edges in path_edges that are not in G
-
-# These are edges that connect nodes in different scenes
-
-# These edges should be removed from path_edges
-
-path_edges
-
-#%%
-
 plt.figure(figsize=(10,10))
 
 # Make a color map with a different color for each scene based on the scene of each node
 
 # create number for each group to allow use of colormap
 
-from itertools import count
 # get unique groups
 
 groups = scene_sequence
