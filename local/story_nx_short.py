@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import argparse
 
 from aa_utils.local import transition_fn_from_transition_row, clip_names_from_transition_row, image_names_from_transition
-from aa_utils.story import read_scene_dict, downselect_to_scene_sequence, gen_path_edges_short, construct_input_image_folder_paths, check_input_image_folders_exist, generate_text_for_ffmpeg, generate_output_video
+from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, construct_input_image_folder_paths, check_input_image_folders_exist, generate_text_for_ffmpeg, generate_output_video
 # %%
 
 parser = argparse.ArgumentParser()
@@ -37,7 +37,12 @@ G = G.subgraph(largest_cc)
 
 #%%
 
-scene_dict, file_to_scene_dict = read_scene_dict(gdrive_basedir, args.song)
+fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
+scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
+
+scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
+from aa_utils.local import gen_scene_dicts
+scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=4)
 
 for node in list(G.nodes):
     if node in file_to_scene_dict:
@@ -50,10 +55,7 @@ for node in list(G.nodes):
         #
 
 # %%
-fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
-scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
-# scene_sequence = scene_sequence[0:3]
 
 #%%
 

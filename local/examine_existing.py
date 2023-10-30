@@ -36,34 +36,14 @@ scene_dir = pjoin(gdrive_basedir, song, 'scenes')
 fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
 scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
-
 # Make a mapping from file to folder name for each scene folder in scene dir
-
-regex = re.compile("([\S\s]+_\d\d\d\d)\d+.png")
-
-scene_dict = {}
-for scene in scene_sequence:
-    scene_dict[scene] = [fn for fn in os.listdir(pjoin(scene_dir, scene)) if fn.endswith('.png')]
-
-    scene_dict[scene] = [fn.rsplit('_', 1)[0] + '-' + fn.rsplit('_', 1)[1] for fn in scene_dict[scene]]
-
-    # remove the .png extension from each filename with a regular expression
-
-    scene_dict[scene] = [re.sub(r'\.png$', '', fn) for fn in scene_dict[scene]]
-
-pd.Series(scene_dict).to_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_dict.csv'))
-
-# truncate the digits after each hyphen to 4 digits 
-
-scene_dict = {scene: [re.sub(r'-(\d+)$', lambda m: '-' + m.group(1)[:4], fn) for fn in scene_dict[scene]] for scene in scene_dict}
-
-scene_dict
+from aa_utils.local import gen_scene_dicts
+scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=4)
 
 
 #%%
 
 dir_transitions = os.path.join(gdrive_basedir, song, 'transition_images')
-
 if not os.path.exists(dir_transitions): os.makedirs(dir_transitions)
 
 trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]

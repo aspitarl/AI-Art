@@ -8,27 +8,6 @@ import networkx as nx
 
 
 
-def read_scene_dict(gdrive_basedir, song):
-    scene_dict = pd.read_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_dict.csv'), index_col=0).to_dict()['0']
-
-    # Convert the values from strings to lists
-    scene_dict = {k: v.split(',') for k,v in scene_dict.items()}
-
-    # Remove single quotes and list brackets from each element in the list
-    scene_dict = {k: [re.sub(r"['\[\]]", '', fn).strip() for fn in v] for k,v in scene_dict.items()}
-
-    # Truncate the digits after each hyphen to 4 digits
-    scene_dict = {scene: [re.sub(r'-(\d+)$', lambda m: '-' + m.group(1)[:4], fn) for fn in scene_dict[scene]] for scene in scene_dict}
-
-    # Invert scene_dict to make a mapping from file to folder name
-    file_to_scene_dict = {}
-    for scene in scene_dict:
-        for fn in scene_dict[scene]:
-            file_to_scene_dict[fn] = scene
-
-    return scene_dict, file_to_scene_dict
-
-
 def downselect_to_scene_sequence(G, scene_sequence):
     # Remove all edges from the graph that do not connect nodes in the scene_sequence
     # Make a list of all edges in the graph

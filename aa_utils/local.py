@@ -1,6 +1,34 @@
 import os
+from os.path import join as pjoin
 
+def gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=None):
+    """
+    Generates a mapping from scene name to a list of filenames in that scene
+    """
+    # regex = re.compile("([\S\s]+_\d\d\d\d)\d+.png")
 
+    scene_dict = {}
+    for scene in scene_sequence:
+        scene_dict[scene] = [fn for fn in os.listdir(pjoin(scene_dir, scene)) if fn.endswith('.png')]
+
+        scene_dict[scene] = [fn.rsplit('_', 1)[0] + '-' + fn.rsplit('_', 1)[1] for fn in scene_dict[scene]]
+
+    # remove the .png extension from each filename with a regular expression
+
+        scene_dict[scene] = [re.sub(r'\.png$', '', fn) for fn in scene_dict[scene]]
+        
+
+    # Truncate the digits after each hyphen to 4 digits
+    if truncate_digits:
+        scene_dict = {scene: [re.sub(r'-(\d+)$', lambda m: '-' + m.group(1)[:truncate_digits], fn) for fn in scene_dict[scene]] for scene in scene_dict}
+
+    # Invert scene_dict to make a mapping from file to folder name
+    file_to_scene_dict = {}
+    for scene in scene_dict:
+        for fn in scene_dict[scene]:
+            file_to_scene_dict[fn] = scene
+
+    return scene_dict, file_to_scene_dict
 
 def image_names_from_transition(transition_name):
 
