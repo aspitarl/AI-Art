@@ -7,7 +7,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import argparse
 
-from aa_utils.local import gen_scene_dicts, transition_fn_from_transition_row, clip_names_from_transition_row, image_names_from_transition
+from aa_utils.local import gen_scene_dicts, image_names_from_transition, build_graph_scenes, check_existing_transitions
 from aa_utils.plot import plot_scene_sequence
 
 from dotenv import load_dotenv; load_dotenv()
@@ -16,8 +16,8 @@ from dotenv import load_dotenv; load_dotenv()
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('--ss', default='scene_sequence_kv3', dest='scene_sequence')
-# args = parser.parse_args()
-args = parser.parse_args("") # Needed for jupyter notebook
+args = parser.parse_args()
+# args = parser.parse_args("") # Needed for jupyter notebook
 
 gdrive_basedir = os.getenv('base_dir')
 # gdrive_basedir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
@@ -28,55 +28,21 @@ input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
 scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
 # scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
 
-fp_scene_sequence = os.path.join(gdrive_basedir, args.args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
+fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
 scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
 # Make a mapping from file to folder name for each scene folder in scene dir
+# We truncate here as transition folders are truncated to 4 digits...
 scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=4)
 
 #%%
 
 dir_transitions = os.path.join(gdrive_basedir, args.song, 'transition_images')
-if not os.path.exists(dir_transitions): os.makedirs(dir_transitions)
-
 trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
 trans_list = [image_names_from_transition(t) for t in trans_list]
 
-#%%
-
-G = nx.Graph()
-
-# add nodes for each image in each scene
-
-for scene in scene_dict:
-    G.add_nodes_from(scene_dict[scene], scene=scene)
-
-scene_names = list(scene_dict.keys())
-
-for i in range(len(scene_names)):
-    scene_from = scene_names[i]
-
-    # add eges between all pairs of nodes in scene_from
-
-    for node_from in scene_dict[scene_from]:
-        for node_to in scene_dict[scene_from]:
-            if node_from != node_to:
-                G.add_edge(node_from, node_to)
-
-    if i < len(scene_names) - 1:
-        scene_to = scene_names[i+1]
-        # add edges between all pairs of nodes in the two scenes
-        for node_from in scene_dict[scene_from]:
-            for node_to in scene_dict[scene_to]:
-                G.add_edge(node_from, node_to)
-
-for edge in G.edges():
-    edge_rev = (edge[1], edge[0])
-    if edge in trans_list or edge_rev in trans_list:
-        G.edges[edge]['exists'] = True
-    else:
-        G.edges[edge]['exists'] = False
-
+G = build_graph_scenes(scene_dict)
+G = check_existing_transitions(G, trans_list)
 
 if not os.path.exists(pjoin(gdrive_basedir, args.song, 'story')): os.makedirs(pjoin(gdrive_basedir, args.song, 'story'))
 nx.write_gexf(G, pjoin(gdrive_basedir, args.song, 'story', 'graph_existing_transitions.gexf'))

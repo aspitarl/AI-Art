@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import argparse
 from itertools import count
 
-from aa_utils.local import gen_scene_dicts, gen_transitions_path_edges, transition_fn_from_transition_row, clip_names_from_transition_row, image_names_from_transition
+from aa_utils.local import gen_scene_dicts, gen_transitions_path_edges, build_graph_scenes, image_names_from_transition, check_existing_transitions
+from aa_utils.plot import plot_scene_sequence
 
 from dotenv import load_dotenv; load_dotenv()
 # %%
@@ -36,35 +37,11 @@ scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence, trun
 
 #%%
 
-G = nx.Graph()
-
-# add nodes for each image in each scene
-
-for scene in scene_dict:
-    G.add_nodes_from(scene_dict[scene], scene=scene)
-
-scene_names = list(scene_dict.keys())
-
-for i in range(len(scene_names)):
-    scene_from = scene_names[i]
-
-    # add eges between all pairs of nodes in scene_from
-
-    for node_from in scene_dict[scene_from]:
-        for node_to in scene_dict[scene_from]:
-            if node_from != node_to:
-                G.add_edge(node_from, node_to)
-
-    if i < len(scene_names) - 1:
-        scene_to = scene_names[i+1]
-        # add edges between all pairs of nodes in the two scenes
-        for node_from in scene_dict[scene_from]:
-            for node_to in scene_dict[scene_to]:
-                G.add_edge(node_from, node_to)
-
+G = build_graph_scenes(scene_dict)
 
 #%%
 
+scene_names = list(scene_dict.keys())
 path_edges = gen_transitions_path_edges(G, scene_names, args.N_repeats)
 
 #%%
@@ -82,41 +59,23 @@ nx.is_connected(G_path)
 nx.draw(G_path)
 
 #%%
+# Having to check existing separately so that output transitions file are not truncated to 4 digits
+# TODO: rework seed length to avoid this and truncation in geenral
+# TODO: this can't be obtained from the graph?
+dir_transitions = os.path.join(gdrive_basedir, args.song, 'transition_images')
+trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
+trans_list = [image_names_from_transition(t) for t in trans_list]
 
-plt.figure(figsize=(10,10))
+# make a mapping from node name to truncated name for each node in the graph
 
-# Make a color map with a different color for each scene based on the scene of each node
+node_to_trunc = {n: n.split('-')[0] + '-' + n.split('-')[1][:4] for n in G.nodes}
 
-# create number for each group to allow use of colormap
+G_plot = G.copy()
+G_plot = nx.relabel_nodes(G_plot, node_to_trunc)
+G_plot = check_existing_transitions(G_plot, trans_list)
+path_edges_truncate = [(node_to_trunc[e[0]], node_to_trunc[e[1]]) for e in path_edges]
 
-# get unique groups
-
-groups = scene_sequence
-mapping = dict(zip(groups,count()))
-nodes = G.nodes()
-colors = [mapping[G.nodes[n]['scene']] for n in nodes]
-
-edge_colors = []
-alphas = []
-
-for edge in G.edges():
-    edge_rev = (edge[1], edge[0])
-    if edge in path_edges or edge_rev in path_edges:
-        edge_colors.append('green')
-        alphas.append(1)
-    else:
-        edge_colors.append('red')
-        alphas.append(0.1)
-
-# drawing nodes and edges separately so we can capture collection for colobar
-
-pos = nx.spring_layout(G)
-ec = nx.draw_networkx_edges(G, pos, edge_color= edge_colors, alpha=alphas)
-nc = nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color=colors, node_size=5, cmap=plt.cm.jet)
-
-plt.colorbar(nc)
-plt.axis('off')
-
+plot_scene_sequence(G_plot, scene_sequence, scene_dict, path_edges=path_edges_truncate)
 
 plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_transition_gen.png'))
 
@@ -181,11 +140,7 @@ fp_out = os.path.join(gdrive_basedir, args.song, 'prompt_data', 'interscene_tran
 print("writing transitions csv to {}".format(fp_out))
 df_inter.to_csv(fp_out)
 
-
-
 # %%
-
-
 # Intrascene transition file
 
 if len(intrascene_edges) == 0:

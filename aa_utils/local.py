@@ -30,6 +30,52 @@ def gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=None):
 
     return scene_dict, file_to_scene_dict
 
+
+import networkx as nx
+
+def build_graph_scenes(scene_dict):
+    """
+    Create a graph of all possible transitions in the scene sequence
+    if a list of existing transitions is provided, add an attribute to each edge indicating whether it exists 
+    """
+    G = nx.Graph()
+
+    # add nodes for each image in each scene
+    for scene in scene_dict:
+        G.add_nodes_from(scene_dict[scene], scene=scene)
+
+    scene_names = list(scene_dict.keys())
+
+    for i in range(len(scene_names)):
+        scene_from = scene_names[i]
+
+        # add eges between all pairs of nodes in scene_from
+        for node_from in scene_dict[scene_from]:
+            for node_to in scene_dict[scene_from]:
+                if node_from != node_to:
+                    G.add_edge(node_from, node_to)
+
+        if i < len(scene_names) - 1:
+            scene_to = scene_names[i+1]
+            # add edges between all pairs of nodes in the two scenes
+            for node_from in scene_dict[scene_from]:
+                for node_to in scene_dict[scene_to]:
+                    G.add_edge(node_from, node_to)
+
+    return G
+
+def check_existing_transitions(G, existing_transitions, truncate_digits=None):
+
+    for edge in G.edges():
+        edge_rev = (edge[1], edge[0])
+        if edge in existing_transitions or edge_rev in existing_transitions:
+            G.edges[edge]['exists'] = True
+        else:
+            G.edges[edge]['exists'] = False
+
+    return G
+
+
 def image_names_from_transition(transition_name):
 
     # c1, c2 = name.split(" to ")

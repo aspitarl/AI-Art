@@ -7,7 +7,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import argparse
 
-from aa_utils.local import transition_fn_from_transition_row, clip_names_from_transition_row, image_names_from_transition
+from aa_utils.local import image_names_from_transition, build_graph_scenes, check_existing_transitions, gen_scene_dicts
 from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, construct_input_image_folder_paths, check_input_image_folders_exist, generate_text_for_ffmpeg, generate_output_video
 from aa_utils.plot import plot_scene_sequence
 
@@ -28,8 +28,18 @@ gdrive_basedir = os.getenv('base_dir')
 input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
 
 #%%
+fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
+scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
-G = nx.read_gexf(pjoin(gdrive_basedir, args.song, 'story', 'graph_existing_transitions.gexf'))
+scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
+scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=4)
+
+dir_transitions = os.path.join(gdrive_basedir, args.song, 'transition_images')
+trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
+trans_list = [image_names_from_transition(t) for t in trans_list]
+
+G = build_graph_scenes(scene_dict)
+G = check_existing_transitions(G, trans_list)
 
 # only keep edges with the attribute exists=True
 edges_to_keep = [(u,v) for u,v,d in G.edges(data=True) if d['exists']]
@@ -41,13 +51,6 @@ G = G.subgraph(largest_cc)
 
 #%%
 
-fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
-scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
-
-scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
-from aa_utils.local import gen_scene_dicts
-scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=4)
-
 for node in list(G.nodes):
     if node in file_to_scene_dict:
         G.nodes[node]['scene'] = file_to_scene_dict[node]
@@ -57,12 +60,6 @@ for node in list(G.nodes):
         # Drop this node from the graph
         G.remove_node(node)
         #
-
-# %%
-fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
-scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
-
-# scene_sequence = scene_sequence[0:5]
 
 #%%
 
