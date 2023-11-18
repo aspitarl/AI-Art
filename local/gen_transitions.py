@@ -16,8 +16,7 @@ from dotenv import load_dotenv; load_dotenv()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-parser.add_argument('--ss', default='scene_sequence_kv3', dest='scene_sequence')
-parser.add_argument("-n", default=0, type=int, dest='N_repeats')
+parser.add_argument('--ss', default='scene_sequence_3_la', dest='scene_sequence')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
@@ -31,9 +30,11 @@ scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
 # scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
 
 fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
-scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
+df_scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)
 
-scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=None)
+scene_sequence_list = df_scene_sequence['scene'].values.tolist()
+
+scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence_list, truncate_digits=None)
 
 #%%
 
@@ -41,8 +42,7 @@ G = build_graph_scenes(scene_dict)
 
 #%%
 
-scene_names = list(scene_dict.keys())
-path_edges = gen_transitions_path_edges(G, scene_names, args.N_repeats)
+path_edges = gen_transitions_path_edges(G, df_scene_sequence)
 
 #%%
 
@@ -75,12 +75,26 @@ G_plot = nx.relabel_nodes(G_plot, node_to_trunc)
 G_plot = check_existing_transitions(G_plot, trans_list)
 path_edges_truncate = [(node_to_trunc[e[0]], node_to_trunc[e[1]]) for e in path_edges]
 
-plot_scene_sequence(G_plot, scene_sequence, scene_dict, path_edges=path_edges_truncate)
+plot_scene_sequence(G_plot, scene_sequence_list, scene_dict, path_edges=path_edges_truncate)
 
 plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_transition_gen.png'))
 
 # %%
+from aa_utils.local import gen_df_transitions
 
+song_basedir = os.path.join(gdrive_basedir, args.song)
+out_dir = os.path.join(song_basedir, 'story')
+if not os.path.exists(out_dir): os.makedirs(out_dir)
+
+scene_section_map = df_scene_sequence.set_index('scene')['section']
+section_list = [scene_section_map[G.nodes[e[0]]['scene']] for e in path_edges]
+section_list.append(scene_section_map[G.nodes[path_edges[-1][1]]['scene']])
+
+df_transitions = gen_df_transitions(G,path_edges,section_list,song_basedir)
+
+df_transitions.to_csv(os.path.join(out_dir, 'trans_sequence_gen.csv'))
+
+#%%
 # iterate through path_edges and split into inter and intra scene edges
 
 
@@ -132,7 +146,7 @@ df_inter['scene_to'] = scenes_to
 df_inter['from_seed'] = df_inter['from_seed'].astype(str)
 df_inter['to_seed'] = df_inter['to_seed'].astype(str)
 
-df_inter = df_inter.sort_values('scene_from', key=lambda x: x.map(scene_sequence.index))
+df_inter = df_inter.sort_values('scene_from', key=lambda x: x.map(scene_sequence_list.index))
 df_inter = df_inter.reset_index(drop=True)
 
 
@@ -180,7 +194,7 @@ else:
     df_intra['from_seed'] = df_intra['from_seed'].astype(str)
     df_intra['to_seed'] = df_intra['to_seed'].astype(str)
 
-    df_intra = df_intra.sort_values('scene', key=lambda x: x.map(scene_sequence.index))
+    df_intra = df_intra.sort_values('scene', key=lambda x: x.map(scene_sequence_list.index))
     df_intra = df_intra.reset_index(drop=True)
 
     df_intra

@@ -55,25 +55,8 @@ def gen_path_edges_short(G_sel, scene_sequence):
 
     return path_edges
 
-def construct_input_image_folder_paths(df_transitions, song_basedir, forward_c_pairs):
-    df_transitions['reversed'] = [tuple(c_pair) not in forward_c_pairs for c_pair in df_transitions[['c1', 'c2']].values]
-    df_transitions['input_image_folder'] = df_transitions.apply(
-        lambda x: f"{x['c1']} to {x['c2']}" if not x['reversed'] else f"{x['c2']} to {x['c1']}",
-        axis=1
-    )
-    # df_transitions['input_image_folder'] = os.path.join(song_basedir, 'transition_images', df_transitions['input_image_folder'])
-
-    input_image_folders = [os.path.join(song_basedir, 'transition_images', folder) for folder in df_transitions['input_image_folder'].tolist()]
-    df_transitions['input_image_folder'] = input_image_folders
-    return df_transitions
 
 
-def check_input_image_folders_exist(df_transitions):
-    missing_folders = df_transitions[~df_transitions['input_image_folder'].apply(os.path.exists)]
-    if not missing_folders.empty:
-        print("Files not existing:  {}".format(missing_folders))
-        print(missing_folders['input_image_folder'].values)
-        raise ValueError()
 
 
 def generate_text_for_ffmpeg(df_transitions, fps):

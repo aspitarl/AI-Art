@@ -212,20 +212,29 @@ def gen_seed_lookup(df_transitions):
 
 import networkx as nx
 
-def gen_transitions_path_edges(G, scene_names, N_repeats, node_from=None):
+def gen_transitions_path_edges(G, df_scene_sequence, node_from=None):
     # Iterate through the scenes
     # For each scene, find a random node in that scene
     # continue to find a path to another random node in the same scene for N_repeats times
     # Add the path to the list of path edges
     # after N_repeats, find a path to a random node in the next scene and repeat the above process
 
+
     path_edges = []
 
-    if node_from is None: node_from = np.random.choice([n for n in G.nodes() if G.nodes[n]['scene'] == scene_names[0]])
+
+    scene_sequence_list = df_scene_sequence['scene'].values.tolist()
+
+    if node_from is None: node_from = np.random.choice([n for n in G.nodes() if G.nodes[n]['scene'] == scene_sequence_list[0]])
     node_to = None
 
-    for i in range(len(scene_names)):
-        scene_from = scene_names[i]
+    for i, (idx, row) in enumerate(df_scene_sequence.iterrows()):
+
+        if i == len(scene_sequence_list)-1:
+            break
+
+        scene_from = row['scene']
+        N_repeats = row['duration']
 
         for j in range(N_repeats):
             # get a random node from scene_from
@@ -258,9 +267,8 @@ def gen_transitions_path_edges(G, scene_names, N_repeats, node_from=None):
             # add the path to the list of path edges
             path_edges.extend([(path[i], path[i+1]) for i in range(len(path)-1)])
 
-        if i < len(scene_names) - 1:
             
-            scene_to = scene_names[i+1]
+            scene_to = scene_sequence_list[i+1]
             # get a random node from scene_from
             
             if node_to is not None:
@@ -276,3 +284,48 @@ def gen_transitions_path_edges(G, scene_names, N_repeats, node_from=None):
             path_edges.extend([(path[i], path[i+1]) for i in range(len(path)-1)])
 
     return path_edges
+
+def construct_input_image_folder_paths(df_transitions, song_basedir, forward_c_pairs):
+    df_transitions['reversed'] = [tuple(c_pair) not in forward_c_pairs for c_pair in df_transitions[['c1', 'c2']].values]
+    df_transitions['input_image_folder'] = df_transitions.apply(
+        lambda x: f"{x['c1']} to {x['c2']}" if not x['reversed'] else f"{x['c2']} to {x['c1']}",
+        axis=1
+    )
+    # df_transitions['input_image_folder'] = os.path.join(song_basedir, 'transition_images', df_transitions['input_image_folder'])
+
+    input_image_folders = [os.path.join(song_basedir, 'transition_images', folder) for folder in df_transitions['input_image_folder'].tolist()]
+    df_transitions['input_image_folder'] = input_image_folders
+    return df_transitions
+
+
+def check_input_image_folders_exist(df_transitions):
+    missing_folders = df_transitions[~df_transitions['input_image_folder'].apply(os.path.exists)]
+    if not missing_folders.empty:
+        print("Files not existing:  {}".format(missing_folders))
+        print(missing_folders['input_image_folder'].values)
+        raise ValueError()
+
+def gen_df_transitions(G_sel, path_edges,section_list, song_basedir):
+    """
+    Generate dataframe of transitions with final path edges
+    """
+
+    df_transitions = pd.DataFrame(path_edges, columns=['c1','c2'])
+
+    # TODO: this can't be obtained from the graph?
+    dir_transitions = os.path.join(song_basedir, 'transition_images')
+
+    trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
+    trans_list = [image_names_from_transition(t) for t in trans_list]
+
+    forward_c_pairs = trans_list
+
+    df_transitions['section']= section_list[:-1]
+
+    df_transitions = construct_input_image_folder_paths(df_transitions, song_basedir, forward_c_pairs)
+
+
+    scene_from = df_transitions['c1'].apply(lambda x: G_sel.nodes[x]['scene'])
+# insert scene_from as the first column
+    df_transitions.insert(0, 'scene_from', scene_from)
+    return df_transitions

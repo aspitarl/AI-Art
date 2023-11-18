@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import argparse
 
 from aa_utils.local import image_names_from_transition, build_graph_scenes, check_existing_transitions, gen_scene_dicts
-from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, construct_input_image_folder_paths, check_input_image_folders_exist, generate_text_for_ffmpeg, generate_output_video
+from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, generate_text_for_ffmpeg, generate_output_video
 from aa_utils.plot import plot_scene_sequence
 
 from dotenv import load_dotenv; load_dotenv()
@@ -19,8 +19,8 @@ parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('--ss', default='scene_sequence_3_la', dest='scene_sequence_list')
 parser.add_argument('-o', default='story_long', dest='output_filename')
 parser.add_argument('--fps', default=10, type=int, dest='fps')
-# args = parser.parse_args()
-args = parser.parse_args("") # Needed for jupyter notebook
+args = parser.parse_args()
+# args = parser.parse_args("") # Needed for jupyter notebook
 
 gdrive_basedir = os.getenv('base_dir')
 # gdrive_basedir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
@@ -235,36 +235,23 @@ plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'storygraph_long.png'))
 
 #%%
 
-df_transitions = pd.DataFrame(path_edges, columns=['c1','c2'])
+from aa_utils.local import gen_df_transitions, check_input_image_folders_exist
 
-df_transitions['section']= section_list[:-1]
-
-# TODO: this can't be obtained from the graph?
-dir_transitions = os.path.join(gdrive_basedir, args.song, 'transition_images')
-
-trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
-trans_list = [image_names_from_transition(t) for t in trans_list]
-
-
-forward_c_pairs = trans_list
 song_basedir = os.path.join(gdrive_basedir, args.song)
+out_dir = os.path.join(song_basedir, 'story')
+if not os.path.exists(out_dir): os.makedirs(out_dir)
 
-df_transitions = construct_input_image_folder_paths(df_transitions, song_basedir, forward_c_pairs)
+df_transitions = gen_df_transitions(G_sel,path_edges,section_list,song_basedir)
 
 check_input_image_folders_exist(df_transitions)
 
-out_dir = os.path.join(song_basedir, 'story', 'sections')
-if not os.path.exists(out_dir): os.makedirs(out_dir)
-
-
-scene_from = df_transitions['c1'].apply(lambda x: G_sel.nodes[x]['scene'])
-# insert scene_from as the first column
-df_transitions.insert(0, 'scene_from', scene_from)
-
-df_transitions.to_csv(os.path.join(out_dir, 'trans_sequence.csv'))
+df_transitions.to_csv(os.path.join(out_dir, 'trans_sequence_long.csv'))
 
 
 #%%
+
+out_dir = os.path.join(out_dir, 'sections')
+if not os.path.exists(out_dir): os.makedirs(out_dir)
 
 for section, df in df_transitions.groupby('section'):
 
