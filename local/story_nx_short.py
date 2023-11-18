@@ -16,8 +16,6 @@ from dotenv import load_dotenv; load_dotenv()
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('--ss', default='scene_sequence_3_la', dest='scene_sequence')
-parser.add_argument('-o', default='story_short.mov', dest='output_filename')
-parser.add_argument('--fps', default=10, type=int, dest='fps')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 

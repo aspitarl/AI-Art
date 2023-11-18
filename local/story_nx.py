@@ -17,8 +17,6 @@ from dotenv import load_dotenv; load_dotenv()
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('--ss', default='scene_sequence_3_la', dest='scene_sequence_list')
-parser.add_argument('-o', default='story_long', dest='output_filename')
-parser.add_argument('--fps', default=10, type=int, dest='fps')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
@@ -247,24 +245,3 @@ check_input_image_folders_exist(df_transitions)
 
 df_transitions.to_csv(os.path.join(out_dir, 'trans_sequence_long.csv'))
 
-
-#%%
-
-out_dir = os.path.join(out_dir, 'sections')
-if not os.path.exists(out_dir): os.makedirs(out_dir)
-
-for section, df in df_transitions.groupby('section'):
-
-    print("Generating video for section: {}".format(section))
-
-    out_txt = generate_text_for_ffmpeg(df, fps=args.fps)
-
-    # use out_text to make a text file that can be used by ffmpeg to make a movie
-
-    with open(os.path.join(out_dir, 'videos.txt'), 'w') as f:
-        f.write(out_txt)
-
-    generate_output_video(args.fps, out_dir, "{}_{}.mov".format(args.output_filename, section ))
-
-# %%
-df
