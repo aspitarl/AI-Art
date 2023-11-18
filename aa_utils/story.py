@@ -97,4 +97,4 @@ def generate_text_for_ffmpeg(df_transitions, fps):
 
 def generate_output_video(fps, out_dir, output_filename):
     os.chdir(out_dir)
-    os.system(f"ffmpeg -f concat -safe 0 -i videos.txt -c mjpeg -q:v 3 -r {fps} {output_filename}")
+    os.system(f"ffmpeg -f concat -safe 0 -i videos.txt -y -c mjpeg -q:v 3 -r {fps} {output_filename}")
