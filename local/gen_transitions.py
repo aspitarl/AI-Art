@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import argparse
 from itertools import count
 
-from aa_utils.local import gen_scene_dicts, gen_transitions_path_edges, build_graph_scenes, image_names_from_transition, check_existing_transitions
+from aa_utils.local import gen_scene_dicts, gen_path_sequence_fullG, build_graph_scenes, image_names_from_transition, check_existing_transitions
 from aa_utils.plot import plot_scene_sequence
 
 from dotenv import load_dotenv; load_dotenv()
@@ -42,7 +42,7 @@ G = build_graph_scenes(scene_dict)
 
 #%%
 
-path_edges = gen_transitions_path_edges(G, df_scene_sequence)
+path_edges = gen_path_sequence_fullG(G, df_scene_sequence)
 
 #%%
 

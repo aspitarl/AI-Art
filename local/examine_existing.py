@@ -15,7 +15,7 @@ from dotenv import load_dotenv; load_dotenv()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-parser.add_argument('--ss', default='scene_sequence_kv3', dest='scene_sequence')
+parser.add_argument('--ss', default='scene_sequence_3_la', dest='scene_sequence')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
