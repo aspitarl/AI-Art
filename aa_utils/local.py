@@ -38,6 +38,12 @@ def build_graph_scenes(scene_dict):
     Create a graph of all possible transitions in the scene sequence
     if a list of existing transitions is provided, add an attribute to each edge indicating whether it exists 
     """
+
+    # check if any nodes are in multiple scenes in scene_dict
+    all_values = [item for sublist in scene_dict.values() for item in sublist]
+    if len(all_values) != len(set(all_values)):
+        raise ValueError("Duplicate strings found across different keys in scene_dict")
+
     G = nx.Graph()
 
     # add nodes for each image in each scene

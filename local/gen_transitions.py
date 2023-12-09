@@ -16,7 +16,7 @@ from dotenv import load_dotenv; load_dotenv()
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-parser.add_argument('--ss', default='scene_sequence_3_la', dest='scene_sequence')
+parser.add_argument('--ss', default='', dest='scene_sequence')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
@@ -29,7 +29,8 @@ input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
 scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
 # scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
 
-fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
+scene_sequence_name = "scene_sequence" if args.scene_sequence == '' else "scene_sequence_{}".format(args.scene_sequence)
+fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(scene_sequence_name))
 df_scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)
 
 scene_sequence_list = df_scene_sequence['scene'].values.tolist()
