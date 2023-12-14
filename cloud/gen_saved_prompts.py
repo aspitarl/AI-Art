@@ -2,10 +2,10 @@
 # This is a notebook to generate all the prompts and seeds in the prompts google sheet
 
 # %%
-song_name = 'cycle' #@param {type:"string"}
-res_height = 576 #@param
-res_width = 1024 #@param
-seed_delimiter = ","
+song_name = 'pipey' #@param {type:"string"}
+res_height = 512 #@param
+res_width = 512 #@param
+seed_delimiter = " "
 
 import os
 import pandas as pd
@@ -25,10 +25,13 @@ df_prompt = df_prompt.dropna(how='any', subset=['prompt', 'seeds'])
 import torch
 from diffusers import StableDiffusionPipeline
 
-pipe = StableDiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1",
-                                               torch_dtype=torch.float16,
-                                               safety_checker=None,
-                                               cache_dir='model_cache'
+pipe = StableDiffusionPipeline.from_pretrained(
+                                              # "stabilityai/stable-diffusion-2-1",
+                                              "CompVis/stable-diffusion-v1-4",
+                                              # "runwayml/stable-diffusion-v1-5",
+                                              torch_dtype=torch.float16,
+                                              safety_checker=None,
+                                              cache_dir='model_cache'
                                                )
 
 

@@ -45,11 +45,11 @@ pipe = pipe.to("cuda")
 fp = os.path.join(os.getenv('REPO_DIR'), 'cloud', 'prompt_data', 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
 
-name_sel = 'solarpunk'
+name_sel = 'burst_city_blue'
 prompt = df_prompt['prompt'][name_sel]
 guidance_scale = df_prompt['guidance_scale'][name_sel]
 
-num_inference_steps = 10
+num_inference_steps = 20
 
 # rows X cols of images. Reduce for speed and memory issues.
 rows = 2
