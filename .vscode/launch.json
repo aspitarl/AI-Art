@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "cwd": "${fileDirname}",
-            "args": ["emit", "--ss", "kv1"]
+            "args": ["emit", "-i", "gen_orig"]
 
         }
     ]

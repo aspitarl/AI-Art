@@ -11,7 +11,7 @@ from itertools import count
 from aa_utils.local import gen_scene_dicts, gen_path_sequence_fullG, build_graph_scenes, image_names_from_transition, check_existing_transitions
 from aa_utils.plot import plot_scene_sequence
 
-from dotenv import load_dotenv; load_dotenv()
+from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
 
 parser = argparse.ArgumentParser()

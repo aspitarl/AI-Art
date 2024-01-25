@@ -10,7 +10,7 @@ import argparse
 from aa_utils.local import gen_scene_dicts, image_names_from_transition, build_graph_scenes, check_existing_transitions
 from aa_utils.plot import plot_scene_sequence
 
-from dotenv import load_dotenv; load_dotenv()
+from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
 
 parser = argparse.ArgumentParser()

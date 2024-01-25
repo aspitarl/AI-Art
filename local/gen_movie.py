@@ -5,7 +5,7 @@ import argparse
 
 from aa_utils.story import generate_text_for_ffmpeg, generate_output_video
 
-from dotenv import load_dotenv; load_dotenv()
+from dotenv import load_dotenv; load_dotenv(override=True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
@@ -16,6 +16,7 @@ args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
 gdrive_basedir = os.getenv('base_dir')
+print(gdrive_basedir)
 
 
 song_basedir = os.path.join(gdrive_basedir, args.song)
@@ -56,11 +57,15 @@ df_transitions[['c1', 'c2']] = df_temp[['c1', 'c2']]
 #TODO: just using this to determine file path, but reversed should already be accurate?
 df_transitions = construct_input_image_folder_paths(df_transitions, song_basedir, forward_c_pairs)
 
+
 #%%
 
 out_dir = os.path.join(story_dir, args.output_folder)
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
+
+
+df_transitions.to_csv(pjoin(out_dir, 'final_transitions.csv'))
 
 for section, df in df_transitions.groupby('section'):
 
@@ -88,7 +93,7 @@ with open(os.path.join(story_dir, 'videos.txt'), 'w') as f:
 
     for section in df_transitions['section'].unique():
 
-        f.write("file 'sections/section_{}.mov'\n".format(section))
+        f.write("file '{}/section_{}.mov'\n".format(out_dir, section))
 
     # generate_output_video(args.fps, story_dir, "sections_combined.mov")
 

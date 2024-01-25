@@ -11,7 +11,7 @@ from aa_utils.local import image_names_from_transition, build_graph_scenes, chec
 from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, generate_text_for_ffmpeg, generate_output_video
 from aa_utils.plot import plot_scene_sequence
 
-from dotenv import load_dotenv; load_dotenv()
+from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
 
 parser = argparse.ArgumentParser()
