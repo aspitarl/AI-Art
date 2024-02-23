@@ -35,8 +35,8 @@ from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
 
 parser = argparse.ArgumentParser()
-parser.add_argument("song", default='emit', nargs='?')
-parser.add_argument('--ss', default='kv1', dest='scene_sequence')
+parser.add_argument("song", default='cycle_mask_full', nargs='?')
+parser.add_argument('--ss', default='', dest='scene_sequence')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
@@ -129,6 +129,8 @@ df_scene_sequence2
 
 scene_to_section_dict  = df_scene_sequence2[['scene','section']].set_index('scene')['section'].to_dict()
 
+scene_order_lookup = df_scene_sequence2['scene'].reset_index().set_index('scene')['index'].to_dict()
+
 #%%
 path = []
 path_section_list = []
@@ -164,7 +166,7 @@ for idx, df_path_section in df_scene_sequence2.groupby('path_section'):
     # find all simple paths between start and end, that are of total_duraiton in length
 
 
-    max_duration_add = 10
+    max_duration_add = 20
 
     for j in range(max_duration_add):
         max_duration = total_duration + j
@@ -178,17 +180,19 @@ for idx, df_path_section in df_scene_sequence2.groupby('path_section'):
     if len(all_paths) == 0:
         print("start_node: ", start_node)
         print("end_node: ", end_node)
-        print("subgraph nodes: ", subgraph.nodes)
+        print("subgraph nodes: ", sorted(subgraph.nodes))
         raise ValueError("No valid paths found")
 
     all_paths_order = []
 
     for subpath_candidate in all_paths:
         scene_list = [file_to_scene_dict[node] for node in subpath_candidate]
+        scene_order = [scene_order_lookup[scene] for scene in scene_list]
 
         # check that scene_list goes in order 's2', 's3', 's4', etc.
-        sorted_scene_list = sorted(scene_list, key=lambda x: float(x[1:]))
-        if scene_list == sorted_scene_list:
+        # sorted_scene_list = sorted(scene_list, key=lambda x: float(x[1:]))
+        sorted_scene_order = sorted(scene_order)
+        if scene_order == sorted_scene_order:
             all_paths_order.append(subpath_candidate)
 
     if len(all_paths_order) == 0:
@@ -217,8 +221,10 @@ for idx, df_path_section in df_scene_sequence2.groupby('path_section'):
 scene_list = [file_to_scene_dict[node] for node in path]
 section_list = [scene_to_section_dict[scene] for scene in scene_list]
 
+
 #%%
-list(subgraph.nodes)
+
+scene_list
 
 #%%
 
@@ -246,7 +252,8 @@ df_transitions = gen_df_transitions(G_sequence,path_edges,section_list,song_base
 
 # add path section list as second column
 df_transitions['path_section'] = path_section_list
-cols = ['path_section']  + [col for col in df_transitions if col != 'path_section']
+first_cols = ['path_section','section']
+cols = first_cols + [col for col in df_transitions if col not in first_cols]
 df_transitions = df_transitions[cols]
 
 check_input_image_folders_exist(df_transitions)
