@@ -12,7 +12,7 @@ echo "Examining existing transitions for $song"
 python examine_existing.py $song --ss $scene_sequence
 
 echo "generating story"
-python story_nx.py $song --ss $scene_sequence
+python story_nx_sections.py $song --ss $scene_sequence
 
 echo "generating movie"
 python gen_movie.py $song 
