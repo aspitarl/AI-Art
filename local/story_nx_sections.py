@@ -35,10 +35,10 @@ from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
 
 parser = argparse.ArgumentParser()
-parser.add_argument("song", default='pipey', nargs='?')
-parser.add_argument('--ss', default='kv', dest='scene_sequence')
-# args = parser.parse_args()
-args = parser.parse_args("") # Needed for jupyter notebook
+parser.add_argument("song", default='emit', nargs='?')
+parser.add_argument('--ss', default='kv1', dest='scene_sequence')
+args = parser.parse_args()
+# args = parser.parse_args("") # Needed for jupyter notebook
 
 gdrive_basedir = os.getenv('base_dir')
 # gdrive_basedir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
@@ -87,12 +87,17 @@ for node in list(G.nodes):
 
 G_sequence = downselect_to_scene_sequence(G, scene_sequence_list)
 
-# %%
-G_sequence
+
+
 # %%
 import re
 
 df_scene_sequence2 = df_scene_sequence.copy()
+
+# if first row start value is NaN, raise error
+
+if pd.isna(df_scene_sequence2['start'].iloc[0]):
+    raise ValueError("First row start value is NaN, need a start image") 
 
 df_scene_sequence2['start'] = df_scene_sequence2['start'].ffill()
 
@@ -159,7 +164,7 @@ for idx, df_path_section in df_scene_sequence2.groupby('path_section'):
     # find all simple paths between start and end, that are of total_duraiton in length
 
 
-    max_duration_add = 5
+    max_duration_add = 10
 
     for j in range(max_duration_add):
         max_duration = total_duration + j
@@ -171,6 +176,9 @@ for idx, df_path_section in df_scene_sequence2.groupby('path_section'):
             break
     
     if len(all_paths) == 0:
+        print("start_node: ", start_node)
+        print("end_node: ", end_node)
+        print("subgraph nodes: ", subgraph.nodes)
         raise ValueError("No valid paths found")
 
     all_paths_order = []
@@ -179,7 +187,7 @@ for idx, df_path_section in df_scene_sequence2.groupby('path_section'):
         scene_list = [file_to_scene_dict[node] for node in subpath_candidate]
 
         # check that scene_list goes in order 's2', 's3', 's4', etc.
-        sorted_scene_list = sorted(scene_list, key=lambda x: int(x[1:]))
+        sorted_scene_list = sorted(scene_list, key=lambda x: float(x[1:]))
         if scene_list == sorted_scene_list:
             all_paths_order.append(subpath_candidate)
 
@@ -210,12 +218,13 @@ scene_list = [file_to_scene_dict[node] for node in path]
 section_list = [scene_to_section_dict[scene] for scene in scene_list]
 
 #%%
-
-path
+list(subgraph.nodes)
 
 #%%
 
-path_section_list
+s1_nodes = [node for node in G_sequence.nodes if G_sequence.nodes[node]['scene'] == 's1']
+
+s1_nodes
 
 #%%
 path_edges = list(zip(path,path[1:]))
