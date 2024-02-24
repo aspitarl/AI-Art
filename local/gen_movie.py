@@ -5,23 +5,25 @@ import argparse
 
 from aa_utils.story import generate_text_for_ffmpeg, generate_output_video
 
-from dotenv import load_dotenv; load_dotenv()
+from dotenv import load_dotenv; load_dotenv(override=True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-parser.add_argument('-i', default='trans_sequence_gen', dest='input_transitions_filename')
-parser.add_argument('-o', default='story_long', dest='output_filename')
+parser.add_argument('-i', default='', dest='input_transitions_filename')
+parser.add_argument('-o', default='sections', dest='output_folder')
 parser.add_argument('--fps', default=10, type=int, dest='fps')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
 gdrive_basedir = os.getenv('base_dir')
+print(gdrive_basedir)
 
 
 song_basedir = os.path.join(gdrive_basedir, args.song)
 story_dir = os.path.join(song_basedir, 'story')
 
-fp_transitions = os.path.join(story_dir, '{}.csv'.format(args.input_transitions_filename))
+name_trans_sequence = 'trans_sequence' if args.input_transitions_filename == '' else "trans_sequence_{}".format(args.input_transitions_filename)
+fp_transitions = os.path.join(story_dir, '{}.csv'.format(name_trans_sequence))
 
 df_transitions = pd.read_csv(fp_transitions, index_col=0)
 
@@ -55,9 +57,15 @@ df_transitions[['c1', 'c2']] = df_temp[['c1', 'c2']]
 #TODO: just using this to determine file path, but reversed should already be accurate?
 df_transitions = construct_input_image_folder_paths(df_transitions, song_basedir, forward_c_pairs)
 
+
 #%%
 
-out_dir = os.path.join(story_dir, 'sections')
+out_dir = os.path.join(story_dir, args.output_folder)
+if not os.path.exists(out_dir):
+    os.makedirs(out_dir)
+
+
+df_transitions.to_csv(pjoin(out_dir, 'final_transitions.csv'))
 
 for section, df in df_transitions.groupby('section'):
 
@@ -70,5 +78,28 @@ for section, df in df_transitions.groupby('section'):
     with open(os.path.join(out_dir, 'videos.txt'), 'w') as f:
         f.write(out_txt)
 
-    generate_output_video(args.fps, out_dir, "{}_{}.mov".format(args.output_filename, section ))
+    generate_output_video(args.fps, out_dir, "section_{}.mov".format(section))
+
+
+#%%
+
+# concatenate all output videos into one video called sections_combined.mov in the story_dir
+
+# use out_text to make a text file that can be used by ffmpeg to make a movie
+import subprocess
+
+with open(os.path.join(story_dir, 'videos.txt'), 'w') as f:
+
+
+    for section in df_transitions['section'].unique():
+
+        f.write("file '{}/section_{}.mov'\n".format(out_dir, section))
+
+    # generate_output_video(args.fps, story_dir, "sections_combined.mov")
+
+    # concatenate the videos with subprocess
+
+os.chdir(story_dir)
+
+subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-c', 'mjpeg', '-q:v', '3', '-r', str(args.fps), '{}_combined.mov'.format(out_dir)])
 

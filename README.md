@@ -9,10 +9,12 @@ These codes output images and movides to a specified directory. Create a file in
 
 ```
 base_dir="path/to/your/AI-Art/Gdrive/folder"
-REPO_DIR="path/to/this/repository"
+repo_dir="path/to/this/repository"
 ```
 
 The codes were designed on a combination of cloud environment (google cloud) for generation of images, as well as local machine for generating metadata and combining images into movies. The codes for each enviroment as well as python requirments are in respective folders
+
+
 
 # Movie generation workflow
 
@@ -38,20 +40,10 @@ transfer back images to local
 ## Generate Transitions
 
 ### local
-Pick images and put in `GDrive/AI-Art/<song>/scenes/<scene_name>
-TODO: script to Auto make these folders by prompt name
 
-create `prompt_data/scene_sequence.csv` with the order of desired scenes and duration (duration is only used iwht `story.py`)
+gen_ss.sh has the sequence of steps to make a song
 
-After images are in scene folder
-run `gen_all_transitions.sh <song>` to generate intra and interscene transitions and transfer to cloud
+### Folder structure
 
-### cloud
-
-run `generate_transitions.py`
-
-transfer back transitions to local computer
-
-## Making Transition story
-
-run `story.py <song>`
+transition_sequence.csv - final sequence used by ffmpeg to generate a movie
+transition_sequence_gen.csv - sequence generated for image creation, i.e. known path through graph

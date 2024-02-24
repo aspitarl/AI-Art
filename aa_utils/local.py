@@ -38,6 +38,25 @@ def build_graph_scenes(scene_dict):
     Create a graph of all possible transitions in the scene sequence
     if a list of existing transitions is provided, add an attribute to each edge indicating whether it exists 
     """
+
+    # check if any nodes are in multiple scenes in scene_dict
+    all_values = [item for sublist in scene_dict.values() for item in sublist]
+    if len(all_values) != len(set(all_values)):
+        # print out which scenes have duplicate key 
+    # Find and print scenes with duplicate items
+        seen = set()
+        duplicates = set()
+        for scene, items in scene_dict.items():
+            for item in items:
+                if item in seen:
+                    duplicates.add(item)
+                seen.add(item)
+        if duplicates:
+            print(f"Duplicate items found in scenes: {duplicates}")
+
+
+        raise ValueError("Duplicate strings found across different keys in scene_dict")
+
     G = nx.Graph()
 
     # add nodes for each image in each scene
@@ -267,7 +286,22 @@ def gen_path_sequence_fullG(G, df_scene_sequence):
 
             # get a random node
             
-            node_to = np.random.choice([n for n in scene_G.nodes() if n != node_from]).item()
+            # node_to = np.random.choice([n for n in scene_G.nodes() if n != node_from]).item()
+            
+            # Go to a random node that is not already in path_edges
+            existing_nodes_in_path = [n for e in path_edges for n in e]
+            valid_nodes = [n for n in scene_G.nodes() if n not in existing_nodes_in_path]
+
+            if len(valid_nodes) == 0:
+                print("No valid nodes found in scene {}, existing nodes in path: {}".format(scene_from, existing_nodes_in_path))
+                print("scene nodes: {}".format(scene_nodes))
+                print("scene_G nodes: {}".format(scene_G.nodes()))
+                print("scene_G edges: {}".format(scene_G.edges()))
+                print("path_edges: {}".format(path_edges))
+                raise ValueError()
+
+
+            node_to = np.random.choice(valid_nodes).item()
             
 
             # find a path between the two nodes

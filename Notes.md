@@ -80,3 +80,15 @@ Installing collected packages: transformers
 Successfully installed transformers-4.26.1
 
 ```
+
+# 2024-01-24
+
+Returning after break to try and finish emit pipey and cycle. 
+
+
+## emit
+Trying to regenerate scene sequence kv1. Appears transitions downloaded on 12-13 were not completely downloaded (partially black) images causing "png @ 0x chunk too big error " in ffmpeg. Think they would have to be generated as I deleted images from gdrive. Removed those images to another folder 'TI_bad' . Cant remember if they were just extra or completed the graph. Emit movie generation appears to work ok now, but final transitions file is pretty different from kv1. 
+
+## pipey
+
+scene sequence kv_fix is latest and assuming is right. movie generates without issue and new images appear to be full. 

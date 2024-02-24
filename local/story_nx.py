@@ -11,12 +11,12 @@ from aa_utils.local import image_names_from_transition, build_graph_scenes, chec
 from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, generate_text_for_ffmpeg, generate_output_video
 from aa_utils.plot import plot_scene_sequence
 
-from dotenv import load_dotenv; load_dotenv()
+from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
-parser.add_argument('--ss', default='scene_sequence_3_la', dest='scene_sequence_list')
+parser.add_argument('--ss', default='', dest='scene_sequence')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
@@ -25,7 +25,9 @@ gdrive_basedir = os.getenv('base_dir')
 input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
 
 #%%
-fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence_list))
+
+scene_sequence_name = "scene_sequence" if args.scene_sequence == '' else "scene_sequence_{}".format(args.scene_sequence)
+fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(scene_sequence_name))
 df_scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)
 
 scene_sequence_list = df_scene_sequence['scene'].values.tolist()
@@ -243,5 +245,5 @@ df_transitions = gen_df_transitions(G_sel,path_edges,section_list,song_basedir)
 
 check_input_image_folders_exist(df_transitions)
 
-df_transitions.to_csv(os.path.join(out_dir, 'trans_sequence_long.csv'))
+df_transitions.to_csv(os.path.join(out_dir, 'trans_sequence.csv'))
 
