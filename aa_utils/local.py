@@ -55,7 +55,7 @@ def build_graph_scenes(scene_dict):
             print(f"Duplicate items found in scenes: {duplicates}")
 
 
-        raise ValueError("Duplicate strings found across different keys in scene_dict")
+        raise ValueError("Duplicate strings found across different keys in scene_dict: {}".format(duplicates))
 
     G = nx.Graph()
 

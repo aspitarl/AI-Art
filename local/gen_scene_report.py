@@ -29,7 +29,7 @@ scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
 # scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
 
 scene_sequence_name = "scene_sequence" if args.scene_sequence == '' else "scene_sequence_{}".format(args.scene_sequence)
-fp_scene_sequence = os.path.join(gdrive_basedir, args.song, 'prompt_data', '{}.csv'.format(scene_sequence_name))
+fp_scene_sequence = os.path.join(os.getenv('repo_dir'), 'song_meta', args.song, '{}.csv'.format(scene_sequence_name))
 scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
 # Make a mapping from file to folder name for each scene folder in scene dir
