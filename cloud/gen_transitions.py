@@ -1,5 +1,5 @@
 # %%
-song_name = 'pipey' #@param {type:"string"}
+song_name = 'emit' #@param {type:"string"}
 res_height = 512 #@param
 res_width = 512 #@param
 
