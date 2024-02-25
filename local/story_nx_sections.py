@@ -163,7 +163,7 @@ for idx, df_path_section in df_scene_sequence2.groupby('path_section'):
         subgraph = G_sequence.subgraph([*path_section_nodes, *next_scene_nodes])
 
 
-    total_duration = df_path_section['duration'].sum()
+    total_duration = df_path_section['duration'].sum() - 1
 
     start_node = df_path_section['start'].iloc[0]
 
@@ -211,6 +211,8 @@ for idx, df_path_section in df_scene_sequence2.groupby('path_section'):
     # filter out paths that are not of max_path_length in length
 
     all_paths = [path for path in all_paths if len(path) == max_path_length]
+
+    print("Number of paths: ", len(all_paths))
 
     # selected_path = np.random.choice(all_paths)
     selected_path_idx = np.random.randint(len(all_paths))
