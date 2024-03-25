@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "cwd": "${fileDirname}",
-            "args": ["pipey", "-ss", "kv"]
+            // "args": ["pipey", "-ss", "kv"]
 
         }
     ]
