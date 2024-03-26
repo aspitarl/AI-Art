@@ -1,6 +1,22 @@
 import os
 from os.path import join as pjoin
 
+
+
+def load_df_scene_sequence(scene_sequence, song_name, dir_option='gdrive'):
+    scene_sequence_name = "scene_sequence" if scene_sequence == '' else "scene_sequence_{}".format(scene_sequence)
+    if dir_option == 'gdrive':
+        fp_scene_sequence = pjoin(os.getenv('base_dir'), song_name, 'prompt_data', '{}.csv'.format(scene_sequence_name))
+        print("loading scene sequence from {}".format(fp_scene_sequence))
+    elif dir_option == 'repo':
+        fp_scene_sequence = pjoin(os.getenv('repo_dir'), 'song_meta', song_name, '{}.csv'.format(scene_sequence_name))
+        print("loading scene sequence from {}".format(fp_scene_sequence))
+    else:
+        raise ValueError("dir_option must be 'gdrive' or 'repo'")
+    df_scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)
+    return df_scene_sequence
+
+
 def gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=None):
     """
     Generates a mapping from scene name to a list of filenames in that scene
