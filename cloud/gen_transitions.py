@@ -1,7 +1,7 @@
 # %%
-song_name = 'emit' #@param {type:"string"}
-res_height = 512 #@param
-res_width = 512 #@param
+song_name = 'window' #@param {type:"string"}
+res_height = 564 #@param
+res_width = 1024 #@param
 
 
 import os
@@ -93,8 +93,8 @@ df_transitions
 
 # %%
 pipe = StableDiffusionPipeline.from_pretrained(
-                                                # "stabilityai/stable-diffusion-2-1",
-                                                "CompVis/stable-diffusion-v1-4",
+                                                "stabilityai/stable-diffusion-2-1",
+                                                # "CompVis/stable-diffusion-v1-4",
                                                 torch_dtype=torch.float16,
                                                 safety_checker=None,
                                                 cache_dir='model_cache'
@@ -114,8 +114,8 @@ skip_existing = True
 generator = torch.Generator(device="cuda")
 
 max_seed_characters = 4 # Take the first few numbers of the seed for the name
-num_interpolation_steps = 50
-num_inference_steps = 50
+num_interpolation_steps = 30
+num_inference_steps = 40
 
 
 T = np.linspace(0.0, 1.0, num_interpolation_steps)
