@@ -190,11 +190,11 @@ for i, (idx, row) in enumerate(df_scene_sequence.iterrows()):
             # path_to_next_scene = all_simple_paths[i_max]
 
             # pick a random path from all_simple_paths
-            # idx_random = np.random.randint(len(all_simple_paths))
-            # path_to_next_scene = all_simple_paths[idx_random]
+            idx_random = np.random.randint(len(all_simple_paths))
+            path_to_next_scene = all_simple_paths[idx_random]
 
             # pick the longest path from all_simple_paths
-            path_to_next_scene = max(all_simple_paths, key=len)
+            # path_to_next_scene = max(all_simple_paths, key=len)
 
             # print("found simple path: {}".format(path_to_next_scene ))
 
