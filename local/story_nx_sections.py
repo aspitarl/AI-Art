@@ -93,6 +93,10 @@ import re
 
 df_scene_sequence2 = df_scene_sequence.copy()
 
+# if the start value contains spaces, split on spaces and take a random value. This column can contain missing values. 
+df_scene_sequence2['start'] = df_scene_sequence2['start'].apply(lambda x: np.random.choice(x.split(',')) if isinstance(x, str) else x)
+
+
 # if first row start value is NaN, raise error
 
 if pd.isna(df_scene_sequence2['start'].iloc[0]):
@@ -177,7 +181,7 @@ for idx, df_path_section in df_scene_sequence2.groupby('path_section'):
 
 
     max_duration_add = 20
-
+    print("looking for paths from {} to {}".format(start_node, end_node))
     for j in range(max_duration_add):
         max_duration = total_duration + j
         print("Trying max_duration: ", max_duration)
