@@ -93,6 +93,33 @@ import re
 
 df_scene_sequence2 = df_scene_sequence.copy()
 
+# if the start value is 'random', pick a random start value from the scene. But we need to select only from nodes that are connected to the previous scene
+# I think this still could result in a disconnected graph, if we connect to a path in the previous scene that is not connected to the rest of the scene.
+nodes_to_choose_from = []
+
+for idx, row in df_scene_sequence2.iterrows():
+    if row['start'] == 'random':
+
+        # If the first row, then just pick a random start image from the scene
+        if idx == 0:
+            scene = row['scene']
+            scene_nodes = [node for node in G_sequence.nodes if G_sequence.nodes[node]['scene'] == scene]
+            df_scene_sequence2['start'].iloc[idx] = np.random.choice(scene_nodes)
+            continue
+
+        scene = row['scene']
+        prev_scene = df_scene_sequence2['scene'].iloc[idx-1]
+        prev_scene_nodes = [node for node in G_sequence.nodes if G_sequence.nodes[node]['scene'] == prev_scene]
+        scene_nodes = [node for node in G_sequence.nodes if G_sequence.nodes[node]['scene'] == scene]
+
+        connected_nodes = [node for node in scene_nodes if any([G_sequence.has_edge(node, prev_node) for prev_node in prev_scene_nodes])]
+        nodes_to_choose_from.append(connected_nodes)
+
+        df_scene_sequence2['start'].iloc[idx] = np.random.choice(connected_nodes)
+
+# alternative method, pick a random start value from the scene. This might not be connected to the previous scene
+# df_scene_sequence2['start'] = df_scene_sequence2['start'].apply(lambda x: np.random.choice(G_sequence.nodes) if x == 'random' else x)
+
 # if the start value contains spaces, split on spaces and take a random value. This column can contain missing values. 
 df_scene_sequence2['start'] = df_scene_sequence2['start'].apply(lambda x: np.random.choice(x.split(',')) if isinstance(x, str) else x)
 
