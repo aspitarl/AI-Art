@@ -49,8 +49,41 @@ trans_list = [image_names_from_transition(t) for t in trans_list]
 G = build_graph_scenes(scene_dict)
 G = check_existing_transitions(G, trans_list)
 
+
+# for edge in G.edges():
+#     edge_rev = (edge[1], edge[0])
+#     if edge in existing_transitions or edge_rev in existing_transitions:
+#         G.edges[edge]['exists'] = True
+#     else:
+#         G.edges[edge]['exists'] = False
+
+# iterate through edges, and indicate if the edge in an interscene or intrascene transition
+
+for edge in G.edges():
+    node1 = edge[0]
+    node2 = edge[1]
+
+    node1_scene = file_to_scene_dict[node1]
+    node2_scene = file_to_scene_dict[node2]
+
+    if node1_scene == node2_scene:
+        G.edges[edge]['transition_type'] = 'intra'
+    else:
+        G.edges[edge]['transition_type'] = 'inter'
+
 if not os.path.exists(pjoin(gdrive_basedir, args.song, 'story')): os.makedirs(pjoin(gdrive_basedir, args.song, 'story'))
 nx.write_gexf(G, pjoin(gdrive_basedir, args.song, 'story', 'graph_existing_transitions.gexf'))
+
+#%%
+# drop all edges that are not existing transitions
+
+edges_to_drop = [edge for edge in G.edges() if not G.edges[edge]['exists']]
+G_only_existing = G.copy()
+
+
+G_only_existing.remove_edges_from(edges_to_drop)
+
+nx.write_gexf(G_only_existing, pjoin(gdrive_basedir, args.song, 'story', 'graph_only_existing_transitions.gexf'))
 
 
 #%%
