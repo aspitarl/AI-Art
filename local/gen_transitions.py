@@ -32,6 +32,9 @@ scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
 from aa_utils.local import load_df_scene_sequence
 df_scene_sequence = load_df_scene_sequence(args.scene_sequence, args.song, dir_option=os.getenv('ss_dir_option'))
 
+# remove 'random' from the start column, replacing with nan
+df_scene_sequence['start'] = df_scene_sequence['start'].replace('random', np.nan)
+
 scene_sequence_list = df_scene_sequence['scene'].values.tolist()
 
 scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence_list, truncate_digits=None)
