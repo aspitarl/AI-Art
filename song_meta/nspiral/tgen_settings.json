@@ -1,0 +1,8 @@
+{
+    "song_name": "nspiral",
+    "res_height": 512,
+    "res_width": 512,
+    "interpolation_steps": 50, 
+    "inference_steps": 50,  
+    "model_string": "CompVis/stable-diffusion-v1-4"
+}
