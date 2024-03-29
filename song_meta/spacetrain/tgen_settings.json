@@ -1,0 +1,8 @@
+{
+    "song_name": "spacetrain",
+    "res_height": 564,
+    "res_width": 1024,
+    "interpolation_steps": 30, 
+    "inference_steps": 40,  
+    "model_string": "stabilityai/stable-diffusion-2-1"
+}
