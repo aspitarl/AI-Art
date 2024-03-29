@@ -106,5 +106,5 @@ with open(os.path.join(out_dir, 'videos.txt'), 'w') as f:
 
 os.chdir(out_dir)
 
-subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-c', 'mjpeg', '-q:v', '3', '-r', str(args.fps), '{}_combined.mov'.format(out_dir)])
+subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-c', 'mjpeg', '-q:v', '3', '-r', str(args.fps), '{}/{}_combined.mov'.format(out_dir, args.output_folder)])
 
