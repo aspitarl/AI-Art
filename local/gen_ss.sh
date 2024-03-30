@@ -71,7 +71,8 @@ function main {
         [ "$stop" -eq 1 ] && return
     fi
 
-    stop_script "test"
+    # Can use this to test stopping the script
+    # stop_script "test"
 
 }
 # Call the main function with all command line arguments
