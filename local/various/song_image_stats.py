@@ -1,11 +1,10 @@
 #%%
 
-folder_in = r'G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle\spacetrain\transition_images'
 
 import os
 import pandas as pd
 
-folder_in = r'G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle\spacetrain\transition_images'
+folder_in = r'G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle\emit\transition_images'
 
 # Initialize an empty list to store the results
 results = []
@@ -33,7 +32,7 @@ df['num_images'].value_counts()
 
 count_values = set(df['num_images'].values)
 
-remove_values = [x for x in count_values if x not in [30]]
+remove_values = [x for x in count_values if x not in [50]]
 
 remove_values
 # %%
@@ -58,3 +57,5 @@ for folder_name in df[df['num_images'].isin(remove_values)]['folder_name']:
     folder_in_full = os.path.join(folder_in, folder_name)
     folder_out_full = os.path.join(folder_out, folder_name)
     shutil.move(folder_in_full, folder_out_full)
+
+# %%
