@@ -1,0 +1,9 @@
+{
+    "song_name": "cycle_mask_low",
+    "res_height": 564,
+    "res_width": 1024,
+    "interpolation_steps": 10, 
+    "inference_steps": 10,  
+    "model_string": "runwayml/stable-diffusion-v1-5",
+    "controlnet_string": "lllyasviel/sd-controlnet-scribble"
+}
