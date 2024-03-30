@@ -1,31 +1,78 @@
 # Script to be run after transitions have been generated for a song.
+# Having to do a bunch of crazy stuff sugggested by copilot to exit the script if a python script fails
+# exit 1 doesn't work because it terminates the terminal
 
 #!/bin/bash
 
-# Assign the first positional argument to the variable song
-song=$1
+# Function to stop the script execution without terminating the terminal
+function stop_script {
+  echo "$1 failed"
+  stop=1
+}
 
-# Assign the second positional argument to the variable scene_sequence
-scene_sequence=$2
+# Initialize a flag
+stop=0
 
-# if scene sequence not provide use default
-if [ -z "$scene_sequence" ]
-then
-echo "Examining existing transitions for $song"
-python examine_existing.py $song 
 
-echo "generating story"
-python story_nx_sections.py $song 
+# Wrap your script inside a function
+function main {
 
-else
+    # Initialize the variables
+    song=$1
+    scene_sequence=""
+    output_name=""
 
-echo "Examining existing transitions for $song"
-python examine_existing.py $song --ss $scene_sequence
+    # Parse the arguments
+    while (( "$#" )); do
+    case "$1" in
+        --ss)
+        scene_sequence="$2"
+        shift 2
+        ;;
+        -o)
+        output_name="$2"
+        shift 2
+        ;;
+        --) # end argument parsing
+        shift
+        break
+        ;;
+        -*|--*=) # unsupported flags
+        echo "Error: Unsupported flag $1" >&2
+        exit 1
+        ;;
+        *) # preserve positional arguments
+        PARAMS="$PARAMS $1"
+        shift
+        ;;
+    esac
+    done
+    # set positional arguments in their proper place
+    eval set -- "$PARAMS"
+    
+    # Run the Python scripts and stop if any of them fail
+    if [ -n "$scene_sequence" ]; then
+        python examine_existing.py $song --ss $scene_sequence || stop_script 'examine_existing.py'
+        [ "$stop" -eq 1 ] && return
+        python story_nx_sections.py $song --ss $scene_sequence || stop_script 'story_nx_sections.py'
+        [ "$stop" -eq 1 ] && return
+    else
+        python examine_existing.py $song || stop_script 'examine_existing.py'
+        [ "$stop" -eq 1 ] && return
+        python story_nx_sections.py $song || stop_script 'story_nx_sections.py'
+        [ "$stop" -eq 1 ] && return
+    fi
 
-echo "generating story"
-python story_nx_sections.py $song --ss $scene_sequence
+    if [ -n "$output_name" ]; then
+        python gen_movie.py $song -o $output_name || stop_script 'gen_movie.py'
+        [ "$stop" -eq 1 ] && return
+    else
+        python gen_movie.py $song || stop_script 'gen_movie.py'
+        [ "$stop" -eq 1 ] && return
+    fi
 
-fi
+    stop_script "test"
 
-echo "generating movie"
-python gen_movie.py $song 
+}
+# Call the main function with all command line arguments
+main "$@"
