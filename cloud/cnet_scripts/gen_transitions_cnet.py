@@ -1,10 +1,4 @@
 # %%
-song_name = 'cycle_mask' #@param {type:"string"}
-res_height = 564 #@param
-res_width = 1024 #@param
-
-
-
 from PIL import Image
 import os
 import pandas as pd
@@ -13,27 +7,52 @@ from IPython.display import clear_output
 from aa_utils.sd import generate_latent, get_text_embed, slerp
 import torch
 from diffusers import StableDiffusionPipeline
+import dotenv
+import argparse
+import json
+
 
 import dotenv; dotenv.load_dotenv()
 
 from PIL import Image
 mask_image = Image.open(os.path.join('masks', "cyclist_side.png"))
 
+repo_dir = os.getenv('REPO_DIR')
+
+# add arg for song name 
+
+parser = argparse.ArgumentParser(description='Generate transitions between prompts')
+parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
+args = parser.parse_args()
+song_name = args.song_name
+
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
 output_basedir = os.path.join(os.getenv('REPO_DIR'), 'cloud','output', song_name, 'transition_images')
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
-fp = os.path.join(os.getenv('REPO_DIR'), 'cloud','prompt_data', 'prompt_image_definitions.csv')
+dir_prompt_data = os.path.join(repo_dir, 'cloud', 'prompt_data', song_name)
+song_meta_dir = os.path.join(repo_dir, 'song_meta', song_name)
+
+# load json file with song settings
+json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
+
+with open(json_fp, 'r') as f:
+    settings = json.load(f)
+
+res_height = settings['res_height']
+res_width = settings['res_width']
+
+fp = os.path.join(song_meta_dir, 'prompt_image_definitions.csv')
 df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
 
-fp = os.path.join(os.getenv('REPO_DIR'), 'cloud','prompt_data', 'intrascene_transitions.csv')
+fp = os.path.join(dir_prompt_data, 'intrascene_transitions.csv')
 df_trans_intrascene = pd.read_csv(fp, index_col=0).dropna(how='all')
-fp = os.path.join(os.getenv('REPO_DIR'), 'cloud','prompt_data', 'interscene_transitions.csv')
+fp = os.path.join(dir_prompt_data, 'interscene_transitions.csv')
 df_trans_interscene = pd.read_csv(fp, index_col=0).dropna(how='all')
 
-df_transitions = pd.concat([df_trans_intrascene, df_trans_interscene])
+df_transitions = pd.concat([df_trans_interscene, df_trans_intrascene])
 
-df_existing = pd.read_csv(os.path.join(os.getenv('REPO_DIR'), 'cloud','prompt_data', 'existing_transitions.csv'), index_col=0)
+df_existing = pd.read_csv(os.path.join(dir_prompt_data, 'existing_transitions.csv'), index_col=0)
 
 
 #%%
@@ -74,7 +93,8 @@ print("Removed {} transitions that already exist".format(len_before - len_after)
 
 # %%
 df_transitions = df_transitions.where(df_transitions['compute'] == 'y').dropna(how='all')
-
+# Get the number of rows before dropping duplicates
+num_rows_before = df_transitions.shape[0]
 df_transitions = df_transitions.astype({
     'from_name': str,
     'from_seed': int,
@@ -84,6 +104,16 @@ df_transitions = df_transitions.astype({
     'duration':float
 
 })
+
+# Drop duplicates
+df_transitions = df_transitions.drop_duplicates()
+
+# Get the number of rows after dropping duplicates
+num_rows_after = df_transitions.shape[0]
+
+# Calculate and print the number of rows dropped
+num_rows_dropped = num_rows_before - num_rows_after
+print(f"Dropped {num_rows_dropped} duplicate rows for transitions")
 
 if df_prompt.index.duplicated().any():
   print("Warning: Duplicated prompts found, dropping duplicates")
@@ -105,9 +135,12 @@ import torch
 
 model_cache_dir = os.path.join(os.getenv('REPO_DIR'), 'cloud','model_cache')
 
-controlnet = ControlNetModel.from_pretrained("lllyasviel/sd-controlnet-scribble", torch_dtype=torch.float32)
+controlnet = ControlNetModel.from_pretrained(
+                                            settings['controlnet_string'], 
+                                            torch_dtype=torch.float32
+                                            )
 pipe = StableDiffusionControlNetPipeline.from_pretrained(
-    "runwayml/stable-diffusion-v1-5", 
+    settings['model_string'], 
     controlnet=controlnet, 
     torch_dtype=torch.float32, 
     safety_checker=None,
@@ -134,8 +167,8 @@ skip_existing = True
 generator = torch.Generator(device="cuda")
 
 max_seed_characters = 4 # Take the first few numbers of the seed for the name
-num_interpolation_steps = 20
-num_inference_steps = 25
+num_interpolation_steps = settings['interpolation_steps']
+num_inference_steps = settings['inference_steps']
 
 
 T = np.linspace(0.0, 1.0, num_interpolation_steps)
