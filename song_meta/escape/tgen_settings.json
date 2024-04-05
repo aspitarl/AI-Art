@@ -1,8 +1,9 @@
 {
     "song_name": "escape",
-    "res_height": 564,
+    "res_height": 576,
     "res_width": 1024,
     "interpolation_steps": 15, 
     "inference_steps": 15,  
-    "model_string": "stabilityai/stable-diffusion-2-1"
+    "model_string": "stabilityai/stable-diffusion-2-1",
+    "seed_delimter": ", "
 }

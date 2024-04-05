@@ -1,2 +1,4 @@
 name,prompt,seeds,guidance_scale
-geo1,"geometric shapes in space","1234",7.5
+geo1,geometric shapes in space,"6497, 3676, 3855, 3021",7.5
+geo2,"a geometric shape floating through space on fire, lines","3243, 2002, 1975, 8783", 7.5
+geo3,geometric flames floating through cosmos,"6914, 2730, 3455, 2605, 8962, 2031, 2698", 7.5
