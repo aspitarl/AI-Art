@@ -14,11 +14,15 @@ repo_dir = os.getenv('REPO_DIR')
 
 # add arg for song name 
 
-# parser = argparse.ArgumentParser(description='Generate transitions between prompts')
-# parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
-# args = parser.parse_args()
-# song_name = args.song_name
-song_name = 'escape'
+parser = argparse.ArgumentParser(description='Generate transitions between prompts')
+parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
+parser.add_argument('--prompt_name', '-p', type=str, default="geo1")
+parser.add_argument('--num_images', '-n', type=int, default=4)
+args = parser.parse_args()
+# args=None
+
+song_name = args.song_name if args.song_name else 'escape'
+num_images = args.num_images if args.num_images else 4
 
 
 song_meta_dir = os.path.join(repo_dir, 'song_meta', song_name)
@@ -48,14 +52,30 @@ df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
 with open(json_fp, 'r') as f:
     settings = json.load(f)
 
-name_sel = 'geo1'
+
+# if 'prompt_name' not in args:
+#     name_sel = 'geo1'
+# else:
+#     name_sel = args.prompt_name
+
+default_prompt = 'geo1'
+name_sel = args.prompt_name if args.prompt_name else default_prompt
+
 prompt = df_prompt['prompt'][name_sel]
 
+col_wrap = 2 
 # rows X cols of images. Reduce for speed and memory issues.
 rows = 2
 cols = 2
 
-num_images = rows*cols
+def calculate_rows_cols(num_images, col_wrap):
+    cols = col_wrap
+    rows = num_images // cols
+    if num_images % cols != 0:
+        rows += 1
+    return rows, cols
+
+rows, cols = calculate_rows_cols(args.num_images, col_wrap)
 
 # Make new random seeds in a hacky way. TODO: probably a function to generate seeds without making a generator instance.
 
@@ -84,7 +104,7 @@ grid
 # %%
 
 
-output_dir = os.path.join('output', 'explore', name_sel)
+output_dir = os.path.join('output', song_name, 'explore_images', name_sel)
 if not os.path.exists(output_dir): os.makedirs(output_dir)
 
 grid.save(os.path.join(output_dir, 'image_grid.png'))

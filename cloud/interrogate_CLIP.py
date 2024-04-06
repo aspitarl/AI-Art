@@ -7,6 +7,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Interrogate a CLIP model with an image.')
 
+parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
 parser.add_argument('--prompt_name', '-p', type=str, default="treestory_la",
                     help='Name of the prompt to interrogate.')
 
@@ -15,8 +16,10 @@ parser.add_argument('--starting_seed', '-s', type=str, default="3962",
 
 
 args = parser.parse_args()
+song_name = args.song_name
 
-image_folder = "cnet_scripts/output/explore/{}".format(args.prompt_name)
+# image_folder = "cnet_scripts/output/explore/{}".format(args.prompt_name)
+image_folder = os.path.join('output', song_name, 'prompt_images')
 
 # find the first image with starting_seed in the filename
 

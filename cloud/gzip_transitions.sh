@@ -22,9 +22,9 @@ for dir in "$input_dir"/*/; do
     # tar -czf "$filename_out" -C "$dir" transition_images
 
     # Define the output filename
-    filename_out="ti_gz/${song}_transitions_${timestamp}.tar"
+    filename_out="ti_gz/${song}_${timestamp}.tar"
     # Create a tar file without compression
-    tar -cf "$filename_out" -C "$dir" transition_images
+    tar -cf "$filename_out" -C "$dir" .
 
 
     # Create a zip file
