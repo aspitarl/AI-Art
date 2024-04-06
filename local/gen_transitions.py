@@ -66,6 +66,7 @@ nx.draw(G_path)
 # TODO: rework seed length to avoid this and truncation in geenral
 # TODO: this can't be obtained from the graph?
 dir_transitions = os.path.join(gdrive_basedir, args.song, 'transition_images')
+if not os.path.exists(dir_transitions): os.makedirs(dir_transitions)
 trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
 trans_list = [image_names_from_transition(t) for t in trans_list]
 
@@ -80,6 +81,7 @@ path_edges_truncate = [(node_to_trunc[e[0]], node_to_trunc[e[1]]) for e in path_
 
 plot_scene_sequence(G_plot, scene_sequence_list, scene_dict, path_edges=path_edges_truncate)
 
+if not os.path.exists(pjoin(gdrive_basedir, args.song, 'story')): os.makedirs(pjoin(gdrive_basedir, args.song, 'story'))
 plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_transition_gen.png'))
 
 # %%
