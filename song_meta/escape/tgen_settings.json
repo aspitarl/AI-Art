@@ -3,7 +3,7 @@
     "res_height": 576,
     "res_width": 1024,
     "interpolation_steps": 15, 
-    "inference_steps": 15,  
+    "inference_steps": 25,  
     "model_string": "stabilityai/stable-diffusion-2-1",
     "seed_delimter": ", "
 }
