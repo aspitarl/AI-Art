@@ -147,8 +147,6 @@ generator = torch.Generator(device="cuda")
 
 max_seed_characters = 4 # Take the first few numbers of the seed for the name
 num_interpolation_steps = settings['interpolation_steps']
-num_inference_steps = settings['inference_steps']
-
 
 T = np.linspace(0.0, 1.0, num_interpolation_steps)
 
@@ -216,7 +214,7 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
             prompt_embeds=embeds,
             guidance_scale=guidance_steps[i],
             latents = latents,
-            num_inference_steps = num_inference_steps
+            num_inference_steps = settings['inference_steps'] 
         )
 
       clear_output(wait=True)

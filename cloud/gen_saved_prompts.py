@@ -10,7 +10,7 @@ import json
 import dotenv
 import argparse
 
-from aa_utils.sd import generate_latent
+from aa_utils.sd import generate_latent, get_text_embed
 
 dotenv.load_dotenv()
 
@@ -81,6 +81,7 @@ skip_existing = True
 for name, row in df_prompt.iterrows():
   seeds = row['seeds'].split(seed_delimiter)
   seeds = [s.strip() for s in seeds]
+  seeds = [int(s) for s in seeds]
 
   prompt = row['prompt']
   guidance_scale = float(row['guidance_scale'])
@@ -93,13 +94,12 @@ for name, row in df_prompt.iterrows():
         print("{} already exists, skipping".format(output_fn))
         continue
 
-    generator.manual_seed(int(seed))
-
     latent = generate_latent(generator, seed, pipe, settings['res_height'] // 8, settings['res_width'] // 8)
+    text_embed = get_text_embed(prompt, pipe)
 
     with torch.autocast(device):
       images = pipe(
-          prompt,
+          prompt_embeds=text_embed,
           guidance_scale=guidance_scale,
           latents = latent,
           num_inference_steps=settings['inference_steps']
