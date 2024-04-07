@@ -228,18 +228,14 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         # latents = torch.lerp(from_latent, to_latent, t)
         latents = slerp(float(t), from_latent, to_latent)
 
-      
+        settings['pipe_kwargs']['image'] = mask_image      
 
         with torch.autocast('cuda'):
           images = pipe(
               prompt_embeds=embeds,
               guidance_scale=guidance_steps[i],
               latents = latents,
-              num_inference_steps = settings['inference_steps'],
-              control_guidance_start=0.1,
-              control_guidance_end=0.6,          
-              controlnet_conditioning_scale=0.8,
-              image=mask_image,
+              **settings['pipe_kwargs']
           )
 
         clear_output(wait=True)

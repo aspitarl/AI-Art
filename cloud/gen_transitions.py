@@ -199,7 +199,6 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
     # embed_steps = make_latent_steps(from_text_embed, to_text_embed, num_interpolation_steps)
     guidance_steps = np.linspace(guidance_scales[0], guidance_scales[1], num_interpolation_steps + 1)
 
-
     print("Transition {} out of {}".format(i_row, len(df_transitions)))
     print(output_name)
     for i, t in enumerate(tqdm(T)):
@@ -215,7 +214,7 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
               prompt_embeds=embeds,
               guidance_scale=guidance_steps[i],
               latents = latents,
-              num_inference_steps = settings['inference_steps'] 
+              **settings['pipe_kwargs']
           )
 
         clear_output(wait=True)

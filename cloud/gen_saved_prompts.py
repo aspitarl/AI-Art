@@ -102,7 +102,7 @@ for name, row in df_prompt.iterrows():
           prompt_embeds=text_embed,
           guidance_scale=guidance_scale,
           latents = latent,
-          num_inference_steps=settings['inference_steps']
+          **settings['pipe_kwargs']
       )
 
     output_image = images.images[0]
