@@ -88,10 +88,8 @@ print("Removed {} transitions that already exist".format(len_before - len_after)
 
 # %%
 df_transitions = df_transitions.where(df_transitions['compute'] == 'y').dropna(how='all')
-
 # Get the number of rows before dropping duplicates
 num_rows_before = df_transitions.shape[0]
-
 df_transitions = df_transitions.astype({
     'from_name': str,
     'from_seed': int,
@@ -99,6 +97,7 @@ df_transitions = df_transitions.astype({
     'to_seed':int,
     'compute':str,
     'duration':float
+
 })
 
 # Drop duplicates
@@ -209,6 +208,8 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         # latents = torch.lerp(from_latent, to_latent, t)
         latents = slerp(float(t), from_latent, to_latent)
 
+      
+
         with torch.autocast('cuda'):
           images = pipe(
               prompt_embeds=embeds,
@@ -225,7 +226,7 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         output_image.save(os.path.join(output_dir, "frame{}.png".format(output_number_string)))
 
 
-  # %%
+# %%
 
 
 
