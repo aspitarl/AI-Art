@@ -176,82 +176,82 @@ T = np.linspace(0.0, 1.0, num_interpolation_steps)
 from tqdm import tqdm
 
 for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
-  clear_output(wait=True)
+    clear_output(wait=True)
 
-  output_name = row.name
+    output_name = row.name
 
-  output_dir = os.path.join(output_basedir, output_name)
+    output_dir = os.path.join(output_basedir, output_name)
 
-  if os.path.exists(output_dir):
-      if skip_existing:
-          print("{} already exists, skipping".format(output_name))
-          continue
-      else:
-          print("{} already exists, deleting images".format(output_name))
-          for fn in os.listdir(output_dir):
-            os.remove(os.path.join(output_dir, fn))
-  else:
-      if not os.path.exists(output_dir): os.makedirs(output_dir)
+    if os.path.exists(output_dir):
+        if skip_existing:
+            print("{} already exists, skipping".format(output_name))
+            continue
+        else:
+            print("{} already exists, deleting images".format(output_name))
+            for fn in os.listdir(output_dir):
+              os.remove(os.path.join(output_dir, fn))
+    else:
+        if not os.path.exists(output_dir): os.makedirs(output_dir)
 
-  prompts = [
-      df_prompt['prompt'][row['from_name']],
-      df_prompt['prompt'][row['to_name']]
-      ]
+    prompts = [
+        df_prompt['prompt'][row['from_name']],
+        df_prompt['prompt'][row['to_name']]
+        ]
 
-  guidance_scales = [
-      df_prompt['guidance_scale'][row['from_name']],
-      df_prompt['guidance_scale'][row['to_name']]
-  ]
+    guidance_scales = [
+        df_prompt['guidance_scale'][row['from_name']],
+        df_prompt['guidance_scale'][row['to_name']]
+    ]
 
-  seeds = [row['from_seed'], row['to_seed']]
+    seeds = [row['from_seed'], row['to_seed']]
 
-  duration = row['duration']
-  fps = num_interpolation_steps/duration
-
-
-  latent_width = res_width // 8
-  latent_height = res_height // 8
-
-  from_latent = generate_latent(generator, seeds[0], pipe, latent_height, latent_width)
-  to_latent = generate_latent(generator, seeds[1], pipe, latent_height, latent_width)
-
-  from_text_embed = get_text_embed(prompts[0], pipe)
-  to_text_embed = get_text_embed(prompts[1], pipe)
-
-  # The tensor steps are len(num_interpolation_steps) + 1
-  # latent_steps = make_latent_steps(from_latent, to_latent, num_interpolation_steps)
-  # embed_steps = make_latent_steps(from_text_embed, to_text_embed, num_interpolation_steps)
-  guidance_steps = np.linspace(guidance_scales[0], guidance_scales[1], num_interpolation_steps + 1)
+    duration = row['duration']
+    fps = num_interpolation_steps/duration
 
 
-  print("Transition {} out of {}".format(i_row, len(df_transitions)))
-  print(output_name)
-  for i, t in enumerate(tqdm(T)):
+    latent_width = res_width // 8
+    latent_height = res_height // 8
 
-      embeds = torch.lerp(from_text_embed, to_text_embed, t)
-      # latents = torch.lerp(from_latent, to_latent, t)
-      latents = slerp(float(t), from_latent, to_latent)
+    from_latent = generate_latent(generator, seeds[0], pipe, latent_height, latent_width)
+    to_latent = generate_latent(generator, seeds[1], pipe, latent_height, latent_width)
+
+    from_text_embed = get_text_embed(prompts[0], pipe)
+    to_text_embed = get_text_embed(prompts[1], pipe)
+
+    # The tensor steps are len(num_interpolation_steps) + 1
+    # latent_steps = make_latent_steps(from_latent, to_latent, num_interpolation_steps)
+    # embed_steps = make_latent_steps(from_text_embed, to_text_embed, num_interpolation_steps)
+    guidance_steps = np.linspace(guidance_scales[0], guidance_scales[1], num_interpolation_steps + 1)
+
+
+    print("Transition {} out of {}".format(i_row, len(df_transitions)))
+    print(output_name)
+    for i, t in enumerate(tqdm(T)):
+
+        embeds = torch.lerp(from_text_embed, to_text_embed, t)
+        # latents = torch.lerp(from_latent, to_latent, t)
+        latents = slerp(float(t), from_latent, to_latent)
 
       
 
-      with torch.autocast('cuda'):
-        images = pipe(
-            prompt_embeds=embeds,
-            guidance_scale=guidance_steps[i],
-            latents = latents,
-            num_inference_steps = num_inference_steps,
-            control_guidance_start=0.1,
-            control_guidance_end=0.6,          
-            controlnet_conditioning_scale=0.8,
-            image=mask_image,
-        )
+        with torch.autocast('cuda'):
+          images = pipe(
+              prompt_embeds=embeds,
+              guidance_scale=guidance_steps[i],
+              latents = latents,
+              num_inference_steps = num_inference_steps,
+              control_guidance_start=0.1,
+              control_guidance_end=0.6,          
+              controlnet_conditioning_scale=0.8,
+              image=mask_image,
+          )
 
-      clear_output(wait=True)
+        clear_output(wait=True)
 
-      output_image = images.images[0]
+        output_image = images.images[0]
 
-      output_number_string = str(i).zfill(6)
-      output_image.save(os.path.join(output_dir, "frame{}.png".format(output_number_string)))
+        output_number_string = str(i).zfill(6)
+        output_image.save(os.path.join(output_dir, "frame{}.png".format(output_number_string)))
 
 
 # %%
