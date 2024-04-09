@@ -9,6 +9,7 @@ from diffusers import StableDiffusionPipeline
 import dotenv
 import argparse
 import json
+from PIL import Image
 
 dotenv.load_dotenv()
 
@@ -49,7 +50,9 @@ df_transitions = pd.concat([df_trans_interscene, df_trans_intrascene])
 
 df_existing = pd.read_csv(os.path.join(dir_prompt_data, 'existing_transitions.csv'), index_col=0)
 
-
+if 'mask_image' in settings:
+    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+    settings['pipe_kwargs']['image'] = mask_image      
 #%%
 
 def get_output_name(row, max_seed_characters=4):
@@ -123,20 +126,53 @@ df_prompt = df_prompt.astype({
 
 df_transitions
 
-# %%
-pipe = StableDiffusionPipeline.from_pretrained(
-                                                settings['model_string'],
-                                                torch_dtype=torch.float16,
-                                                safety_checker=None,
-                                                cache_dir='model_cache'
-                                               )
+if 'controlnet_string' in settings:
+    from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
+    import torch
 
 
-pipe = pipe.to("cuda")
+    controlnet = ControlNetModel.from_pretrained(
+                                                settings['controlnet_string'], 
+                                                torch_dtype=torch.float32
+                                                )
+    pipe = StableDiffusionControlNetPipeline.from_pretrained(
+        settings['model_string'], 
+        controlnet=controlnet, 
+        torch_dtype=torch.float32, 
+        safety_checker=None,
+        cache_dir='model_cache'
+    )
 
-# if one wants to disable `tqdm`
-# https://github.com/huggingface/diffusers/issues/1786
-pipe.set_progress_bar_config(disable=True)
+    # if one wants to disable `tqdm`
+    # https://github.com/huggingface/diffusers/issues/1786
+    pipe.set_progress_bar_config(disable=True)
+
+    from diffusers import UniPCMultistepScheduler
+
+    pipe.scheduler = UniPCMultistepScheduler.from_config(pipe.scheduler.config)
+
+    # this command loads the individual model components on GPU on-demand.
+    pipe.enable_model_cpu_offload()
+
+
+
+
+
+else:
+
+    pipe = StableDiffusionPipeline.from_pretrained(
+                                                    settings['model_string'],
+                                                    torch_dtype=torch.float16,
+                                                    safety_checker=None,
+                                                    cache_dir='model_cache'
+                                                )
+
+
+    pipe = pipe.to("cuda")
+
+    # if one wants to disable `tqdm`
+    # https://github.com/huggingface/diffusers/issues/1786
+    pipe.set_progress_bar_config(disable=True)
 
 
 # %%
