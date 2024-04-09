@@ -61,45 +61,72 @@ if 'seed_delimiter' not in settings:
 else:
     seed_delimiter = settings['seed_delimiter']
 
-for name, row in df_prompt.iterrows():
-    seeds = row['seeds'].split(seed_delimiter)
-    seeds = [s.strip() for s in seeds]
-    seeds = [int(s) for s in seeds]
-
 
 # %%
 device = "cuda"
 generator = torch.Generator(device=device)
 
-prompt_sel = ['geo1', 'geo_simple1', 'portal2', 'geom1']
-# prompt_sel = ['ridin2', 'elatrain2', 'mushrooms2', 'flyin2']
+# prompt_sel = ['geo1', 'geo_simple1', 'portal2', 'geom1']
+prompt_sel = ['ridin2', 'elatrain2', 'mushrooms2', 'flyin2']
 df_prompt = df_prompt.loc[prompt_sel]
 
 skip_existing = True
 
-cnet_vals = [0.25, 0.5, 0.75, 1.0, 2.0, 3.0]
 # masks = ['window_net', 'window_net_blur']
-masks = ['circle', 'circle0', 'circle2']
+# masks = ['circle', 'circle0', 'circle2']
 
+combos = {
+
+    # 'num_inference_steps': [5,10,15,20],
+    # 'controlnet_conditioning_scale': [1.0,2.0,3.0,4.0,5.0],
+    'control_guidance_start': [0,0.1,0.2,0.3,0.4],
+    # 'control_guidance_end': [0.6,0.7,0.8,0.9,1.0],
+    'control_guidance_width': [0.05,0.1,0.15,0.2,0.25],
+}
+
+if 'mask_name' in combos:
+    combos['mask_name'] = [Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', mask_name + '.png')) for mask_name in combos['mask_name']]
 
 
 for name, row in df_prompt.iterrows():
 
+    seeds = row['seeds'].split(seed_delimiter)
+    seeds = [s.strip() for s in seeds]
+    seeds = [int(s) for s in seeds]
 
     seeds = [seeds[0]] # Keep only the first seed 
 
     prompt = row['prompt']
     guidance_scale = float(row['guidance_scale'])
 
-    # Use itertools.product to generate all combinations of seeds and cnet_vals
-    for seed, cnet_val, mask_name in itertools.product(seeds, cnet_vals, masks):
-        print("cnet_val: {}".format(cnet_val))
-        settings['pipe_kwargs']['controlnet_conditioning_scale'] = cnet_val
-        settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', mask_name + '.png'))
 
-        cnet_val_str = str(cnet_val).replace('.', 'p')
-        mask_str = mask_name.replace('_', '')
-        output_fn = "{}_{}_{}_{}.png".format(name, seed, cnet_val_str, mask_str)
+    setting_vals = [combos[key] for key in combos.keys()]
+    # Use itertools.product to generate all combinations of seeds and cnet_vals
+    # for seed, cnet_val, mask_name in itertools.product(seeds, *setting_vals):
+    for vals in itertools.product(seeds, *setting_vals):
+        seed = vals[0]
+        combo_keys = list(combos.keys())
+
+        output_fn = "{}_{}".format(name, seed)
+        #TODO: hack to get length, how to get order or handle better
+        if 'control_guidance_width' in combos:
+            c_end = vals[1] + vals[2]
+            settings['pipe_kwargs']['control_guidance_end'] = c_end
+            combo_keys = ['control_guidance_start']
+            output_fn += "_{}".format(str(vals[2]).replace('.', 'p'))
+
+
+        for i, key in enumerate(combo_keys):
+            settings['pipe_kwargs'][key] = vals[i+1]
+            val_str = str(vals[i+1])
+            if key == 'mask_name':
+                output_fn += "_{}".format(val_str.replace('_', ''))
+            elif key == 'controlnet_conditioning_scale':
+                output_fn += "_{}".format(val_str.replace('.', 'p'))
+            else:
+                output_fn += "_{}".format(val_str)
+
+        output_fn += ".png"
 
         if os.path.exists(os.path.join(output_basedir, output_fn)):
             if skip_existing:

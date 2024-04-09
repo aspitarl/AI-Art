@@ -59,10 +59,6 @@ if 'seed_delimiter' not in settings:
 else:
     seed_delimiter = settings['seed_delimiter']
 
-for name, row in df_prompt.iterrows():
-    seeds = row['seeds'].split(seed_delimiter)
-    seeds = [s.strip() for s in seeds]
-    seeds = [int(s) for s in seeds]
 
 # %%
 device = "cuda"
@@ -73,6 +69,9 @@ skip_existing = True
 
 for name, row in df_prompt.iterrows():
 
+    seeds = row['seeds'].split(seed_delimiter)
+    seeds = [s.strip() for s in seeds]
+    seeds = [int(s) for s in seeds]
 
     prompt = row['prompt']
     guidance_scale = float(row['guidance_scale'])
