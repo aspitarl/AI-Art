@@ -1,7 +1,10 @@
 #%%
 import os
 import pandas as pd
-from aa_utils.sd import image_grid
+from aa_utils.sd import image_grid, generate_latent, get_text_embed
+from aa_utils.cloud import load_df_prompt, gen_pipe
+import torch
+from PIL import Image
 
 import argparse
 import json
@@ -9,8 +12,6 @@ import dotenv
 import os
 
 dotenv.load_dotenv()
-
-repo_dir = os.getenv('REPO_DIR')
 
 # add arg for song name 
 
@@ -25,33 +26,29 @@ song_name = args.song_name if args.song_name else 'escape'
 num_images = args.num_images if args.num_images else 4
 
 
-song_meta_dir = os.path.join(repo_dir, 'song_meta', song_name)
+song_meta_dir = os.path.join(os.getenv('REPO_DIR'), 'song_meta', song_name)
 # load json file with song settings
 json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
 
 with open(json_fp, 'r') as f:
     settings = json.load(f)
 
-import torch
-from diffusers import StableDiffusionPipeline
-
-pipe = StableDiffusionPipeline.from_pretrained(settings['model_string'],
-                                               torch_dtype=torch.float16,
-                                               safety_checker=None,
-                                               cache_dir='model_cache'
-                                               )
+pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
+pipe = gen_pipe(pipe_name, settings)
 
 
-pipe = pipe.to("cuda")
 
 
 #%%
-fp = os.path.join(song_meta_dir, 'prompt_image_definitions.csv')
-df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
+
+df_prompt = load_df_prompt(song_meta_dir)
 
 with open(json_fp, 'r') as f:
     settings = json.load(f)
 
+if 'mask_image' in settings:
+    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+    settings['pipe_kwargs']['image'] = mask_image    
 
 # if 'prompt_name' not in args:
 #     name_sel = 'geo1'
@@ -93,9 +90,9 @@ images = pipe(
     prompt, 
     generator=generator, 
     num_images_per_prompt=rows*cols, 
-    width=settings['res_width'], 
+    width=settings['res_width'],
     height=settings['res_height'],
-    num_inference_steps=settings['inference_steps']
+    **settings['pipe_kwargs']
     ).images
 
 grid = image_grid(images, rows=rows, cols=cols)

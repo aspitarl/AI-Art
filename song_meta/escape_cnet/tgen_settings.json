@@ -1,15 +1,15 @@
 {
-    "song_name": "cycle_mask_low",
-    "res_height": 564,
+    "song_name": "escape_cnet",
+    "res_height": 576,
     "res_width": 1024,
     "interpolation_steps": 10, 
     "model_string": "runwayml/stable-diffusion-v1-5",
     "controlnet_string": "lllyasviel/sd-controlnet-scribble",
-    "cnet_image": "cycle_side.png",
+    "mask_image": "circle0.png",
     "pipe_kwargs":{
         "num_inference_steps": 10,
         "control_guidance_start":0.1,
-        "control_guidance_end":0.6,          
-        "controlnet_conditioning_scale":0.8
+        "control_guidance_end":0.5,          
+        "controlnet_conditioning_scale":2.0
     }
 }

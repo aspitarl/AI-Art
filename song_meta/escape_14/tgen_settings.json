@@ -1,0 +1,11 @@
+{
+    "song_name": "escape",
+    "model_string": "CompVis/stable-diffusion-v1-4",
+    "res_height": 576,
+    "res_width": 1024,
+    "seed_delimiter": ", ",
+    "interpolation_steps": 15, 
+    "pipe_kwargs":{
+        "num_inference_steps": 25
+    }
+}

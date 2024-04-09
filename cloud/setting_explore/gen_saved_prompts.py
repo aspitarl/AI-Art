@@ -11,6 +11,7 @@ import dotenv
 import argparse
 import torch
 from PIL import Image
+import itertools
 
 from aa_utils.sd import generate_latent, get_text_embed
 from aa_utils.cloud import load_df_prompt, gen_pipe
@@ -23,11 +24,12 @@ repo_dir = os.getenv('REPO_DIR')
 
 parser = argparse.ArgumentParser(description='Generate transitions between prompts')
 parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
+parser.add_argument('--output_dir', '-o', type=str, help='The output directory for the images', default='test1')
 args = parser.parse_args()
 song_name = args.song_name
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_basedir = os.path.join('output', song_name, 'prompt_images')
+output_basedir = os.path.join('output', song_name, args.output_dir)
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
 dir_prompt_data = os.path.join(repo_dir, 'cloud', 'prompt_data', song_name)
@@ -45,7 +47,7 @@ pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
 
 if 'mask_image' in settings:
-    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+    mask_image = Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', settings['mask_image']))
     settings['pipe_kwargs']['image'] = mask_image     
 
 
@@ -64,8 +66,27 @@ else:
 device = "cuda"
 generator = torch.Generator(device=device)
 
+# prompt_sel = ['geo1', 'geo_simple1', 'portal2', 'geom1']
+prompt_sel = ['ridin2', 'elatrain2', 'mushrooms2', 'flyin2']
+df_prompt = df_prompt.loc[prompt_sel]
 
 skip_existing = True
+
+# masks = ['window_net', 'window_net_blur']
+# masks = ['circle', 'circle0', 'circle2']
+
+combos = {
+
+    # 'num_inference_steps': [5,10,15,20],
+    # 'controlnet_conditioning_scale': [1.0,2.0,3.0,4.0,5.0],
+    'control_guidance_start': [0,0.1,0.2,0.3,0.4],
+    # 'control_guidance_end': [0.6,0.7,0.8,0.9,1.0],
+    'control_guidance_width': [0.05,0.1,0.15,0.2,0.25],
+}
+
+if 'mask_name' in combos:
+    combos['mask_name'] = [Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', mask_name + '.png')) for mask_name in combos['mask_name']]
+
 
 for name, row in df_prompt.iterrows():
 
@@ -73,11 +94,39 @@ for name, row in df_prompt.iterrows():
     seeds = [s.strip() for s in seeds]
     seeds = [int(s) for s in seeds]
 
+    seeds = [seeds[0]] # Keep only the first seed 
+
     prompt = row['prompt']
     guidance_scale = float(row['guidance_scale'])
 
-    for seed in seeds:
-        output_fn = "{}_{}.png".format(name, seed)
+
+    setting_vals = [combos[key] for key in combos.keys()]
+    # Use itertools.product to generate all combinations of seeds and cnet_vals
+    # for seed, cnet_val, mask_name in itertools.product(seeds, *setting_vals):
+    for vals in itertools.product(seeds, *setting_vals):
+        seed = vals[0]
+        combo_keys = list(combos.keys())
+
+        output_fn = "{}_{}".format(name, seed)
+        #TODO: hack to get length, how to get order or handle better
+        if 'control_guidance_width' in combos:
+            c_end = vals[1] + vals[2]
+            settings['pipe_kwargs']['control_guidance_end'] = c_end
+            combo_keys = ['control_guidance_start']
+            output_fn += "_{}".format(str(vals[2]).replace('.', 'p'))
+
+
+        for i, key in enumerate(combo_keys):
+            settings['pipe_kwargs'][key] = vals[i+1]
+            val_str = str(vals[i+1])
+            if key == 'mask_name':
+                output_fn += "_{}".format(val_str.replace('_', ''))
+            elif key == 'controlnet_conditioning_scale':
+                output_fn += "_{}".format(val_str.replace('.', 'p'))
+            else:
+                output_fn += "_{}".format(val_str)
+
+        output_fn += ".png"
 
         if os.path.exists(os.path.join(output_basedir, output_fn)):
             if skip_existing:
@@ -98,8 +147,3 @@ for name, row in df_prompt.iterrows():
         output_image = images.images[0]
 
         output_image.save(os.path.join(output_basedir, output_fn))
-
-# %%
-
-
-

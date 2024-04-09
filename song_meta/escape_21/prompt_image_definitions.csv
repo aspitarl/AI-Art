@@ -1,0 +1,11 @@
+name,prompt,seeds,guidance_scale
+geo1,"geometric shapes in space, psychedelic interconnections, clustered, neural network, mycelium, gritty","6034, 7307, 3772, 6579",7.5
+geo2,"fungal mycelial clusters floating through space, psychedelic interconnections, gritty","4709, 5295, 7462, 4884"," 7.5"
+geo3,"hyperdimensional geometric object in center of image, mycelial network border around image, gritty","6681, 1346, 1578, 1646, 5460, 8784"," 7.5"
+portal1,"fungal mycelial clusters floating through space, wormhole portal door, gritty","0001, 0002, 00003, 0004"," 7.5"
+portal2,"portal to another dimension in space, geometric object through portal, stargate, fungal, gritty","5134, 8552, 6271, 3385, 8181"," 7.5"
+portal3,"fungal mycelial clusters surrounding an interdimensional portal, flames, gritty","5756, 2649, 6847, 3656"," 7.5"
+geom1,"geometric shape in center of view, hyperdimensional, hypercube, hyphae, isolated shape, flames, gritty","1983, 4576, 2822, 8190"," 7.5"
+geo_simple1,geometric shapes in space,"6497, 3676, 3855, 3021",7.5
+geo_simple2,"a geometric shape floating through space on fire, lines","3243, 2002, 1975, 8783", 7.5
+geo_simple3,geometric flames floating through cosmos,"6914, 2730, 3455, 2605, 8962, 2031, 2698", 7.5
