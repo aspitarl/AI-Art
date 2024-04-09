@@ -19,13 +19,15 @@ song_name = args.song_name
 regex = re.compile(r'(.*?)_([^_]*)_([^_]*).png')
 
 # input_dir = 'output/escape_cnet/setting_explore'
-input_dir = os.path.join('output', song_name, args.input_dir)
+input_dir = os.path.join('output', song_name, args.input_dir, 'images')
+assert os.path.exists(input_dir), "input dir did not exist, make sure first arg is a song name"
 
-output_dir = os.path.join('output', song_name, args.input_dir + '_grid')
+output_dir = os.path.join('output', song_name, args.input_dir, 'grid')
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-fns = [f for f in os.listdir(input_dir)]
+fns = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
+fns = [f for f in fns if f.endswith('.png')]
 
 # get a list of basenames for each file 
 

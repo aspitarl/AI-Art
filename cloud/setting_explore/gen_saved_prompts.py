@@ -12,6 +12,7 @@ import argparse
 import torch
 from PIL import Image
 import itertools
+import shutil
 
 from aa_utils.sd import generate_latent, get_text_embed
 from aa_utils.cloud import load_df_prompt, gen_pipe
@@ -37,6 +38,7 @@ song_meta_dir = os.path.join(repo_dir, 'song_meta', song_name)
 
 # load json file with song settings
 json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
+shutil.copy(json_fp, os.path.join(output_basedir, 'tgen_settings.json'))
 
 with open(json_fp, 'r') as f:
     settings = json.load(f)
@@ -84,9 +86,15 @@ combos = {
     'control_guidance_width': [0.05,0.1,0.15,0.2,0.25],
 }
 
+with open(os.path.join(output_basedir, 'combos.json'), 'w') as f:
+    json.dump(combos, f, indent=4)
+
 if 'mask_name' in combos:
     combos['mask_name'] = [Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', mask_name + '.png')) for mask_name in combos['mask_name']]
 
+
+image_output_dir = os.path.join(output_basedir, 'images')
+if not os.path.exists(image_output_dir): os.makedirs(image_output_dir)
 
 for name, row in df_prompt.iterrows():
 
@@ -128,7 +136,7 @@ for name, row in df_prompt.iterrows():
 
         output_fn += ".png"
 
-        if os.path.exists(os.path.join(output_basedir, output_fn)):
+        if os.path.exists(os.path.join(image_output_dir, output_fn)):
             if skip_existing:
                 print("{} already exists, skipping".format(output_fn))
                 continue
@@ -146,4 +154,4 @@ for name, row in df_prompt.iterrows():
 
         output_image = images.images[0]
 
-        output_image.save(os.path.join(output_basedir, output_fn))
+        output_image.save(os.path.join(image_output_dir, output_fn))
