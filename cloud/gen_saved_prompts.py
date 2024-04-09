@@ -55,14 +55,14 @@ if 'mask_image' in settings:
 # %%
 
 if 'seed_delimiter' not in settings:
-  seed_delimiter = ','
+    seed_delimiter = ','
 else:
-  seed_delimiter = settings['seed_delimiter']
+    seed_delimiter = settings['seed_delimiter']
 
 for name, row in df_prompt.iterrows():
-  seeds = row['seeds'].split(seed_delimiter)
-  seeds = [s.strip() for s in seeds]
-  print(seeds)
+    seeds = row['seeds'].split(seed_delimiter)
+    seeds = [s.strip() for s in seeds]
+    print(seeds)
 
 # %%
 device = "cuda"
@@ -72,35 +72,35 @@ generator = torch.Generator(device=device)
 skip_existing = True
 
 for name, row in df_prompt.iterrows():
-  seeds = row['seeds'].split(seed_delimiter)
-  seeds = [s.strip() for s in seeds]
-  seeds = [int(s) for s in seeds]
+    seeds = row['seeds'].split(seed_delimiter)
+    seeds = [s.strip() for s in seeds]
+    seeds = [int(s) for s in seeds]
 
-  prompt = row['prompt']
-  guidance_scale = float(row['guidance_scale'])
+    prompt = row['prompt']
+    guidance_scale = float(row['guidance_scale'])
 
-  for seed in seeds:
-    output_fn = "{}_{}.png".format(name, seed)
+    for seed in seeds:
+        output_fn = "{}_{}.png".format(name, seed)
 
-    if os.path.exists(os.path.join(output_basedir, output_fn)):
-      if skip_existing:
-        print("{} already exists, skipping".format(output_fn))
-        continue
+        if os.path.exists(os.path.join(output_basedir, output_fn)):
+            if skip_existing:
+                print("{} already exists, skipping".format(output_fn))
+                continue
 
-    latent = generate_latent(generator, seed, pipe, settings['res_height'] // 8, settings['res_width'] // 8)
-    text_embed = get_text_embed(prompt, pipe)
+        latent = generate_latent(generator, seed, pipe, settings['res_height'] // 8, settings['res_width'] // 8)
+        text_embed = get_text_embed(prompt, pipe)
 
-    with torch.autocast(device):
-      images = pipe(
-          prompt_embeds=text_embed,
-          guidance_scale=guidance_scale,
-          latents = latent,
-          **settings['pipe_kwargs']
-      )
+        with torch.autocast(device):
+            images = pipe(
+                prompt_embeds=text_embed,
+                guidance_scale=guidance_scale,
+                latents = latent,
+                **settings['pipe_kwargs']
+            )
 
-    output_image = images.images[0]
+        output_image = images.images[0]
 
-    output_image.save(os.path.join(output_basedir, output_fn))
+        output_image.save(os.path.join(output_basedir, output_fn))
 
 # %%
 
