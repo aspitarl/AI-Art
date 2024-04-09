@@ -31,11 +31,12 @@ with open(json_fp, 'r') as f:
 df_prompt = load_df_prompt(song_meta_dir)
 df_transitions = load_df_transitions(dir_prompt_data)
 
-#TODO: implement in settings
-settings['pipe_name'] = 'controlnet' if 'controlnet_string' in settings else 'basic'
+pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
+pipe = gen_pipe(pipe_name, settings)
 
-pipe = gen_pipe(settings['pipe_name'], settings)
-
+if 'mask_image' in settings:
+    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+    settings['pipe_kwargs']['image'] = mask_image    
 
 # %%
 skip_existing = True
@@ -45,9 +46,6 @@ generator = torch.Generator(device="cuda")
 max_seed_characters = 4 # Take the first few numbers of the seed for the name
 num_interpolation_steps = settings['interpolation_steps']
 
-if 'mask_image' in settings:
-    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
-    settings['pipe_kwargs']['image'] = mask_image      
 
 T = np.linspace(0.0, 1.0, num_interpolation_steps)
 

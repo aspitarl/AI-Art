@@ -9,8 +9,11 @@ import pandas as pd
 import json
 import dotenv
 import argparse
+import torch
+from PIL import Image
 
 from aa_utils.sd import generate_latent, get_text_embed
+from aa_utils.cloud import load_df_prompt, gen_pipe
 
 dotenv.load_dotenv()
 
@@ -36,24 +39,14 @@ json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
 with open(json_fp, 'r') as f:
     settings = json.load(f)
 
-fp = os.path.join(song_meta_dir, 'prompt_image_definitions.csv')
-df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
-df_prompt = df_prompt.dropna(how='any', subset=['prompt', 'seeds'])
+df_prompt = load_df_prompt(song_meta_dir)
 
-# %%
-import torch
-from diffusers import StableDiffusionPipeline
+pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
+pipe = gen_pipe(pipe_name, settings)
 
-pipe = StableDiffusionPipeline.from_pretrained(
-                                              settings['model_string'],
-                                              torch_dtype=torch.float16,
-                                              safety_checker=None,
-                                              cache_dir='model_cache'
-                                               )
-
-
-pipe = pipe.to("cuda")
-
+if 'mask_image' in settings:
+    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+    settings['pipe_kwargs']['image'] = mask_image     
 
 
 # %% [markdown]

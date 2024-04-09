@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-
+import dotenv; dotenv.load_dotenv()
 
 def load_df_transitions(dir_prompt_data):
 
@@ -89,7 +89,7 @@ from diffusers import StableDiffusionPipeline
 from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
 import torch
 
-
+MODEL_CACHE_DIR = os.path.join(os.getenv('REPO_DIR'), 'cloud', 'model_cache')
 
 def gen_pipe(pipe_name, settings):
 
@@ -98,7 +98,7 @@ def gen_pipe(pipe_name, settings):
                                                         settings['model_string'],
                                                         torch_dtype=torch.float16,
                                                         safety_checker=None,
-                                                        cache_dir='model_cache'
+                                                        cache_dir=MODEL_CACHE_DIR
                                                     )
 
         pipe = pipe.to("cuda")
@@ -118,7 +118,7 @@ def gen_pipe(pipe_name, settings):
             controlnet=controlnet, 
             torch_dtype=torch.float32, 
             safety_checker=None,
-            cache_dir='model_cache'
+            cache_dir=MODEL_CACHE_DIR
         )
 
         # if one wants to disable `tqdm`
