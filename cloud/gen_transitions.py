@@ -22,7 +22,7 @@ args = parser.parse_args()
 song_name = args.song_name
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_basedir = os.path.join('output', song_name, 'transition_images')
+output_basedir = os.path.join(os.getenv('REPO_DIR'), 'cloud','output', song_name, 'transition_images')
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
 dir_prompt_data = os.path.join(repo_dir, 'cloud', 'prompt_data', song_name)

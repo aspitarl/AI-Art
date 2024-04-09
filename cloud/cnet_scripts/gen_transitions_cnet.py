@@ -13,7 +13,6 @@ from PIL import Image
 
 dotenv.load_dotenv()
 
-
 repo_dir = os.getenv('REPO_DIR')
 
 # add arg for song name 
@@ -53,6 +52,7 @@ df_existing = pd.read_csv(os.path.join(dir_prompt_data, 'existing_transitions.cs
 
 
 mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+settings['pipe_kwargs']['image'] = mask_image      
 #%%
 
 def get_output_name(row, max_seed_characters=4):
@@ -219,7 +219,6 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
     # embed_steps = make_latent_steps(from_text_embed, to_text_embed, num_interpolation_steps)
     guidance_steps = np.linspace(guidance_scales[0], guidance_scales[1], num_interpolation_steps + 1)
 
-
     print("Transition {} out of {}".format(i_row, len(df_transitions)))
     print(output_name)
     for i, t in enumerate(tqdm(T)):
@@ -228,7 +227,7 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         # latents = torch.lerp(from_latent, to_latent, t)
         latents = slerp(float(t), from_latent, to_latent)
 
-        settings['pipe_kwargs']['image'] = mask_image      
+      
 
         with torch.autocast('cuda'):
           images = pipe(
