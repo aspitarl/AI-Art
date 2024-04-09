@@ -9,11 +9,10 @@ from diffusers import StableDiffusionPipeline
 import dotenv
 import argparse
 import json
+from PIL import Image
 
 dotenv.load_dotenv()
 
-from PIL import Image
-mask_image = Image.open(os.path.join('masks', "cyclist_side.png"))
 
 repo_dir = os.getenv('REPO_DIR')
 
@@ -53,6 +52,7 @@ df_transitions = pd.concat([df_trans_interscene, df_trans_intrascene])
 df_existing = pd.read_csv(os.path.join(dir_prompt_data, 'existing_transitions.csv'), index_col=0)
 
 
+mask_image = Image.open(os.path.join('masks', settings['mask_image']))
 #%%
 
 def get_output_name(row, max_seed_characters=4):
