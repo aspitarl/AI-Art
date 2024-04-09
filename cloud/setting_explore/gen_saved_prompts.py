@@ -27,7 +27,7 @@ args = parser.parse_args()
 song_name = args.song_name
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_basedir = os.path.join('output', song_name, 'prompt_images')
+output_basedir = os.path.join('output', song_name, 'setting_explore')
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
 dir_prompt_data = os.path.join(repo_dir, 'cloud', 'prompt_data', song_name)
@@ -45,7 +45,7 @@ pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
 
 if 'mask_image' in settings:
-    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+    mask_image = Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', settings['mask_image']))
     settings['pipe_kwargs']['image'] = mask_image     
 
 
@@ -63,14 +63,20 @@ for name, row in df_prompt.iterrows():
     seeds = row['seeds'].split(seed_delimiter)
     seeds = [s.strip() for s in seeds]
 
+
 # %%
 device = "cuda"
 generator = torch.Generator(device=device)
 
+prompt_sel = ['geo1', 'geo_simple1']
+df_prompt = df_prompt.loc[prompt_sel]
 
 skip_existing = True
 
+cnet_vals = [0.1, 0.5, 1.0, 2.0, 5.0]
+
 for name, row in df_prompt.iterrows():
+
     seeds = row['seeds'].split(seed_delimiter)
     seeds = [s.strip() for s in seeds]
     seeds = [int(s) for s in seeds]
@@ -79,29 +85,31 @@ for name, row in df_prompt.iterrows():
     guidance_scale = float(row['guidance_scale'])
 
     for seed in seeds:
-        output_fn = "{}_{}.png".format(name, seed)
+        for cnet_val in cnet_vals:
+            print("cnet_val: {}".format(cnet_val))
+            settings['pipe_kwargs']['controlnet_conditioning_scale'] = cnet_val
 
-        if os.path.exists(os.path.join(output_basedir, output_fn)):
-            if skip_existing:
-                print("{} already exists, skipping".format(output_fn))
-                continue
+            cnet_val_str = str(cnet_val).replace('.', 'p')
+            output_fn = "{}_{}_cnet{}.png".format(name, seed, cnet_val_str)
 
-        latent = generate_latent(generator, seed, pipe, settings['res_height'] // 8, settings['res_width'] // 8)
-        text_embed = get_text_embed(prompt, pipe)
+            if os.path.exists(os.path.join(output_basedir, output_fn)):
+                if skip_existing:
+                    print("{} already exists, skipping".format(output_fn))
+                    continue
 
-        with torch.autocast(device):
-            images = pipe(
-                prompt_embeds=text_embed,
-                guidance_scale=guidance_scale,
-                latents = latent,
-                **settings['pipe_kwargs']
-            )
+            latent = generate_latent(generator, seed, pipe, settings['res_height'] // 8, settings['res_width'] // 8)
+            text_embed = get_text_embed(prompt, pipe)
 
-        output_image = images.images[0]
+            with torch.autocast(device):
+                images = pipe(
+                    prompt_embeds=text_embed,
+                    guidance_scale=guidance_scale,
+                    latents = latent,
+                    **settings['pipe_kwargs']
+                )
 
-        output_image.save(os.path.join(output_basedir, output_fn))
+            output_image = images.images[0]
 
-# %%
-
+            output_image.save(os.path.join(output_basedir, output_fn))
 
 
