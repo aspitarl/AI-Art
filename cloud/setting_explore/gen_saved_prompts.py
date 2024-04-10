@@ -69,8 +69,8 @@ else:
 device = "cuda"
 generator = torch.Generator(device=device)
 
-# prompt_sel = ['geo1', 'geo_simple1', 'portal2', 'geom1']
-prompt_sel = ['ridin2', 'elatrain2', 'mushrooms2', 'flyin2']
+prompt_sel = ['geo1', 'geo_simple1', 'portal2', 'geom1']
+# prompt_sel = ['ridin2', 'elatrain2', 'mushrooms2', 'flyin2']
 df_prompt = df_prompt.loc[prompt_sel]
 
 skip_existing = True
@@ -79,13 +79,13 @@ skip_existing = True
 combos = {
 
     # 'num_inference_steps': [5,10,15,20],
-    'controlnet_conditioning_scale': [0.5,1.0,1.5,2.0,2.5],
+    'controlnet_conditioning_scale': [1.5,1.75,2.0,2.25],
     # 'control_guidance_start': [0,0.1,0.2],
     # 'control_guidance_end': [0.6,0.7,0.8,0.9,1.0],
-    'control_guidance_width': [0.1,0.2,0.3,0.4],
+    # 'control_guidance_width': [0.1,0.2,0.3,0.4],
 
     # 'mask_name': ['window_net', 'window_net_blur', 'window_net_blur_less'],
-    # 'mask_name' : ['circle', 'circle0', 'circle2']
+    'mask_name' : ['circle0', 'circle_oct', 'circle_hex1', 'circle_hex2', 'circle_hex3']
 }
 
 with open(os.path.join(output_basedir, 'combos.json'), 'w') as f:
