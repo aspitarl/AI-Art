@@ -102,6 +102,7 @@ On cloud: Open terminal in `cloud` folder of repo
 
 1. create `song_meta\song_name\tgen_settings.json` and `song_meta\song_name\prompt_image_definitions.csv`.
 2. use `cloud/explore_prompts.py` to come up with prompts and seeds and create prompt image definitions. 
+  * `python interrogate_CLIP.py song_name -p prompt_name -s seed_name` can be used to interrogate prompts
 3. create the prompt image files with `python gen_saved_prompts.py song_name`
 4. download prompt_images to local song dir 
   * TODO: add to `cloud\gzip_transitions.sh`
@@ -109,7 +110,7 @@ On cloud: Open terminal in `cloud` folder of repo
 local: google drive folder. song_dir = gdrive_basedir/song_name. Open terminal in `local` folder of repo
 
 4. group images into scenes (`song_dir/scenes/sx`). 
-  * TODO: test `local\various\automake_scenes.py` which should automate this process based on prompt definition. 
+  * local\various\automake_scenes.py` will automate this process based on prompt definition. 
 5. Create scene sequence csv and place in `song_dir/prompt_data`. 
 7. run `python examine_existing.py song_name` 
 6. run `python gen_transitions.py song_name` to random generate transition path

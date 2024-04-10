@@ -25,6 +25,8 @@ else:
     song = args.song
 
 allscenes_folder = os.path.join(gdrive_basedir, song, 'scenes')
+if not os.path.exists(allscenes_folder):
+    os.mkdir(allscenes_folder)
 prompt_images_folder = os.path.join(gdrive_basedir, song, 'prompt_images')
 # %%
 
@@ -69,6 +71,8 @@ for prompt in prompt_dict:
 df_sequence = pd.DataFrame({'scene':list(prompt_dict.keys())})  
 
 df_sequence['duration'] = 3
+df_sequence['section'] = 1
+df_sequence['start'] = ''
 
 df_sequence.to_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence_auto.csv'))
 
