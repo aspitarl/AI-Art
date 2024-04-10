@@ -10,7 +10,7 @@
     "pipe_kwargs":{
         "num_inference_steps": 10,
         "control_guidance_start":0.1,
-        "control_guidance_end":0.8,          
-        "controlnet_conditioning_scale":2.0
+        "control_guidance_end":0.4,          
+        "controlnet_conditioning_scale":1.5
     }
 }
