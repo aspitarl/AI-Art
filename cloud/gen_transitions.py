@@ -34,9 +34,9 @@ df_transitions = load_df_transitions(dir_prompt_data)
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
 
-if 'mask_image' in settings:
-    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
-    settings['pipe_kwargs']['image'] = mask_image    
+# if 'mask_image' in settings:
+#     mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+#     settings['pipe_kwargs']['image'] = mask_image    
 
 # %%
 skip_existing = True
@@ -79,6 +79,13 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         df_prompt['guidance_scale'][row['to_name']]
     ]
 
+    masks = [
+        df_prompt['mask'][row['from_name']],
+        df_prompt['mask'][row['to_name']]
+    ]
+
+    masks = [Image.open(os.path.join('masks', mask +'.png')) for mask in masks]
+
     seeds = [row['from_seed'], row['to_seed']]
 
     duration = row['duration']
@@ -106,6 +113,9 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         embeds = torch.lerp(from_text_embed, to_text_embed, t)
         # latents = torch.lerp(from_latent, to_latent, t)
         latents = slerp(float(t), from_latent, to_latent)
+
+        mask_interp = Image.blend(masks[0], masks[1], float(t))
+        settings['pipe_kwargs']['image'] = mask_interp
 
       
 
