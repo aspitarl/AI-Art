@@ -79,13 +79,13 @@ skip_existing = True
 combos = {
 
     # 'num_inference_steps': [5,10,15,20],
-    'controlnet_conditioning_scale': [1.5,1.75,2.0,2.25],
+    # 'controlnet_conditioning_scale': [1.5,1.75,2.0,2.25],
     # 'control_guidance_start': [0,0.1,0.2],
-    # 'control_guidance_end': [0.6,0.7,0.8,0.9,1.0],
+    'control_guidance_end': [0.4,0.6,0.8,1.0],
     # 'control_guidance_width': [0.1,0.2,0.3,0.4],
 
     # 'mask_name': ['window_net', 'window_net_blur', 'window_net_blur_less'],
-    'mask_name' : ['circle0', 'circle_oct', 'circle_hex1', 'circle_hex2', 'circle_hex3']
+    'mask_name' : ['circle0', 'circle_full', 'hex', 'hc/f1', 'hc/f1_fill']
 }
 
 with open(os.path.join(output_basedir, 'combos.json'), 'w') as f:
@@ -126,7 +126,7 @@ for name, row in df_prompt.iterrows():
         for i, key in enumerate(combo_keys):
             val_str = str(vals[i+1])
             if key == 'mask_name':
-                output_fn += "_{}".format(val_str.replace('_', ''))
+                output_fn += "_{}".format(val_str.replace('_', '').replace('/', ''))
                 settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', vals[i+1] + '.png'))
             elif key == 'controlnet_conditioning_scale':
                 output_fn += "_{}".format(val_str.replace('.', 'p'))

@@ -79,6 +79,11 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         df_prompt['guidance_scale'][row['to_name']]
     ]
 
+    cnet_scales = [
+        df_prompt['cnet_scale'][row['from_name']],
+        df_prompt['cnet_scale'][row['to_name']]
+    ]
+
     masks = [
         df_prompt['mask'][row['from_name']],
         df_prompt['mask'][row['to_name']]
@@ -105,6 +110,7 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
     # latent_steps = make_latent_steps(from_latent, to_latent, num_interpolation_steps)
     # embed_steps = make_latent_steps(from_text_embed, to_text_embed, num_interpolation_steps)
     guidance_steps = np.linspace(guidance_scales[0], guidance_scales[1], num_interpolation_steps + 1)
+    cnet_steps = np.linspace(cnet_scales[0], cnet_scales[1], num_interpolation_steps + 1)
 
     print("Transition {} out of {}".format(i_row, len(df_transitions)))
     print(output_name)
@@ -117,7 +123,7 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         mask_interp = Image.blend(masks[0], masks[1], float(t))
         settings['pipe_kwargs']['image'] = mask_interp
 
-      
+        settings['pipe_kwargs']['controlnet_conditioning_scale'] = cnet_steps[i]
 
         with torch.autocast('cuda'):
           images = pipe(

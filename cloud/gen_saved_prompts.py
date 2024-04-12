@@ -44,9 +44,9 @@ df_prompt = load_df_prompt(song_meta_dir)
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
 
-if 'mask_image' in settings:
-    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
-    settings['pipe_kwargs']['image'] = mask_image     
+# if 'mask_image' in settings:
+#     mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+#     settings['pipe_kwargs']['image'] = mask_image     
 
 
 # %% [markdown]
@@ -75,6 +75,9 @@ for name, row in df_prompt.iterrows():
 
     prompt = row['prompt']
     guidance_scale = float(row['guidance_scale'])
+
+    mask_name = row['mask']
+    settings['pipe_kwargs']['image'] = Image.open(os.path.join('masks', mask_name + '.png'))
 
     for seed in seeds:
         output_fn = "{}_{}.png".format(name, seed)
