@@ -8,13 +8,13 @@
 32,geo_simple3_1,2,1,
 10,geo_simple3_2,2,1,
 1,geo_simple3_3,2,1,
-23,portal0,2,1,
+23,portal0,2,1,random
 6,portal1,2,1,
 20,portal2,2,1,
 21,portal3,2,1,
 12,portal4,2,1,
 17,portal5,2,1,
-14,geo1_1,2,1,
+14,geo1_1,2,1,random
 2,geo1_2,0,1,
 16,geo1_3,2,1,
 29,geo1_4,0,1,
@@ -31,6 +31,6 @@
 11,geo3_3,2,1,
 30,geo3_4,0,1,
 7,geo3_5,2,1,
-4,geom1_1,0,1,
+4,geom1_1,0,1,random
 28,geom1_2,2,1,
 0,geom1_3,0,1,

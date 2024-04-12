@@ -76,6 +76,8 @@ for name, row in df_prompt.iterrows():
     prompt = row['prompt']
     guidance_scale = float(row['guidance_scale'])
 
+    settings['pipe_kwargs']['controlnet_conditioning_scale'] = float(row['cnet_scale'])
+
     mask_name = row['mask']
     settings['pipe_kwargs']['image'] = Image.open(os.path.join('masks', mask_name + '.png'))
 
