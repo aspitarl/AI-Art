@@ -34,6 +34,8 @@ df_scene_sequence = load_df_scene_sequence(args.scene_sequence, args.song, dir_o
 
 # remove 'random' from the start column, replacing with nan
 df_scene_sequence['start'] = df_scene_sequence['start'].replace('random', np.nan)
+# if the start value contains spaces, split on spaces and take a random value. This column can contain missing values. 
+df_scene_sequence['start'] = df_scene_sequence['start'].apply(lambda x: np.random.choice(x.split(',')) if isinstance(x, str) else x)
 
 scene_sequence_list = df_scene_sequence['scene'].values.tolist()
 
