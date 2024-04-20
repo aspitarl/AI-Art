@@ -19,7 +19,7 @@ folder_name=$1
 # tar -czf "$filename_out" -C "$dir" transition_images
 
 # Define the output filename
-filename_out="ti_gz/${song}_${timestamp}.tar"
+filename_out="ti_gz/${folder_name}_${timestamp}.tar"
 # Create a tar file without compression
 tar -cf "$filename_out" -C "$input_dir/$folder_name" .
 
