@@ -34,7 +34,13 @@ echo "$concatenated_videos" > "videos_concat.txt"
 
 fps=10
 
+#replace / with _ in song_name
+
+song_name=$(echo $song_name | sed 's/\//_/g')
+
 # # Run the ffmpeg command
-ffmpeg -f concat -safe 0 -i videos_concat.txt -y -c mjpeg -q:v 3 -r $fps "$story_dir/movies_combined.mov"
+ffmpeg -f concat -safe 0 -i videos_concat.txt -y -c mjpeg -q:v 3 -r $fps "$story_dir/"$song_name"_combined.mov"
+
+
 
 popd
