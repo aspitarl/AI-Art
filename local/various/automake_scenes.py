@@ -74,5 +74,7 @@ df_sequence['duration'] = 3
 df_sequence['section'] = 1
 df_sequence['start'] = ''
 
+df_sequence = df_sequence.sort_values('scene')
+
 df_sequence.to_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence_auto.csv'))
 
