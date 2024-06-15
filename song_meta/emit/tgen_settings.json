@@ -1,8 +1,20 @@
 {
-    "song_name": "emit",
-    "res_height": 512,
-    "res_width": 512,
-    "interpolation_steps": 50, 
-    "inference_steps": 50,  
-    "model_string": "CompVis/stable-diffusion-v1-4"
+    "default":{
+        "res_height": 512,
+        "res_width": 512,
+        "interpolation_steps": 50, 
+        "model_string": "CompVis/stable-diffusion-v1-4",
+        "pipe_kwargs":{
+            "num_inference_steps": 50
+        }
+    },
+    "cell":{
+        "res_width": 576,
+        "res_height": 1024,
+        "interpolation_steps": 30, 
+        "model_string": "CompVis/stable-diffusion-v1-4",
+        "pipe_kwargs":{
+            "num_inference_steps": 30
+        }
+    }
 }

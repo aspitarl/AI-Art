@@ -1,0 +1,11 @@
+{
+    "song_name": "acai",
+    "res_height": 512,
+    "res_width": 512,
+    "interpolation_steps": 20, 
+    "model_string": "CompVis/stable-diffusion-v1-4",
+    "seed_delimiter": " ",
+    "pipe_kwargs":{
+        "num_inference_steps": 30
+    }
+}
