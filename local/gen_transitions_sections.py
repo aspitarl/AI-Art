@@ -40,21 +40,21 @@ parser.add_argument('--ss', default='', dest='scene_sequence')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
-gdrive_basedir = os.getenv('base_dir')
-# gdrive_basedir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
-input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
+media_dir = os.getenv('media_dir')
+# media_dir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
+input_basedir = os.path.join(media_dir, '{}\scenes'.format(args.song))
 
 #%%
 
 from aa_utils.local import load_df_scene_sequence
-df_scene_sequence = load_df_scene_sequence(args.scene_sequence, args.song, dir_option=os.getenv('ss_dir_option')).reset_index(drop=True)
+df_scene_sequence = load_df_scene_sequence(args.scene_sequence, args.song).reset_index(drop=True)
 
 scene_sequence_list = df_scene_sequence['scene'].values.tolist()
 
-scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
+scene_dir = pjoin(media_dir, args.song, 'scenes')
 scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence_list, truncate_digits=None)
 
-dir_transitions = os.path.join(gdrive_basedir, args.song, 'transition_images')
+dir_transitions = os.path.join(media_dir, args.song, 'transition_images')
 trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
 trans_list = [image_names_from_transition(t) for t in trans_list]
 
@@ -213,7 +213,7 @@ plot_scene_sequence(G_sequence, scene_sequence_list, scene_dict, path_edges=path
 
 plt.tight_layout()
 
-plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'storygraph_long.png'))
+plt.savefig(pjoin(media_dir, args.song, 'story', 'storygraph_long.png'))
 # %%
 # Check that path_edges is one connected path
 
@@ -231,7 +231,7 @@ nx.draw(G_path)
 # Having to check existing separately so that output transitions file are not truncated to 4 digits
 # TODO: rework seed length to avoid this and truncation in geenral
 # TODO: this can't be obtained from the graph?
-dir_transitions = os.path.join(gdrive_basedir, args.song, 'transition_images')
+dir_transitions = os.path.join(media_dir, args.song, 'transition_images')
 trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
 trans_list = [image_names_from_transition(t) for t in trans_list]
 
@@ -246,12 +246,12 @@ path_edges_truncate = [(node_to_trunc[e[0]], node_to_trunc[e[1]]) for e in path_
 
 plot_scene_sequence(G_plot, scene_sequence_list, scene_dict, path_edges=path_edges_truncate)
 
-plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'story_transition_gen.png'))
+plt.savefig(pjoin(media_dir, args.song, 'story', 'story_transition_gen.png'))
 
 # %%
 from aa_utils.local import gen_df_transitions
 
-song_basedir = os.path.join(gdrive_basedir, args.song)
+song_basedir = os.path.join(media_dir, args.song)
 out_dir = os.path.join(song_basedir, 'story')
 if not os.path.exists(out_dir): os.makedirs(out_dir)
 
@@ -319,7 +319,7 @@ df_inter = df_inter.sort_values('scene_from', key=lambda x: x.map(scene_sequence
 df_inter = df_inter.reset_index(drop=True)
 
 
-fp_out = os.path.join(gdrive_basedir, args.song, 'prompt_data', 'interscene_transitions.csv')
+fp_out = os.path.join(media_dir, args.song, 'prompt_data', 'interscene_transitions.csv')
 print("writing transitions csv to {}".format(fp_out))
 df_inter.to_csv(fp_out)
 
@@ -369,7 +369,7 @@ else:
     df_intra
 
 
-fp_out = os.path.join(gdrive_basedir, args.song, 'prompt_data', 'intrascene_transitions.csv')
+fp_out = os.path.join(media_dir, args.song, 'prompt_data', 'intrascene_transitions.csv')
 print("writing transitions csv to {}".format(fp_out))
 df_intra.to_csv(fp_out)
 

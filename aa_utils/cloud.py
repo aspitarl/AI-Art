@@ -89,7 +89,7 @@ from diffusers import StableDiffusionPipeline
 from diffusers import StableDiffusionControlNetPipeline, ControlNetModel
 import torch
 
-MODEL_CACHE_DIR = os.path.join(os.getenv('REPO_DIR'), 'cloud', 'model_cache')
+MODEL_CACHE_DIR = os.getenv('model_cache_dir')
 
 def gen_pipe(pipe_name, settings):
 

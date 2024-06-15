@@ -26,8 +26,8 @@ else:
     num_output_rows = int(args.num_output_rows)
 
 from dotenv import load_dotenv; load_dotenv()
-gdrive_basedir = os.getenv('base_dir')
-input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(song))
+media_dir = os.getenv('media_dir')
+input_basedir = os.path.join(media_dir, '{}\scenes'.format(song))
 
 scene_folder = os.path.join(input_basedir, scene)
 
@@ -39,7 +39,7 @@ folder_rev = os.path.join(scene_folder, 'rev')
 #%%
 # Load list of all transitions
 
-fp = os.path.join(gdrive_basedir, song, 'all_transitions.csv')
+fp = os.path.join(media_dir, song, 'all_transitions.csv')
 df_transitions = pd.read_csv(fp, index_col=0).dropna(how='all')
 
 # Determine clip names for each transition
@@ -73,7 +73,7 @@ df_trans_sequence
 
 df_trans_sequence["fn"]=df_trans_sequence['from_seed']+ ' to ' +df_trans_sequence['to_seed']+'.mp4'
 df_trans_sequence['input_movie_folder'] = ['transitions_rev' if reverse else 'transitions' for reverse in df_trans_sequence['reversed']]
-input_basedir = os.path.join(gdrive_basedir, song)
+input_basedir = os.path.join(media_dir, song)
 
 df_trans_sequence['fp_out'] = input_basedir + '\\' + df_trans_sequence['input_movie_folder'] + '\\' +  df_trans_sequence['fn']
 

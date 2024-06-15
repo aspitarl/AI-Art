@@ -19,20 +19,20 @@ parser.add_argument('--ss', default='', dest='scene_sequence')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
-gdrive_basedir = os.getenv('base_dir')
-# gdrive_basedir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
-input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
+media_dir = os.getenv('media_dir')
+# media_dir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
+input_basedir = os.path.join(media_dir, '{}\scenes'.format(args.song))
 
 #%%
 
-scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
+scene_dir = pjoin(media_dir, args.song, 'scenes')
 # scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
 
 # scene_sequence_name = "scene_sequence" if args.scene_sequence == '' else "scene_sequence_{}".format(args.scene_sequence)
-# fp_scene_sequence = os.path.join(os.getenv('repo_dir'), 'song_meta', args.song, '{}.csv'.format(scene_sequence_name))
+# fp_scene_sequence = os.path.join(os.getenv('meta_dir'), args.song, '{}.csv'.format(scene_sequence_name))
 # scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 from aa_utils.local import load_df_scene_sequence
-df_scene_sequence = load_df_scene_sequence(args.scene_sequence, args.song, dir_option=os.getenv('ss_dir_option'))
+df_scene_sequence = load_df_scene_sequence(args.scene_sequence, args.song)
 scene_sequence = df_scene_sequence['scene'].values.tolist()
 
 
@@ -42,7 +42,7 @@ scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence, trun
 
 #%%
 
-dir_transitions = os.path.join(gdrive_basedir, args.song, 'transition_images')
+dir_transitions = os.path.join(media_dir, args.song, 'transition_images')
 trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
 trans_list = [image_names_from_transition(t) for t in trans_list]
 
@@ -71,8 +71,8 @@ for edge in G.edges():
     else:
         G.edges[edge]['transition_type'] = 'inter'
 
-if not os.path.exists(pjoin(gdrive_basedir, args.song, 'story')): os.makedirs(pjoin(gdrive_basedir, args.song, 'story'))
-nx.write_gexf(G, pjoin(gdrive_basedir, args.song, 'story', 'graph_existing_transitions.gexf'))
+if not os.path.exists(pjoin(media_dir, args.song, 'story')): os.makedirs(pjoin(media_dir, args.song, 'story'))
+nx.write_gexf(G, pjoin(media_dir, args.song, 'story', 'graph_existing_transitions.gexf'))
 
 #%%
 # drop all edges that are not existing transitions
@@ -83,7 +83,7 @@ G_only_existing = G.copy()
 
 G_only_existing.remove_edges_from(edges_to_drop)
 
-nx.write_gexf(G_only_existing, pjoin(gdrive_basedir, args.song, 'story', 'graph_only_existing_transitions.gexf'))
+nx.write_gexf(G_only_existing, pjoin(media_dir, args.song, 'story', 'graph_only_existing_transitions.gexf'))
 
 
 #%%
@@ -91,7 +91,7 @@ nx.write_gexf(G_only_existing, pjoin(gdrive_basedir, args.song, 'story', 'graph_
 plot_scene_sequence(G, scene_sequence, scene_dict)
 
 plt.tight_layout()
-plt.savefig(pjoin(gdrive_basedir, args.song, 'story', 'graph_existing_transitions.png'))
+plt.savefig(pjoin(media_dir, args.song, 'story', 'graph_existing_transitions.png'))
 
 # %%
 
@@ -115,4 +115,4 @@ if len(df_existing):
 
 #%%
 
-df_existing.to_csv(os.path.join(gdrive_basedir, args.song, 'prompt_data', 'existing_transitions.csv'))
+df_existing.to_csv(os.path.join(media_dir, args.song, 'prompt_data', 'existing_transitions.csv'))

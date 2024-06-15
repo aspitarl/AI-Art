@@ -26,7 +26,7 @@ song_name = args.song_name if args.song_name else 'escape'
 num_images = args.num_images if args.num_images else 4
 
 
-song_meta_dir = os.path.join(os.getenv('REPO_DIR'), 'song_meta', song_name)
+song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 # load json file with song settings
 json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
 
@@ -101,7 +101,7 @@ grid
 # %%
 
 
-output_dir = os.path.join('output', song_name, 'explore_images', name_sel)
+output_dir = os.path.join(os.getenv('media_dir'), song_name, 'explore_images', name_sel)
 if not os.path.exists(output_dir): os.makedirs(output_dir)
 
 grid.save(os.path.join(output_dir, 'image_grid.png'))

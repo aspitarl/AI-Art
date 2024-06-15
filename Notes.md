@@ -107,7 +107,7 @@ On cloud: Open terminal in `cloud` folder of repo
 4. download prompt_images to local song dir 
   * TODO: add to `cloud\gzip_transitions.sh`
 
-local: google drive folder. song_dir = gdrive_basedir/song_name. Open terminal in `local` folder of repo
+local: google drive folder. song_dir = media_dir/song_name. Open terminal in `local` folder of repo
 
 4. group images into scenes (`song_dir/scenes/sx`). 
   * local\various\automake_scenes.py` will automate this process based on prompt definition. 

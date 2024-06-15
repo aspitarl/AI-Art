@@ -18,11 +18,11 @@ args = parser.parse_args()
 song_name = args.song_name
 setting_name = args.setting_name
 
-output_basedir = os.path.join(os.getenv('REPO_DIR'), 'cloud','output', "{}_{}".format(song_name, setting_name), 'transition_images')
+output_basedir = os.path.join(os.getenv('media_dir'), 'transition_images', "{}_{}".format(song_name, setting_name), 'transition_images')
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
-dir_prompt_data = os.path.join(os.getenv('REPO_DIR'), 'cloud', 'prompt_data', song_name)
-song_meta_dir = os.path.join(os.getenv('REPO_DIR'), 'song_meta', song_name)
+dir_prompt_data = os.path.join(os.getenv('media_dir'), 'prompt_data', song_name)
+song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 
 # load json file with song settings
 json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')

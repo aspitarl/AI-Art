@@ -17,7 +17,6 @@ from aa_utils.cloud import load_df_prompt, gen_pipe
 
 dotenv.load_dotenv()
 
-repo_dir = os.getenv('REPO_DIR')
 
 # add arg for song name 
 
@@ -27,11 +26,11 @@ args = parser.parse_args()
 song_name = args.song_name
 
 # code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_basedir = os.path.join('output', song_name, 'prompt_images')
+output_basedir = os.path.join(os.getenv('media_dir'), song_name, 'prompt_images')
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
-dir_prompt_data = os.path.join(repo_dir, 'cloud', 'prompt_data', song_name)
-song_meta_dir = os.path.join(repo_dir, 'song_meta', song_name)
+dir_prompt_data = os.path.join(os.getenv('media_dir'), 'prompt_data', song_name)
+song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 
 # load json file with song settings
 json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')

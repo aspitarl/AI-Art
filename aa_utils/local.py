@@ -3,16 +3,11 @@ from os.path import join as pjoin
 
 
 
-def load_df_scene_sequence(scene_sequence, song_name, dir_option='gdrive'):
+def load_df_scene_sequence(scene_sequence, song_name):
     scene_sequence_name = "scene_sequence" if scene_sequence == '' else "scene_sequence_{}".format(scene_sequence)
-    if dir_option == 'gdrive':
-        fp_scene_sequence = pjoin(os.getenv('base_dir'), song_name, 'prompt_data', '{}.csv'.format(scene_sequence_name))
-        print("loading scene sequence from {}".format(fp_scene_sequence))
-    elif dir_option == 'repo':
-        fp_scene_sequence = pjoin(os.getenv('repo_dir'), 'song_meta', song_name, '{}.csv'.format(scene_sequence_name))
-        print("loading scene sequence from {}".format(fp_scene_sequence))
-    else:
-        raise ValueError("dir_option must be 'gdrive' or 'repo'")
+    fp_scene_sequence = pjoin(os.getenv('meta_dir'), song_name, '{}.csv'.format(scene_sequence_name))
+
+    print("loading scene sequence from {}".format(fp_scene_sequence))
     df_scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)
     return df_scene_sequence
 
