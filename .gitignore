@@ -5,6 +5,7 @@ __pycache__
 model_cache
 
 media
+media_gz
 *.png
 
 # Byte-compiled / optimized / DLL files

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-input_dir='output'
+input_dir='media'
 
-mkdir -p 'ti_gz'
+mkdir -p 'media_gz'
 
 # Get the current timestamp
 # timestamp=$(date +%Y%m%d_%H%M%S)
@@ -19,7 +19,7 @@ folder_name=$1
 # tar -czf "$filename_out" -C "$dir" transition_images
 
 # Define the output filename
-filename_out="ti_gz/${folder_name}_${timestamp}.tar"
+filename_out="media_gz/${folder_name}_${timestamp}.tar"
 # Create a tar file without compression
 tar -cf "$filename_out" -C "$input_dir/$folder_name" .
 
