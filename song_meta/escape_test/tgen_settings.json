@@ -1,0 +1,15 @@
+{
+    "default":{
+        "res_height": 576,
+        "res_width": 1024,
+        "interpolation_steps": 5, 
+        "model_string": "runwayml/stable-diffusion-v1-5",
+        "controlnet_string": "lllyasviel/sd-controlnet-scribble",
+        "pipe_kwargs":{
+            "num_inference_steps": 10,
+            "control_guidance_start":0.1,
+            "control_guidance_end":0.8,          
+            "controlnet_conditioning_scale":1.75
+        }
+    }
+}

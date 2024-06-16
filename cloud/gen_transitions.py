@@ -92,7 +92,7 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         df_prompt['mask'][row['to_name']]
     ]
 
-    masks = [Image.open(os.path.join('masks', mask +'.png')) for mask in masks]
+    masks = [Image.open(os.path.join(os.getenv('media_dir'), song_name, 'masks', mask_name + '.png')) for mask_name in masks]
 
     seeds = [row['from_seed'], row['to_seed']]
 

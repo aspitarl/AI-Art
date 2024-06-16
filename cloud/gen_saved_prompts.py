@@ -77,7 +77,7 @@ for name, row in df_prompt.iterrows():
     settings['pipe_kwargs']['controlnet_conditioning_scale'] = float(row['cnet_scale'])
 
     mask_name = row['mask']
-    settings['pipe_kwargs']['image'] = Image.open(os.path.join('masks', mask_name + '.png'))
+    settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('media_dir'), song_name, 'masks', mask_name + '.png'))
 
     for seed in seeds:
         output_fn = "{}_{}.png".format(name, seed)
