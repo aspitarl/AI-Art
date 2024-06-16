@@ -33,7 +33,7 @@ song_name = args.song_name
 output_basedir = os.path.join('output', song_name, args.output_dir)
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
-dir_prompt_data = os.path.join(os.getenv('media_dir'), 'prompt_data', song_name)
+dir_transition_meta = os.path.join(os.getenv('media_dir'), 'transition_meta', song_name)
 song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 
 # load json file with song settings

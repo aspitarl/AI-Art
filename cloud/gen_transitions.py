@@ -18,10 +18,10 @@ args = parser.parse_args()
 song_name = args.song_name
 setting_name = args.setting_name
 
-output_basedir = os.path.join(os.getenv('media_dir'), 'transition_images', "{}_{}".format(song_name, setting_name), 'transition_images')
+output_basedir = os.path.join(os.getenv('media_dir'), "{}".format(song_name), 'transition_images')
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
-dir_prompt_data = os.path.join(os.getenv('media_dir'), 'prompt_data', song_name)
+dir_transition_meta = os.path.join(os.getenv('media_dir'), song_name, 'transition_meta')
 song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 
 # load json file with song settings
@@ -32,7 +32,7 @@ with open(json_fp, 'r') as f:
 settings = settings[setting_name]
 
 df_prompt = load_df_prompt(song_meta_dir)
-df_transitions = load_df_transitions(dir_prompt_data)
+df_transitions = load_df_transitions(dir_transition_meta)
 
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)

@@ -17,26 +17,25 @@ from aa_utils.cloud import load_df_prompt, gen_pipe
 
 dotenv.load_dotenv()
 
-
-# add arg for song name 
-
 parser = argparse.ArgumentParser(description='Generate transitions between prompts')
 parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
+parser.add_argument('setting_name', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
 args = parser.parse_args()
 song_name = args.song_name
+setting_name = args.setting_name
 
-# code_folder = '/content/gdrive/MyDrive/AI-Art Lee'
-output_basedir = os.path.join(os.getenv('media_dir'), song_name, 'prompt_images')
+output_basedir = os.path.join(os.getenv('media_dir'), "{}".format(song_name), 'prompt_images')
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
-dir_prompt_data = os.path.join(os.getenv('media_dir'), 'prompt_data', song_name)
+dir_transition_meta = os.path.join(os.getenv('media_dir'), 'transition_meta', song_name)
 song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 
 # load json file with song settings
 json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
-
 with open(json_fp, 'r') as f:
     settings = json.load(f)
+
+settings = settings[setting_name]
 
 df_prompt = load_df_prompt(song_meta_dir)
 

@@ -115,4 +115,4 @@ if len(df_existing):
 
 #%%
 
-df_existing.to_csv(os.path.join(media_dir, args.song, 'prompt_data', 'existing_transitions.csv'))
+df_existing.to_csv(os.path.join(media_dir, args.song, 'transition_meta', 'existing_transitions.csv'))

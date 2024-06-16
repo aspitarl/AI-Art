@@ -1,5 +1,5 @@
 setup VM with setup.sh
-generate `prompt_data/prompt_image_definitions.csv`
+generate `song_meta/prompt_image_definitions.csv`
 
 #TODO: split out these file transfer steps, implement better file transfer
 transfer prompt metadata to cloud 

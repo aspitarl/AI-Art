@@ -20,7 +20,7 @@ model_cache_dir...(SD model path, only for cloud)
 * media_dir - working directory of generated files
     * prompt images
     * scene image collections
-    * prompt_data (transition_meta)
+    * transition_meta (transition_meta)
     * transition_images
     * masks (?)
     * stories
@@ -37,13 +37,13 @@ in below:
 `<song>`: song name, a subdirectory that images and metadata will be stored in. located in `media_dir/<song>`
 `<sx>`: 'scene' which is a collection of related images
 
-The metadata describing prompts and transitions is located in `prompt_data` in the song directory. This folder needs to be transfered to google cloud with 
+The metadata describing prompts and transitions is located in `transition_meta` in the song directory. This folder needs to be transfered to google cloud with 
 
 For image generation scripts ( `explore_prompts.py`, `gen_saved_prompts.py`, and `gen_transitions.py`) there are associated notebooks that can be run on google collab. 
 
 ## Create images (cloud)
 
-Put prompt defiintions in `media_dir/<song>/prompt_data/prompt_image_definitions.csv` in desired song folder song. Transfer to the cloud server. 
+Put prompt defiintions in `media_dir/<song>/transition_meta/prompt_image_definitions.csv` in desired song folder song. Transfer to the cloud server. 
 
 Use `explore_prompts.py` to find prompts and add seed info to `prompt_image_definitions.csv`
 

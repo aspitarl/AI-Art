@@ -24,7 +24,7 @@ media_dir = os.getenv('media_dir')
 input_basedir = os.path.join(media_dir, '{}\scenes'.format(args.song))
 
 #%%
-fp_scene_sequence = os.path.join(media_dir, args.song, 'prompt_data', '{}.csv'.format(args.scene_sequence))
+fp_scene_sequence = os.path.join(media_dir, args.song, 'transition_meta', '{}.csv'.format(args.scene_sequence))
 df_scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)
 
 scene_sequence_list = df_scene_sequence['scene'].values.tolist()

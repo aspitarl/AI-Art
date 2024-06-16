@@ -319,7 +319,7 @@ df_inter = df_inter.sort_values('scene_from', key=lambda x: x.map(scene_sequence
 df_inter = df_inter.reset_index(drop=True)
 
 
-fp_out = os.path.join(media_dir, args.song, 'prompt_data', 'interscene_transitions.csv')
+fp_out = os.path.join(media_dir, args.song, 'transition_meta', 'interscene_transitions.csv')
 print("writing transitions csv to {}".format(fp_out))
 df_inter.to_csv(fp_out)
 
@@ -369,7 +369,7 @@ else:
     df_intra
 
 
-fp_out = os.path.join(media_dir, args.song, 'prompt_data', 'intrascene_transitions.csv')
+fp_out = os.path.join(media_dir, args.song, 'transition_meta', 'intrascene_transitions.csv')
 print("writing transitions csv to {}".format(fp_out))
 df_intra.to_csv(fp_out)
 

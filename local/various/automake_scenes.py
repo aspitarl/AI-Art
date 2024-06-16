@@ -26,7 +26,7 @@ else:
 
 allscenes_folder = os.path.join(media_dir, song, 'scenes')
 if not os.path.exists(allscenes_folder):
-    os.mkdir(allscenes_folder)
+    os.makedirs(allscenes_folder)
 prompt_images_folder = os.path.join(media_dir, song, 'prompt_images')
 # %%
 
@@ -76,5 +76,10 @@ df_sequence['start'] = ''
 
 df_sequence = df_sequence.sort_values('scene')
 
-df_sequence.to_csv(os.path.join(media_dir, song, 'prompt_data', 'scene_sequence_auto.csv'))
+output_dir=os.path.join(os.getenv('meta_dir'), song, 'transition_meta')
+
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+df_sequence.to_csv( os.path.join(output_dir,'scene_sequence_auto.csv'))
 

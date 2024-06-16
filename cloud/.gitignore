@@ -1,5 +1,5 @@
 model_cache
 output
-prompt_data
+transition_meta
 masks
 ti_gz

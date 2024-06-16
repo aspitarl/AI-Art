@@ -2,16 +2,16 @@ import os
 import pandas as pd
 import dotenv; dotenv.load_dotenv()
 
-def load_df_transitions(dir_prompt_data):
+def load_df_transitions(dir_transition_meta):
 
-    fp = os.path.join(dir_prompt_data, 'intrascene_transitions.csv')
+    fp = os.path.join(dir_transition_meta, 'intrascene_transitions.csv')
     df_trans_intrascene = pd.read_csv(fp, index_col=0).dropna(how='all')
-    fp = os.path.join(dir_prompt_data, 'interscene_transitions.csv')
+    fp = os.path.join(dir_transition_meta, 'interscene_transitions.csv')
     df_trans_interscene = pd.read_csv(fp, index_col=0).dropna(how='all')
 
     df_transitions = pd.concat([df_trans_interscene, df_trans_intrascene])
 
-    df_existing = pd.read_csv(os.path.join(dir_prompt_data, 'existing_transitions.csv'), index_col=0)
+    df_existing = pd.read_csv(os.path.join(dir_transition_meta, 'existing_transitions.csv'), index_col=0)
 
 
     def get_output_name(row, max_seed_characters=4):
