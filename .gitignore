@@ -5,13 +5,14 @@ __pycache__
 model_cache
 
 media
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
+# C extensions1
 *.so
 
 # Distribution / packaging
