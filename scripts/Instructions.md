@@ -9,9 +9,9 @@ setup VM with setup.sh (untested)
 Make .env file 
 
 ```
-media_dir='/home/aspitarte/AI-Art/output'
+media_dir='/home/aspitarte/AI-Art/media'
 meta_dir='/home/aspitarte/AI-Art/song_meta'
-model_cache_dir='/home/aspitarte/AI-Art/scripts/image_gen/model_cache'
+model_cache_dir='/home/aspitarte/AI-Art/model_cache'
 ```
 
 media is output to `<media_dir>/<song_name>`
@@ -29,8 +29,8 @@ group images into scene folders
     can also manually group images in `scenes/scene_name` folders and create  `scene_sequence.csv` with order of those scenes specifies
 
 
-run `story_gen/gen_transitions.py` <song_name>
-run `story_gen/examine_existing.py` <song_name>
+run `story_gen/gen_transition_meta.py` <song_name>
+run `story_gen/examine_existing_transitions.py` <song_name>
 
 geneate transitions `image_gen/gen_transitions.py <song_name>`
 

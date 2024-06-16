@@ -112,7 +112,7 @@ local: google drive folder. song_dir = media_dir/song_name. Open terminal in `lo
 4. group images into scenes (`song_dir/scenes/sx`). 
   * local\various\automake_scenes.py` will automate this process based on prompt definition. 
 5. Create scene sequence csv and place in `song_dir/transition_meta`. 
-7. run `python examine_existing.py song_name` 
+7. run `python examine_existing_transitions.py song_name` 
 6. run `python gen_transitions.py song_name` to random generate transition path
   * TODO: having to run multiple times to get a good sampling of random transitions. Automate, or make a script to generate base level graph, connect one random node to another node in next scene. 
 7. upload generated `interscene_transitions.csv`,`intrascene_transitions.csv`, and `existing_transitions.csv` to cloud at `cloud/transition_meta/song_name`

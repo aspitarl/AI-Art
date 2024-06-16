@@ -4,6 +4,7 @@ __pycache__
 .env
 model_cache
 
+media
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
