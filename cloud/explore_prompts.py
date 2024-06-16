@@ -2,7 +2,7 @@
 import os
 import pandas as pd
 from aa_utils.sd import image_grid, generate_latent, get_text_embed
-from aa_utils.cloud import load_df_prompt, gen_pipe
+from aa_utils.cloud import load_df_prompt, gen_pipe, gen_pipe_kwargs_static
 import torch
 from PIL import Image
 
@@ -43,20 +43,13 @@ settings = settings[args.setting_name]
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
 
-if 'mask_image' in settings:
-    mask_fp = os.path.join(os.getenv('media_dir'),song_name, 'masks', settings['mask_image'])
-    mask_image = Image.open(mask_fp)
-    settings['pipe_kwargs']['image'] = mask_image    
-
-# if 'prompt_name' not in args:
-#     name_sel = 'geo1'
-# else:
-#     name_sel = args.prompt_name
-
 default_prompt = 'geo1'
 name_sel = args.prompt_name if args.prompt_name else default_prompt
 
 prompt = df_prompt['prompt'][name_sel]
+
+pipe_kwargs = gen_pipe_kwargs_static(df_prompt.loc[name_sel], pipe_name)
+settings['pipe_kwargs'].update(pipe_kwargs)
 
 col_wrap = 2 
 # rows X cols of images. Reduce for speed and memory issues.

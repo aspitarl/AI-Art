@@ -13,7 +13,7 @@ import torch
 from PIL import Image
 
 from aa_utils.sd import generate_latent, get_text_embed
-from aa_utils.cloud import load_df_prompt, gen_pipe
+from aa_utils.cloud import load_df_prompt, gen_pipe, gen_pipe_kwargs_static
 
 dotenv.load_dotenv()
 
@@ -42,11 +42,6 @@ df_prompt = load_df_prompt(song_meta_dir)
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
 
-# if 'mask_image' in settings:
-#     mask_image = Image.open(os.path.join(os.getenv('media_dir'), song_name, 'masks', settings['mask_image']))
-#     settings['pipe_kwargs']['image'] = mask_image     
-
-
 # %% [markdown]
 # # Iterate through prompts and seeds, outputting an image for both
 
@@ -72,12 +67,9 @@ for name, row in df_prompt.iterrows():
     seeds = [int(s) for s in seeds]
 
     prompt = row['prompt']
-    guidance_scale = float(row['guidance_scale'])
 
-    settings['pipe_kwargs']['controlnet_conditioning_scale'] = float(row['cnet_scale'])
-
-    mask_name = row['mask']
-    settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('media_dir'), song_name, 'masks', mask_name + '.png'))
+    pipe_kwargs = gen_pipe_kwargs_static(row, pipe_name)
+    settings['pipe_kwargs'].update(pipe_kwargs)
 
     for seed in seeds:
         output_fn = "{}_{}.png".format(name, seed)
@@ -93,7 +85,6 @@ for name, row in df_prompt.iterrows():
         with torch.autocast(device):
             images = pipe(
                 prompt_embeds=text_embed,
-                guidance_scale=guidance_scale,
                 latents = latent,
                 **settings['pipe_kwargs']
             )

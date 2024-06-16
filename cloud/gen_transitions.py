@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from IPython.display import clear_output
 from aa_utils.sd import generate_latent, get_text_embed, slerp
-from aa_utils.cloud import load_df_transitions,load_df_prompt, gen_pipe
+from aa_utils.cloud import load_df_transitions,load_df_prompt, gen_pipe, gen_pipe_kwargs_transition
 import torch
 import dotenv; dotenv.load_dotenv()
 import argparse
@@ -36,10 +36,6 @@ df_transitions = load_df_transitions(dir_transition_meta)
 
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
-
-# if 'mask_image' in settings:
-#     mask_image = Image.open(os.path.join(os.getenv('media_dir'), song_name, 'masks', settings['mask_image']))
-#     settings['pipe_kwargs']['image'] = mask_image    
 
 # %%
 skip_existing = True
@@ -77,22 +73,6 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         df_prompt['prompt'][row['to_name']]
         ]
 
-    guidance_scales = [
-        df_prompt['guidance_scale'][row['from_name']],
-        df_prompt['guidance_scale'][row['to_name']]
-    ]
-
-    cnet_scales = [
-        df_prompt['cnet_scale'][row['from_name']],
-        df_prompt['cnet_scale'][row['to_name']]
-    ]
-
-    masks = [
-        df_prompt['mask'][row['from_name']],
-        df_prompt['mask'][row['to_name']]
-    ]
-
-    masks = [Image.open(os.path.join(os.getenv('media_dir'), song_name, 'masks', mask_name + '.png')) for mask_name in masks]
 
     seeds = [row['from_seed'], row['to_seed']]
 
@@ -109,11 +89,6 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
     from_text_embed = get_text_embed(prompts[0], pipe)
     to_text_embed = get_text_embed(prompts[1], pipe)
 
-    # The tensor steps are len(num_interpolation_steps) + 1
-    # latent_steps = make_latent_steps(from_latent, to_latent, num_interpolation_steps)
-    # embed_steps = make_latent_steps(from_text_embed, to_text_embed, num_interpolation_steps)
-    guidance_steps = np.linspace(guidance_scales[0], guidance_scales[1], num_interpolation_steps + 1)
-    cnet_steps = np.linspace(cnet_scales[0], cnet_scales[1], num_interpolation_steps + 1)
 
     print("Transition {} out of {}".format(i_row, len(df_transitions)))
     print(output_name)
@@ -123,15 +98,12 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         # latents = torch.lerp(from_latent, to_latent, t)
         latents = slerp(float(t), from_latent, to_latent)
 
-        mask_interp = Image.blend(masks[0], masks[1], float(t))
-        settings['pipe_kwargs']['image'] = mask_interp
-
-        settings['pipe_kwargs']['controlnet_conditioning_scale'] = cnet_steps[i]
+        pipe_kwargs = gen_pipe_kwargs_transition(t, df_prompt, row['from_name'], row['to_name'], pipe_name)
+        settings['pipe_kwargs'].update(pipe_kwargs)
 
         with torch.autocast('cuda'):
           images = pipe(
               prompt_embeds=embeds,
-              guidance_scale=guidance_steps[i],
               latents = latents,
               **settings['pipe_kwargs']
           )
