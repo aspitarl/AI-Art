@@ -1,11 +1,36 @@
-name,prompt,seeds,guidance_scale
-geo1,"geometric shapes in space, psychedelic interconnections, clustered, neural network, mycelium, gritty","6034, 7307, 3772, 6579",7.5
-geo2,"fungal mycelial clusters floating through space, psychedelic interconnections, gritty","4709, 5295, 7462, 4884"," 7.5"
-geo3,"hyperdimensional geometric object in center of image, mycelial network border around image, gritty","6681, 1346, 1578, 1646, 5460, 8784"," 7.5"
-portal1,"fungal mycelial clusters floating through space, wormhole portal door, gritty","0001, 0002, 00003, 0004"," 7.5"
-portal2,"portal to another dimension in space, geometric object through portal, stargate, fungal, gritty","5134, 8552, 6271, 3385, 8181"," 7.5"
-portal3,"fungal mycelial clusters surrounding an interdimensional portal, flames, gritty","5756, 2649, 6847, 3656"," 7.5"
-geom1,"geometric shape in center of view, hyperdimensional, hypercube, hyphae, isolated shape, flames, gritty","1983, 4576, 2822, 8190"," 7.5"
-geo_simple1,geometric shapes in space,"6497, 3676, 3855, 3021",7.5
-geo_simple2,"a geometric shape floating through space on fire, lines","3243, 2002, 1975, 8783", 7.5
-geo_simple3,geometric flames floating through cosmos,"6914, 2730, 3455, 2605, 8962, 2031, 2698", 7.5
+name,prompt,seeds,guidance_scale,mask,cnet_scale
+geo_simple1_1,geometric shapes in space,"6497, 3676, 3855, 3021",7.5,shapes/circle_full,0.5
+geo_simple1_2,geometric shapes in space,"6497, 3676, 3855, 3021",7.5,shapes/oct,0.75
+geo_simple1_3,geometric shapes in space,"6497, 3676, 3855, 3021",7.5,shapes/hex,1
+geo_simple2_1,"a geometric shape floating through space on fire, lines","3243, 2002, 1975, 8783"," 7.5",shapes/pentagon,1.25
+geo_simple2_2,"a geometric shape floating through space on fire, lines","3243, 2002, 1975, 8783"," 7.5",shapes/square,1.5
+geo_simple2_3,"a geometric shape floating through space on fire, lines","3243, 2002, 1975, 8783"," 7.5",shapes/pentagon,1.75
+geo_simple3_1,geometric flames floating through cosmos,"6914, 2730, 3455, 2605, 8962"," 7.5",shapes/hex,1.75
+geo_simple3_2,geometric flames floating through cosmos,"6914, 2730, 3455, 2605, 8962"," 7.5",shapes/oct,1.75
+geo_simple3_3,geometric flames floating through cosmos,"6914, 2730, 3455, 2605, 8962"," 7.5",shapes/circle_full,1.75
+portal0,"geometric flames floating through cosmos, wormhole portal door, gritty","0001, 0002, 00003, 0004"," 7.5",portal/portal0,1.75
+portal1,"fungal mycelial clusters floating through space, wormhole portal door, gritty","0001, 0002, 00003, 0004"," 7.5",portal/portal1,1.75
+portal2,"portal to another dimension in space, geometric object through portal, stargate, fungal, gritty","5134, 8552, 6271, 3385, 8181"," 7.5",portal/portal2,1.75
+portal3,"fungal mycelial clusters surrounding an interdimensional portal, flames, gritty","5756, 2649, 6847, 3656"," 7.5",portal/portal3,1.75
+portal4,"fungal mycelial clusters surrounding an interdimensional portal, flames, gritty","5756, 2649, 6847, 3656"," 7.5",portal/portal4,1.75
+portal5,"fungal mycelial clusters surrounding an interdimensional portal, flames, gritty","5756, 2649, 6847, 3656"," 7.5",portal/portal5,1.75
+geo1_1,"geometric shapes in space, psychedelic interconnections, clustered, neural network, mycelium, gritty","6034, 7307, 3772, 6579",7.5,hc/f1,1.75
+geo1_2,"geometric shapes in space, psychedelic interconnections, clustered, neural network, mycelium, gritty","6034, 7307, 3772, 6579",7.5,hc/f1_fill,1.75
+geo1_3,"geometric shapes in space, psychedelic interconnections, clustered, neural network, mycelium, gritty","6034, 7307, 3772, 6579",7.5,hc/f2,1.75
+geo1_4,"geometric shapes in space, psychedelic interconnections, clustered, neural network, mycelium, gritty","6034, 7307, 3772, 6579",7.5,hc/f2_fill,1.75
+geo1_5,"geometric shapes in space, psychedelic interconnections, clustered, neural network, mycelium, gritty","6034, 7307, 3772, 6579",7.5,hc/f3,1.75
+geo1_6,"geometric shapes in space, psychedelic interconnections, clustered, neural network, mycelium, gritty","6034, 7307, 3772, 6579",7.5,hc/f3_fill,1.75
+geo2_1,"fungal mycelial clusters floating through space, psychedelic interconnections, gritty","4709, 5295, 7462, 4884"," 7.5",hc/f4,1.75
+geo2_2,"fungal mycelial clusters floating through space, psychedelic interconnections, gritty","4709, 5295, 7462, 4884"," 7.5",hc/f4_fill,1.75
+geo2_3,"fungal mycelial clusters floating through space, psychedelic interconnections, gritty","4709, 5295, 7462, 4884"," 7.5",hc/f5,1.75
+geo2_4,"fungal mycelial clusters floating through space, psychedelic interconnections, gritty","4709, 5295, 7462, 4884"," 7.5",hc/f5_fill,1.75
+geo2_5,"fungal mycelial clusters floating through space, psychedelic interconnections, gritty","4709, 5295, 7462, 4884"," 7.5",hc/f6,1.75
+geo2_6,"fungal mycelial clusters floating through space, psychedelic interconnections, gritty","4709, 5295, 7462, 4884"," 7.5",hc/f6_fill,1.75
+geo3_1,"hyperdimensional geometric object in center of image, mycelial network border around image, gritty","6681, 1346, 1578, 1646"," 7.5",hc/f7,1.75
+geo3_2,"hyperdimensional geometric object in center of image, mycelial network border around image, gritty","6681, 1346, 1578, 1646"," 7.5",hc/f7_fill,1.75
+geo3_3,"hyperdimensional geometric object in center of image, mycelial network border around image, gritty","6681, 1346, 1578, 1646"," 7.5",hc/f8,1.5
+geo3_4,"hyperdimensional geometric object in center of image, mycelial network border around image, gritty","6681, 1346, 1578, 1646"," 7.5",hc/f8_fill,1.25
+geo3_5,"hyperdimensional geometric object in center of image, mycelial network border around image, gritty","6681, 1346, 1578, 1646"," 7.5",hc/f9,1
+geom1_1,"geometric shape in center of view, hyperdimensional, hypercube, hyphae, isolated shape, flames, gritty","1983, 4576, 2822, 8190"," 7.5",hc/f9_fill,0.75
+geom1_2,"geometric shape in center of view, hyperdimensional, hypercube, hyphae, isolated shape, flames, gritty","1983, 4576, 2822, 8190"," 7.5",hc/f10,0.5
+geom1_3,"geometric shape in center of view, hyperdimensional, hypercube, hyphae, isolated shape, flames, gritty","1983, 4576, 2822, 8190"," 7.5",hc/f10_fill,0.5
