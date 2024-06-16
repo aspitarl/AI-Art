@@ -68,7 +68,7 @@ for name, row in df_prompt.iterrows():
 
     prompt = row['prompt']
 
-    pipe_kwargs = gen_pipe_kwargs_static(row, pipe_name)
+    pipe_kwargs = gen_pipe_kwargs_static(row, pipe_name, song_name)
     settings['pipe_kwargs'].update(pipe_kwargs)
 
     for seed in seeds:

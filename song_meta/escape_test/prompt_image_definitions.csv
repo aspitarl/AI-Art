@@ -1,4 +1,4 @@
 name,prompt,seeds,guidance_scale,mask,cnet_scale
-geo_simple1_1,geometric shapes in space,"6497, 3676, 3855, 3021",7.5,shapes/square,0.5
-geo_simple1_2,geometric shapes in space,"6497, 3676, 3855, 3021",7.5,shapes/pentagon,0.75
+geo_simple1_1,geometric shapes in space,"6497, 3676, 3855, 3021",7.5,shapes/square,1
+geo_simple1_2,geometric shapes in space,"6497, 3676, 3855, 3021",7.5,shapes/pentagon,1
 geo_simple1_3,geometric shapes in space,"6497, 3676, 3855, 3021",7.5,shapes/hex,1

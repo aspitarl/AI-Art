@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from PIL import Image
 import dotenv; dotenv.load_dotenv()
 
 def load_df_transitions(dir_transition_meta):
@@ -87,7 +88,7 @@ def load_df_prompt(song_meta_dir):
 
 # Generate functions for pipeline settings, currently for everything other than latent/embeds
 
-def gen_pipe_kwargs_static(row, pipe_name):
+def gen_pipe_kwargs_static(row, pipe_name, song_name):
     """
     row - row of df_prompt (prompt_image_definitions)
     """
@@ -104,7 +105,7 @@ def gen_pipe_kwargs_static(row, pipe_name):
 
     return pipe_kwargs
 
-def gen_pipe_kwargs_transition(t, df_prompt, from_name, to_name, pipe_name):
+def gen_pipe_kwargs_transition(t, df_prompt, from_name, to_name, pipe_name, song_name):
 
     pipe_kwargs = {}
 

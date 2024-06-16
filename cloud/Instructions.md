@@ -1,18 +1,37 @@
-setup VM with setup.sh
-generate `song_meta/prompt_image_definitions.csv`
+# Procedure
 
-#TODO: split out these file transfer steps, implement better file transfer
-transfer prompt metadata to cloud 
-generate images with `gen_saved_prompts.py`
-transfer back images
+Tested on cloud
 
-#TODO: script to auto setup scenes and scene sequence file. 
-collect images into `scenes/scene_name`
-create  `scene_sequence.csv` with order of those scenes specifies
-run `gen_all_transitions.sh`
+## VM setup
 
-transfer back transition metadata 
-geneate transitions `gen_transitions.py`
-transfer back transition images
+setup VM with setup.sh (untested)
 
-run `story.py`
+Make .env file 
+
+```
+media_dir='/home/aspitarte/AI-Art/output'
+meta_dir='/home/aspitarte/AI-Art/song_meta'
+model_cache_dir='/home/aspitarte/AI-Art/cloud/model_cache'
+```
+
+media is output to `<media_dir>/<song_name>`
+song metadata is in `<meta_dir>/<song_name>`
+
+## song workflow
+
+generate `prompt_image_definitions.csv` and setup `tgen_settings.json`
+explore and dial in with `cloud/explore_prompts.py <song_name> -p <prompt_name>`
+
+generate all images with `cloud/gen_saved_prompts.py <song_name>`
+
+group images into scene folders
+    this can be done automatically with `local/various/automake_scenes.py <song_name>`
+    can also manually group images in `scenes/scene_name` folders and create  `scene_sequence.csv` with order of those scenes specifies
+
+
+run `local/gen_transitions.py` <song_name>
+run `local/examine_existing.py` <song_name>
+
+geneate transitions `cloud/gen_transitions.py <song_name>`
+
+generate path and movie with `local/gen_ss.sh <song_name>`

@@ -48,7 +48,7 @@ name_sel = args.prompt_name if args.prompt_name else default_prompt
 
 prompt = df_prompt['prompt'][name_sel]
 
-pipe_kwargs = gen_pipe_kwargs_static(df_prompt.loc[name_sel], pipe_name)
+pipe_kwargs = gen_pipe_kwargs_static(df_prompt.loc[name_sel], pipe_name, song_name)
 settings['pipe_kwargs'].update(pipe_kwargs)
 
 col_wrap = 2 

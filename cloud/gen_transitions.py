@@ -98,7 +98,7 @@ for i_row, (idx, row) in enumerate(df_transitions.iterrows()):
         # latents = torch.lerp(from_latent, to_latent, t)
         latents = slerp(float(t), from_latent, to_latent)
 
-        pipe_kwargs = gen_pipe_kwargs_transition(t, df_prompt, row['from_name'], row['to_name'], pipe_name)
+        pipe_kwargs = gen_pipe_kwargs_transition(t, df_prompt, row['from_name'], row['to_name'], pipe_name, song_name)
         settings['pipe_kwargs'].update(pipe_kwargs)
 
         with torch.autocast('cuda'):
