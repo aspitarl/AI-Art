@@ -101,7 +101,7 @@ def gen_pipe_kwargs_static(row, pipe_name, song_name):
         pipe_kwargs['controlnet_conditioning_scale'] = float(row['cnet_scale'])
 
         mask_name = row['mask']
-        pipe_kwargs['image'] = Image.open(os.path.join(os.getenv('media_dir'), song_name, 'masks', mask_name + '.png'))
+        pipe_kwargs['image'] = Image.open(os.path.join(os.getenv('meta_dir'), song_name, 'masks', mask_name + '.png'))
 
     return pipe_kwargs
 
@@ -138,7 +138,7 @@ def gen_pipe_kwargs_transition(t, df_prompt, from_name, to_name, pipe_name, song
             df_prompt['mask'][to_name]
         ]
 
-        masks = [Image.open(os.path.join(os.getenv('media_dir'), song_name, 'masks', mask_name + '.png')) for mask_name in masks]
+        masks = [Image.open(os.path.join(os.getenv('meta_dir'), song_name, 'masks', mask_name + '.png')) for mask_name in masks]
 
         mask_interp = Image.blend(masks[0], masks[1], t)
         pipe_kwargs['image'] = mask_interp

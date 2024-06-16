@@ -124,7 +124,7 @@ for name, row in df_prompt.iterrows():
                 output_fn += "_{}".format(val_str.replace('_', '').replace('/', ''))
                 # settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', vals[i+1] + '.png'))
                 # output_fn += "_{}".format(val_str.replace('_', ''))
-                settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('media_dir'), 'masks', vals[i+1] + '.png'))
+                settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('meta_dir'), song_name, 'masks', vals[i+1] + '.png'))
             elif key == 'controlnet_conditioning_scale':
                 output_fn += "_{}".format(val_str.replace('.', 'p'))
                 settings['pipe_kwargs'][key] = vals[i+1]
