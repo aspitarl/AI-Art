@@ -7,7 +7,7 @@ import argparse
 
 from dotenv import load_dotenv, dotenv_values
 load_dotenv()  # take environment variables from .env.
-gdrive_basedir = os.getenv('base_dir')
+media_dir = os.getenv('media_dir')
 
 from aa_utils.local import gendf_imagefn_info
 
@@ -24,10 +24,10 @@ else:
 
     song = args.song
 
-allscenes_folder = os.path.join(gdrive_basedir, song, 'scenes')
+allscenes_folder = os.path.join(media_dir, song, 'scenes')
 if not os.path.exists(allscenes_folder):
-    os.mkdir(allscenes_folder)
-prompt_images_folder = os.path.join(gdrive_basedir, song, 'prompt_images')
+    os.makedirs(allscenes_folder)
+prompt_images_folder = os.path.join(media_dir, song, 'prompt_images')
 # %%
 
 # make a list of all png files in prompt_images_folder
@@ -76,5 +76,10 @@ df_sequence['start'] = ''
 
 df_sequence = df_sequence.sort_values('scene')
 
-df_sequence.to_csv(os.path.join(gdrive_basedir, song, 'prompt_data', 'scene_sequence_auto.csv'))
+output_dir=os.path.join(os.getenv('meta_dir'), song)
+
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+df_sequence.to_csv( os.path.join(output_dir,'scene_sequence_auto.csv'))
 

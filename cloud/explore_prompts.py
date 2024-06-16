@@ -17,6 +17,7 @@ dotenv.load_dotenv()
 
 parser = argparse.ArgumentParser(description='Generate transitions between prompts')
 parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
+parser.add_argument('setting_name', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
 parser.add_argument('--prompt_name', '-p', type=str, default="geo1")
 parser.add_argument('--num_images', '-n', type=int, default=4)
 args = parser.parse_args()
@@ -26,28 +27,25 @@ song_name = args.song_name if args.song_name else 'escape'
 num_images = args.num_images if args.num_images else 4
 
 
-song_meta_dir = os.path.join(os.getenv('REPO_DIR'), 'song_meta', song_name)
+
+#%%
+song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
+
+df_prompt = load_df_prompt(song_meta_dir)
+
 # load json file with song settings
 json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
-
 with open(json_fp, 'r') as f:
     settings = json.load(f)
+
+settings = settings[args.setting_name]
 
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
 
-
-
-
-#%%
-
-df_prompt = load_df_prompt(song_meta_dir)
-
-with open(json_fp, 'r') as f:
-    settings = json.load(f)
-
 if 'mask_image' in settings:
-    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+    mask_fp = os.path.join(os.getenv('media_dir'),song_name, 'masks', settings['mask_image'])
+    mask_image = Image.open(mask_fp)
     settings['pipe_kwargs']['image'] = mask_image    
 
 # if 'prompt_name' not in args:
@@ -101,7 +99,7 @@ grid
 # %%
 
 
-output_dir = os.path.join('output', song_name, 'explore_images', name_sel)
+output_dir = os.path.join(os.getenv('media_dir'), song_name, 'explore_images', name_sel)
 if not os.path.exists(output_dir): os.makedirs(output_dir)
 
 grid.save(os.path.join(output_dir, 'image_grid.png'))

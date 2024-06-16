@@ -11,7 +11,7 @@
 mkdir -p model_cache
 mkdir -p output
 mkdir -p transition_images
-mkdir -p prompt_data
+mkdir -p transition_meta
 
 git config user.email aspitarte@gmail.com
 git config user.name "Lee Aspitarte"

@@ -20,7 +20,6 @@ from aa_utils.cloud import load_df_prompt, gen_pipe
 
 dotenv.load_dotenv()
 
-repo_dir = os.getenv('REPO_DIR')
 
 # add arg for song name 
 
@@ -34,8 +33,8 @@ song_name = args.song_name
 output_basedir = os.path.join('output', song_name, args.output_dir)
 if not os.path.exists(output_basedir): os.makedirs(output_basedir)
 
-dir_prompt_data = os.path.join(repo_dir, 'cloud', 'prompt_data', song_name)
-song_meta_dir = os.path.join(repo_dir, 'song_meta', song_name)
+dir_transition_meta = os.path.join(os.getenv('media_dir'), 'transition_meta', song_name)
+song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 
 # load json file with song settings
 json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
@@ -50,7 +49,7 @@ pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
 
 if 'mask_image' in settings:
-    mask_image = Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', settings['mask_image']))
+    mask_image = Image.open(os.path.join(os.getenv('media_dir'), 'masks', settings['mask_image']))
     settings['pipe_kwargs']['image'] = mask_image     
 
 
@@ -127,7 +126,9 @@ for name, row in df_prompt.iterrows():
             val_str = str(vals[i+1])
             if key == 'mask_name':
                 output_fn += "_{}".format(val_str.replace('_', '').replace('/', ''))
-                settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', vals[i+1] + '.png'))
+                # settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('REPO_DIR'), 'cloud', 'masks', vals[i+1] + '.png'))
+                # output_fn += "_{}".format(val_str.replace('_', ''))
+                settings['pipe_kwargs']['image'] = Image.open(os.path.join(os.getenv('media_dir'), 'masks', vals[i+1] + '.png'))
             elif key == 'controlnet_conditioning_scale':
                 output_fn += "_{}".format(val_str.replace('.', 'p'))
                 settings['pipe_kwargs'][key] = vals[i+1]

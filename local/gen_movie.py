@@ -15,12 +15,12 @@ parser.add_argument('--fps', default=10, type=int, dest='fps')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
-gdrive_basedir = os.getenv('base_dir')
+media_dir = os.getenv('media_dir')
 
-print(gdrive_basedir)
+print(media_dir)
 
 
-song_basedir = os.path.join(gdrive_basedir, args.song)
+song_basedir = os.path.join(media_dir, args.song)
 story_dir = os.path.join(song_basedir, 'story')
 
 out_dir = os.path.join(song_basedir, 'stories', args.output_folder)

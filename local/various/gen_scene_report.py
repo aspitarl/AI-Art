@@ -19,17 +19,17 @@ parser.add_argument('--ss', default='', dest='scene_sequence')
 # args = parser.parse_args()
 args = parser.parse_args("") # Needed for jupyter notebook
 
-gdrive_basedir = os.getenv('base_dir')
-# gdrive_basedir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
-input_basedir = os.path.join(gdrive_basedir, '{}\scenes'.format(args.song))
+media_dir = os.getenv('media_dir')
+# media_dir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
+input_basedir = os.path.join(media_dir, '{}\scenes'.format(args.song))
 
 #%%
 
-scene_dir = pjoin(gdrive_basedir, args.song, 'scenes')
+scene_dir = pjoin(media_dir, args.song, 'scenes')
 # scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
 
 scene_sequence_name = "scene_sequence" if args.scene_sequence == '' else "scene_sequence_{}".format(args.scene_sequence)
-fp_scene_sequence = os.path.join(os.getenv('repo_dir'), 'song_meta', args.song, '{}.csv'.format(scene_sequence_name))
+fp_scene_sequence = os.path.join(os.getenv('meta_dir'), args.song, '{}.csv'.format(scene_sequence_name))
 scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)['scene'].values.tolist()
 
 # Make a mapping from file to folder name for each scene folder in scene dir
@@ -162,7 +162,7 @@ def build_scene_sequence_story(scene_dict, story=[]):
     return story
 
 
-output_pdf_path = os.path.join(gdrive_basedir, args.song, 'story', 'scene_report.pdf')
+output_pdf_path = os.path.join(media_dir, args.song, 'story', 'scene_report.pdf')
 
 #TODO: Can we make a flowable image from PIL image without saving to disk?
 color_scheme_output_dir = 'output/color_schemes'
