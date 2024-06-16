@@ -76,7 +76,7 @@ df_sequence['start'] = ''
 
 df_sequence = df_sequence.sort_values('scene')
 
-output_dir=os.path.join(os.getenv('meta_dir'), song, 'transition_meta')
+output_dir=os.path.join(os.getenv('meta_dir'), song)
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)

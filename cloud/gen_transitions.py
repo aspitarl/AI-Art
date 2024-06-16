@@ -38,7 +38,7 @@ pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
 
 if 'mask_image' in settings:
-    mask_image = Image.open(os.path.join('masks', settings['mask_image']))
+    mask_image = Image.open(os.path.join(os.getenv('media_dir'), song_name, 'masks', settings['mask_image']))
     settings['pipe_kwargs']['image'] = mask_image    
 
 # %%
