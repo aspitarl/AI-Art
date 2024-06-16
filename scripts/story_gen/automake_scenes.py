@@ -81,5 +81,5 @@ output_dir=os.path.join(os.getenv('meta_dir'), song)
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-df_sequence.to_csv( os.path.join(output_dir,'scene_sequence_auto.csv'))
+df_sequence.to_csv( os.path.join(output_dir,'scene_sequence.csv'))
 

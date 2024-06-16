@@ -52,12 +52,12 @@ function main {
     
     # Run the Python scripts and stop if any of them fail
     if [ -n "$scene_sequence" ]; then
-        python examine_existing.py $song --ss $scene_sequence || stop_script 'examine_existing.py'
+        python examine_existing_transitions.py $song --ss $scene_sequence || stop_script 'examine_existing_transitions.py'
         [ "$stop" -eq 1 ] && return
         python story_nx_sections.py $song --ss $scene_sequence || stop_script 'story_nx_sections.py'
         [ "$stop" -eq 1 ] && return
     else
-        python examine_existing.py $song || stop_script 'examine_existing.py'
+        python examine_existing_transitions.py $song || stop_script 'examine_existing_transitions.py'
         [ "$stop" -eq 1 ] && return
         python story_nx_sections.py $song || stop_script 'story_nx_sections.py'
         [ "$stop" -eq 1 ] && return
