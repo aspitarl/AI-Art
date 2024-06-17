@@ -1,12 +1,11 @@
-# Procedure
-
-Tested on cloud
+# Procedures
 
 ## VM setup
 
 setup VM with setup.sh (untested)
 
-Make .env file 
+These codes output images and movides to a specified directory. Create a file in the base repository directory named `.env` and inside this file add the following line 
+
 
 ```
 media_dir='/home/aspitarte/AI-Art/media'
@@ -14,13 +13,18 @@ meta_dir='/home/aspitarte/AI-Art/song_meta'
 model_cache_dir='/home/aspitarte/AI-Art/model_cache'
 ```
 
-media is output to `<media_dir>/<song_name>`
-song metadata is in `<meta_dir>/<song_name>`
+## Movie Generation Workflow
 
-## song workflow
+### Explore Images
 
 generate `prompt_image_definitions.csv` and setup `tgen_settings.json`
 explore and dial in with `image_gen/explore_prompts.py <song_name> -p <prompt_name>`
+
+### Automated Pipeline
+
+once `prompt_image_definitions` and `tgen_settings.json` are created, the entire pipeline can be run wiht `source run_all.sh <song_name>`
+
+### Pipeline Steps
 
 generate all images with `image_gen/gen_saved_prompts.py <song_name>`
 
@@ -35,3 +39,26 @@ run `story_gen/examine_existing_transitions.py` <song_name>
 geneate transitions `image_gen/gen_transitions.py <song_name>`
 
 generate path and movie with `story_gen/gen_ss.sh <song_name>`
+
+
+
+## File structure
+
+media is output to `<media_dir>/<song_name>`
+song metadata is in `<meta_dir>/<song_name>`
+
+* meta_dir - directory of text files defining output, starting point.
+    * prompt_image_definitions.csv
+    * tgen_settings.json
+    * scene_sequence.csv
+    * masks 
+* media_dir - working directory of generated files
+    * prompt images
+    * scene image collections
+    * transition_meta 
+    * transition_images
+    * stories
+    * story temp folder 
+
+transition_sequence.csv - final sequence used by ffmpeg to generate a movie
+transition_sequence_gen.csv - sequence generated for image creation, i.e. known path through graph
