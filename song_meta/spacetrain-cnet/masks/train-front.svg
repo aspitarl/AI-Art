@@ -8,7 +8,7 @@
    version="1.1"
    id="svg5"
    sodipodi:docname="train-front.svg"
-   inkscape:export-filename="train1.png"
+   inkscape:export-filename="train-front.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
@@ -27,9 +27,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="0.88476562"
-     inkscape:cx="490.52539"
-     inkscape:cy="328.33554"
+     inkscape:zoom="0.80150918"
+     inkscape:cx="496.56325"
+     inkscape:cy="298.8113"
      inkscape:window-width="1504"
      inkscape:window-height="930"
      inkscape:window-x="0"
@@ -43,9 +43,17 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:#ffffff;fill-opacity:1;stroke-width:0.286334"
-       d="M 163.51829,28.882293 C 145.95136,7.9227705 134.05646,7.3667642 112.59751,29.362943 82.890045,69.02195 57.540604,101.71973 69.826855,131.89258 80.119286,146.72002 202.45417,147.76046 212.94918,139.35117 242.89685,103.83863 183.08775,45.300664 163.51829,28.882293 Z"
-       id="path442"
-       sodipodi:nodetypes="ccccc" />
+       style="fill:#ffffff;stroke-width:0.264583"
+       d="m 163.92496,33.492863 c -19.63308,-4.955349 -38.41902,-3.980669 -56.81831,-0.299045 l -0.59809,6.578957 -4.78472,0.89713 -4.150972,55.550788 -6.01651,-0.825845 c -1.844163,4.668402 -4.143042,9.387332 -0.598088,13.456952 29.60736,6.04915 59.79871,2.75298 90.01217,-0.89713 3.1827,-3.88934 3.0466,-8.608375 -1.19617,-14.354081 l -7.64561,0.857136 -3.11996,-55.211978 -4.99491,-0.917858 z"
+       id="path776"
+       sodipodi:nodetypes="ccccccccccccc" />
+    <path
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+       d="m 109.73434,111.41092 -14.451338,40.40871 7.352418,1.13828 9.12718,-41.26242 z"
+       id="path2708" />
+    <path
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0;stroke-dasharray:none;stroke-opacity:1"
+       d="m 154.90759,111.52698 12.21235,40.4087 -6.21331,1.13829 -7.71306,-41.26242 z"
+       id="path2708-3" />
   </g>
 </svg>
