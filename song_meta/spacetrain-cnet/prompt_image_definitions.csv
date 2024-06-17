@@ -1,9 +1,19 @@
 name,prompt,seeds,guidance_scale,mask,cnet_scale
-tram_orig_retroart,"a train travelling through space, stars, retro scifi art ","1000, 2000, 3000, 4000, 5000",7.5,train1,1
-tram_orig_genre,"a train travelling through space, stars, Genre Painting","1000, 2000, 3000, 4000, 5000",7.5,train1,1
-tram_orig_surreal,"a train travelling through space, stars, Surrealism Painting","1000, 2000, 3000, 4000, 5000",7.5,train1,1
-train_orig_retro,"a train travelling through space, halflife, retro art, full view of vehicle, stars","1000, 2000, 3000, 4000, 5000",7.5,train1,1
-train_orig_surreal,"a train travelling through space, halflife, Surrealism Painting, full view of vehicle, floating, stars","1000, 2000, 3000, 4000, 5000",7.5,train1,1
-train_orig_shift_painting,"a train travelling through space, Psychedlic dream painting, retrowave color scheme, purple orange yellow maroon, full view of vehicle, floating, stars","1000, 2000, 3000, 4000, 5000",7.5,train1,1
-train_orig_alien,"a train travelling through a strange alien landscape, alien flora and fauna, Surrealism Painting, retrowave color scheme, purple orange yellow maroon, full view of vehicle","1000, 2000, 3000, 4000, 5000",7.5,train1,1
-train_orig_alien2,"a train travelling through a strange alien landscape, alien flora and fauna, bizarre trees, Matte Painting, retrowave color scheme, purple orange yellow maroon, full view of vehicle","1000, 2000, 3000, 4000, 5000",7.5,train1,1
+st_retroart,"a train travelling through space, stars, retro scifi art ","1000, 2000, 3000, 4000, 5000, 6000",7.5,train1,1
+st_genre,"a train travelling through space, stars, Genre Painting","1000, 2000, 3000, 4000, 5000, 6000",7.5,train1,1
+st_surreal,"a train travelling through space, stars, Surrealism Painting","1000, 2000, 3000, 4000, 5000, 6000",7.5,train-front,1
+tram_retro,"a tram travelling through space, halflife, retro art, full view of vehicle, stars","1000, 2000, 3000, 4000, 5000, 6000",7.5,train-front,1
+tram_surreal,"a tram travelling through space, halflife, Surrealism Painting, full view of vehicle, floating, stars","1000, 2000, 3000, 4000, 5000, 6000",7.5,train2,1
+tram_shift_painting,"a tram travelling through space, Psychedlic dream painting, retrowave color scheme, purple orange yellow maroon, full view of vehicle, floating, stars","1000, 2000, 3000, 4000, 5000, 6000",7.5,train2,1
+tram_shift_cg,"a tram travelling through space, realistic CG art, retrowave color scheme, purple orange yellow maroon, full view of vehicle, floating, stars","1000, 2000, 3000, 4000, 5000, 6000",7.5,train-front,1
+tram_alien,"a tram travelling through a strange alien landscape, alien flora and fauna, Surrealism Painting, retrowave color scheme, purple orange yellow maroon, full view of vehicle","1000, 2000, 3000, 4000, 5000, 6000",7.5,train-front,1
+tram_alien2,"a tram travelling through a strange alien landscape, alien flora and fauna, bizarre trees, Matte Painting, retrowave color scheme, purple orange yellow maroon, full view of vehicle","1000, 2000, 3000, 4000, 5000, 6000",7.5,train1,1
+tram_orig_retroart,"a train travelling through space, stars, retro scifi art ","1000, 2000, 3000, 4000, 5000, 6000",7.5,train1,1
+tram_orig_genre,"a train travelling through space, stars, Genre Painting","1000, 2000, 3000, 4000, 5000, 6000",7.5,train1,1
+tram_orig_surreal,"a train travelling through space, stars, Surrealism Painting","1000, 2000, 3000, 4000, 5000, 6000",7.5,train-front,1
+train_orig_retro,"a train travelling through space, halflife, retro art, full view of vehicle, stars","1000, 2000, 3000, 4000, 5000, 6000",7.5,train-front,1
+train_orig_surreal,"a train travelling through space, halflife, Surrealism Painting, full view of vehicle, floating, stars","1000, 2000, 3000, 4000, 5000, 6000",7.5,train2,1
+train_orig_shift_painting,"a train travelling through space, Psychedlic dream painting, retrowave color scheme, purple orange yellow maroon, full view of vehicle, floating, stars","1000, 2000, 3000, 4000, 5000, 6000",7.5,train2,1
+train_orig_shift_cg,"a train travelling through space, realistic CG art, retrowave color scheme, purple orange yellow maroon, full view of vehicle, floating, stars","1000, 2000, 3000, 4000, 5000, 6000",7.5,train-front,1
+train_orig_alien,"a train travelling through a strange alien landscape, alien flora and fauna, Surrealism Painting, retrowave color scheme, purple orange yellow maroon, full view of vehicle","1000, 2000, 3000, 4000, 5000, 6000",7.5,train-front,1
+train_orig_alien2,"a train travelling through a strange alien landscape, alien flora and fauna, bizarre trees, Matte Painting, retrowave color scheme, purple orange yellow maroon, full view of vehicle","1000, 2000, 3000, 4000, 5000, 6000",7.5,train-front,1
