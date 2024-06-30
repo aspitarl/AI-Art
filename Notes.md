@@ -125,3 +125,48 @@ cloud:
 local: 
 
 1. run `source gen_ss.sh escape` 
+
+
+# 2024-06-30 resetup
+
+Reinstalling on google cloud with fresh VM instance 
+
+VM instance 
+
+ c0-deeplearning-common-cu122-v20240613-debian-11
+
+Description
+    Google, Deep Learning VM with CUDA 12.2, M122, Debian 11, Python 3.10. With CUDA 12.2 preinstalled.
+
+
+manually specificying /opt/conda/bin/python as python to use as is 3.10
+
+venv creation failed. trying again with >= instead of == 
+
+successful, update requirements_gcloud.txt
+
+setup .env file
+
+pip install -e . in scripts dir
+
+test out with `python image_gen/gen_saved_prompts.py`
+
+RuntimeError: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx
+
+going to follow cuda install
+
+https://cloud.google.com/compute/docs/gpus/install-drivers-gpu
+
+```
+curl -L https://github.com/GoogleCloudPlatform/compute-gpu-installation/releases/download/cuda-installer-v1.1.0/cuda_installer.pyz --output cuda_installer.pyz
+
+sudo python3 cuda_installer.pyz install_driver
+```
+
+had to manual sudo apt update/upgrade to get to work
+
+sudo apt install ffmpeg
+
+had to upload mask png files to escape test
+
+git config
