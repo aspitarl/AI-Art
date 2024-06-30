@@ -1,5 +1,12 @@
 # Procedures
 
+## On already setup VM
+
+`run_all.sh` has sequence of steps to go from a `song_name` (folder name) in `song_meta` folder. There are two test songs, nspiral_test (regular SD), and escape_test (Controlnet). Test that everything is working with 
+
+`source run_all.sh nspiral_test`
+`source run_all.sh escape_test`
+
 ## VM setup
 
 setup VM with setup.sh (untested)

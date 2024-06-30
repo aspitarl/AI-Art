@@ -1,5 +1,4 @@
 ﻿name,prompt,seeds,guidance_scale
-sunflower,"center of sunflower, close up, yellow petals, blue sky",5340669853330060 2732021544841623 4538969850988016 5413391748357857 731709445984636 5255501974700149 4946009910562756,7.5
-nautilus2,"photograph, conch nautilus shell close up on beach, spiral pattern shell",1248804484045881 2665055045155589 7465299912080968 8699536241568741,7.5
-galaxy,spiral galaxy,3465990629176810 8999876512042888 3284773783961787 6061807517716738 2443981337660528 4632702044449526 4881469296302265,7.5
-,,,
+sunflower,"center of sunflower, close up, yellow petals, blue sky",1000 1001 1002 1003,7.5
+nautilus2,"photograph, conch nautilus shell close up on beach, spiral pattern shell",1000 1001 1002 1003,7.5
+galaxy,spiral galaxy,1000 1001 1002 1003,7.5
