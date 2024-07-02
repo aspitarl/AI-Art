@@ -1,2 +1,12 @@
 ﻿name,prompt,seeds,guidance_scale
-city,"color Illustration, a brick wall and a sidewalk at night, shadows, dark and dingy, a lampost in the foreground and graffiti on the wall  ",,7.5
+city_windows,"a building close up, at night, a glowing window on a building","7665915, 5155045, 5510346, 6301897, 4595067",7.5
+city_windows2,"glitch, the outline of a building on the horizon","4216471, 3068335, 2101102, 6037564, 5348251",7.5
+city_building,"pop art, a building at night, shadows, geometric street in the foreground, a window glowing at night on a building in the background, dark colors","5996955, 6192230, 6520136, 5500291, 6404801",7.5
+city_alley,"color Illustration, dark shadows, a dark brick wall at night, shadows, dark and dingy alleyway, a lampost glowing at night on a sidewalk in the foreground, dark, muted colors","1052375, 3350950, 3739774, 3123759, 6551403",7.5
+trenchcoat,"color Illustration, dark shadows, a dark brick wall at night, shadows, dark and dingy alleyway, a figure walking at night on a sidewalk in the foreground, figure wearing a trench coat, dark, muted colors","7074782, 6458338, 6294332, 7755542, 1746964, 3442194",7.5
+trenchcoat2,"realistic photograph, dark shadows, a dark brick wall at night, shadows, dark and dingy alleyway, a figure walking at night on a sidewalk in the foreground, figure wearing a trench coat, dark, muted colors","6745087, 1847625, 4124745, 8665908, 1401167",7.5
+doorway,"color illustration, a dark brick wall at night, a figure in a trench coat walking near a yellow door in a dark blue brick wall, a light on the wall casts shadows in an alley, red brick","1688848, 5637843, 4623011, 3825939, 1997593, 4010929",7.5
+doorway2,"color illustration, opening a door, a door opening, a silhouette in a trench coat in the opening of a door in a brown brick wall, a light on the wall casts shadows in an alley, dark silhouette, door is big in the frame","7494174, 5488920, 5045999, 7541459, 4139775",7.5
+gangduck,"noir, a duck standing upright like a human, wearing a trench coat, a duck with a hat and a trenchoat, standing by a table under a light, bright yellow color","7984134, 5880675, 8392532, 7140978, 4773583",7.5
+gangduck2,"noir, ducks wearing trench coats, standing around a table, lamp lighting the room, hazy smoke in the room, yellow light","6748885, 5511128, 6760923, 5094070, 6428416",7.5
+plans,"pen drawing, blue prints of a buidling, papers on a table next to an ashtray with a cigar in it, a table surrounded by ducks in trench coats, low lighting",,7.5
