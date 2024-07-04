@@ -69,8 +69,8 @@ rows, cols = calculate_rows_cols(args.num_images, col_wrap)
 
 generator = torch.Generator(device="cuda")
 seeds = [generator.seed() for i in range(num_images)]
-# truncate seeds to 7 digits
-seeds = [int(str(seed)[:7]) for seed in seeds]
+# truncate seeds to 4 digits
+seeds = [int(str(seed)[:4]) for seed in seeds]
 
 generator = [torch.Generator(device="cuda").manual_seed(seed) for seed in seeds]
 
