@@ -1,0 +1,16 @@
+,scene,duration,section,start,avoid
+,s1,3,1,random,
+,s2,4,1,,
+,s3,3,2,random,ascending2_7823859632332002
+,s4,3,3,,
+0,s5,2,3,,
+1,s6,3,3,army blue exp flee_8587678247190113,
+1,s7,3,4,,
+1,s8,3,4,,
+1,s9,2,4,random,
+1,s10,2,5,,
+1,s11,2,5,random,
+1,s12,2,5,,
+1,s13,2,5,random,
+2,s14,2,6,,
+" ",s15,2,6,,
