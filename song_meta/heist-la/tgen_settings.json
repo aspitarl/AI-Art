@@ -1,0 +1,35 @@
+{
+    "default14_nonet":{
+        "res_height": 576,
+        "res_width": 1024,
+        "interpolation_steps": 20, 
+        "model_string": "CompVis/stable-diffusion-v1-4",
+        "seed_delimiter": ", ",
+        "pipe_kwargs":{
+            "num_inference_steps": 20
+        }
+    },
+    "default":{
+        "res_height": 576,
+        "res_width": 1024,
+        "interpolation_steps": 10, 
+        "model_string": "runwayml/stable-diffusion-v1-5",
+        "controlnet_string": "lllyasviel/sd-controlnet-scribble",
+        "pipe_kwargs":{
+            "num_inference_steps": 10,
+            "control_guidance_start":0.1,
+            "control_guidance_end":0.8,          
+            "controlnet_conditioning_scale":0.1
+        }
+    },
+    "cell":{
+        "res_width": 576,
+        "res_height": 1024,
+        "interpolation_steps": 30, 
+        "model_string": "CompVis/stable-diffusion-v1-4",
+        "seed_delimiter": ", ",
+        "pipe_kwargs":{
+            "num_inference_steps": 30
+        }
+    }
+}
