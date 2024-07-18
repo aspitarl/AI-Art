@@ -4,6 +4,7 @@
 23,city_windows,3,1,random
 19,city_building2,3,1,
 24,city_alley,3,1,random
+24,city_alley2,3,1,random
 21,trenchcoat,3,1,
 4,trenchcoat2,3,1,
 14,doorway2,3,1,random
@@ -20,8 +21,10 @@
 0,heist2,3,4,
 13,hall,3,4,
 7,lockpick,3,5,random
-1,vault_mech,3,5,
+7,lockpick2,3,5,
 10,vault_open,3,5,random
+1,vault_mech,3,5,
+1,vault_mech2,3,5,
 3,treasure,4,5,
 9,treasure2,4,5,random
 31,treasure_mask,6,5,
