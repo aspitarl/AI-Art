@@ -139,6 +139,7 @@ def gen_pipe_kwargs_transition(t, df_prompt, from_name, to_name, pipe_name, song
         ]
 
         masks = [Image.open(os.path.join(os.getenv('meta_dir'), song_name, 'masks', mask_name + '.png')) for mask_name in masks]
+        masks = [m.convert('RGBA') for m in masks]
 
         mask_interp = Image.blend(masks[0], masks[1], t)
         pipe_kwargs['image'] = mask_interp
