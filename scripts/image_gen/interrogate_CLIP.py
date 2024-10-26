@@ -22,9 +22,8 @@ parser.add_argument('--starting_seed', '-s', type=str, default="3962",
 args = parser.parse_args()
 song_name = args.song_name
 
-# image_folder = "cnet_scripts/output/explore/{}".format(args.prompt_name)
-# image_folder = os.path.join(os.getenv('media_dir'), song_name, 'prompt_images')
-image_folder = os.path.join(os.getenv('media_dir'), song_name, 'explore_images',args.prompt_name)
+image_folder = os.path.join(os.getenv('media_dir'), song_name, 'prompt_images')
+# image_folder = os.path.join(os.getenv('media_dir'), song_name, 'explore_images',args.prompt_name)
 
 # find the first image with starting_seed in the filename
 
