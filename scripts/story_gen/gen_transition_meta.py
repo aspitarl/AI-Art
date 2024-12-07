@@ -1,4 +1,11 @@
-#%%
+"""
+simplified version of gen_transition_meta.py with gen_scene_dict_simple
+#TODO: combine
+
+"""
+
+
+# %%
 import os
 from os.path import join as pjoin
 import numpy as np
@@ -6,10 +13,14 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import argparse
-from itertools import count
+
+from aa_utils.local import build_graph_scenes, gen_path_sequence_fullG, gen_scene_dict_simple
+from aa_utils.plot import plot_scene_sequence
+from aa_utils.cloud import load_df_prompt, gen_pipe, gen_pipe_kwargs_static
 
 from aa_utils.local import gen_scene_dicts, gen_path_sequence_fullG, build_graph_scenes, image_names_from_transition, check_existing_transitions
 from aa_utils.plot import plot_scene_sequence
+from aa_utils.local import load_df_scene_sequence
 
 from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
@@ -18,40 +29,36 @@ parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('--ss', default='', dest='scene_sequence')
 args = parser.parse_args()
+
 # args = parser.parse_args("") # Needed for jupyter notebook
-
 media_dir = os.getenv('media_dir')
-# media_dir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
-input_basedir = os.path.join(media_dir, '{}\scenes'.format(args.song))
 
-#%%
+song_meta_dir = os.path.join(os.getenv('meta_dir'), args.song)
 
-scene_dir = pjoin(media_dir, args.song, 'scenes')
-# scene_list = [s for s in os.listdir(scene_dir) if os.path.isdir(pjoin(scene_dir,s))]
+df_scene_sequence = load_df_scene_sequence("", args.song)
+scene_sequence_list = df_scene_sequence['scene'].tolist()
 
-from aa_utils.local import load_df_scene_sequence
-df_scene_sequence = load_df_scene_sequence(args.scene_sequence, args.song)
+df_prompt = load_df_prompt(song_meta_dir)
 
+scene_to_file_dict, file_to_scene_dict= gen_scene_dict_simple(df_scene_sequence, df_prompt)
+# Old method baseed on files
+# scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence_list, truncate_digits=None)
+
+G = build_graph_scenes(scene_to_file_dict)
+
+nx.draw(G)
+
+# %%
 # remove 'random' from the start column, replacing with nan
 df_scene_sequence['start'] = df_scene_sequence['start'].replace('random', np.nan)
 # if the start value contains spaces, split on spaces and take a random value. This column can contain missing values. 
 df_scene_sequence['start'] = df_scene_sequence['start'].apply(lambda x: np.random.choice(x.split(',')) if isinstance(x, str) else x)
 
-scene_sequence_list = df_scene_sequence['scene'].values.tolist()
-
-scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence_list, truncate_digits=None)
-
-#%%
-
-G = build_graph_scenes(scene_dict)
-
-#%%
 
 path_edges = gen_path_sequence_fullG(G, df_scene_sequence)
-
+# %%
+path_edges
 #%%
-
-# Check that path_edges is one connected path
 
 path_nodes = set([n for e in path_edges for n in e])
 
@@ -81,7 +88,7 @@ G_plot = nx.relabel_nodes(G_plot, node_to_trunc)
 G_plot = check_existing_transitions(G_plot, trans_list)
 path_edges_truncate = [(node_to_trunc[e[0]], node_to_trunc[e[1]]) for e in path_edges]
 
-plot_scene_sequence(G_plot, scene_sequence_list, scene_dict, path_edges=path_edges_truncate)
+plot_scene_sequence(G_plot, scene_sequence_list, scene_to_file_dict, path_edges=path_edges_truncate)
 
 if not os.path.exists(pjoin(media_dir, args.song, 'story')): os.makedirs(pjoin(media_dir, args.song, 'story'))
 plt.savefig(pjoin(media_dir, args.song, 'story', 'story_transition_gen.png'))

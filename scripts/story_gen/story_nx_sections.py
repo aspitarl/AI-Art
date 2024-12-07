@@ -30,6 +30,10 @@ import argparse
 from aa_utils.local import image_names_from_transition, build_graph_scenes, check_existing_transitions, gen_scene_dicts
 from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, generate_text_for_ffmpeg, generate_output_video
 from aa_utils.plot import plot_scene_sequence
+from aa_utils.local import load_df_scene_sequence
+from aa_utils.local import build_graph_scenes, gen_path_sequence_fullG, gen_scene_dict_simple
+from aa_utils.plot import plot_scene_sequence
+from aa_utils.cloud import load_df_prompt, gen_pipe, gen_pipe_kwargs_static
 
 from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
@@ -41,24 +45,27 @@ args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
 media_dir = os.getenv('media_dir')
-# media_dir = r"G:\.shortcut-targets-by-id\1Dpm6bJCMAI1nDoB2f80urmBCJqeVQN8W\AI-Art Kyle"
-input_basedir = os.path.join(media_dir, '{}\scenes'.format(args.song))
+song_name = args.song
+
+song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
+
+df_scene_sequence = load_df_scene_sequence("", song_name)
+scene_sequence_list = df_scene_sequence['scene'].tolist()
+
+df_prompt = load_df_prompt(song_meta_dir)
+
+scene_to_file_dict, file_to_scene_dict= gen_scene_dict_simple(df_scene_sequence, df_prompt)
+
+G = build_graph_scenes(scene_to_file_dict)
 
 #%%
 
-from aa_utils.local import load_df_scene_sequence
-df_scene_sequence = load_df_scene_sequence(args.scene_sequence, args.song).reset_index(drop=True)
-
-scene_sequence_list = df_scene_sequence['scene'].values.tolist()
-
-scene_dir = pjoin(media_dir, args.song, 'scenes')
-scene_dict, file_to_scene_dict = gen_scene_dicts(scene_dir, scene_sequence_list, truncate_digits=4)
 
 dir_transitions = os.path.join(media_dir, args.song, 'transition_images')
 trans_list = [t for t in os.listdir(dir_transitions) if os.path.isdir(pjoin(dir_transitions,t))]
 trans_list = [image_names_from_transition(t) for t in trans_list]
 
-G = build_graph_scenes(scene_dict)
+G = build_graph_scenes(scene_to_file_dict)
 G = check_existing_transitions(G, trans_list)
 
 # only keep edges with the attribute exists=True
@@ -91,7 +98,7 @@ G_sequence = downselect_to_scene_sequence(G, scene_sequence_list)
 # %%
 import re
 
-df_scene_sequence2 = df_scene_sequence.copy()
+df_scene_sequence2 = df_scene_sequence.copy().reset_index(drop=True) #integer index needed
 
 # if the start value is 'random', pick a random start value from the scene. But we need to select only from nodes that are connected to the previous scene
 # I think this still could result in a disconnected graph, if we connect to a path in the previous scene that is not connected to the rest of the scene.

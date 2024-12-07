@@ -1,6 +1,25 @@
 import os
 from os.path import join as pjoin
 
+import networkx as nx
+from collections import OrderedDict
+
+def gen_scene_dict_simple(df_scene_sequence, df_prompt):
+    scene_to_file_dict = OrderedDict()
+
+    scene_sequence = df_scene_sequence['scene'].values.tolist()
+
+    # {'scene': ['scene-seed1', 'scene-seed2', ...]}
+    for scene in scene_sequence:
+        seeds = df_prompt.loc[scene, 'seeds'].split(',')
+        scene_to_file_dict[scene] = [f'{scene}-{seed.strip()}' for seed in seeds]
+
+    # Invert scene_dict to make a mapping from file to folder name
+    file_to_scene_dict = {}
+    for scene in scene_to_file_dict:
+        for fn in scene_to_file_dict[scene]:
+            file_to_scene_dict[fn] = scene
+    return scene_to_file_dict, file_to_scene_dict
 
 
 def load_df_scene_sequence(scene_sequence, song_name):
