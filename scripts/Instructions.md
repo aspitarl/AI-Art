@@ -1,31 +1,18 @@
 # Procedures
 
-## On already setup VM
+## Full automated workflow
 
 `run_all.sh` has sequence of steps to go from a `song_name` (folder name) in `song_meta` folder. There are two test songs, nspiral_test (regular SD), and escape_test (Controlnet). Test that everything is working with 
 
 `source run_all.sh nspiral_test`
 `source run_all.sh escape_test`
 
-## VM setup
-
-setup VM with setup.sh (untested)
-
-These codes output images and movides to a specified directory. Create a file in the base repository directory named `.env` and inside this file add the following line 
-
-
-```
-media_dir='/home/aspitarte/AI-Art/media'
-meta_dir='/home/aspitarte/AI-Art/song_meta'
-model_cache_dir='/home/aspitarte/AI-Art/model_cache'
-```
-
-## Movie Generation Workflow
+## Movie Generation Workflow Steps
 
 ### Explore Images
 
 generate `prompt_image_definitions.csv` and setup `tgen_settings.json`
-explore and dial in with `image_gen/explore_prompts.py <song_name> -p <prompt_name>`
+explore and dial in with `python image_gen/explore_prompts.py <song_name> -p <prompt_name>`
 
 ### Automated Pipeline
 
@@ -33,17 +20,17 @@ once `prompt_image_definitions` and `tgen_settings.json` are created, the entire
 
 ### Pipeline Steps
 
-generate all images with `image_gen/gen_saved_prompts.py <song_name>`
+generate all images with `python image_gen/gen_saved_prompts.py <song_name>`
 
 group images into scene folders
-    this can be done automatically with `story_gen/automake_scenes.py <song_name>`
+    this can be done automatically with `python story_gen/automake_scenes.py <song_name>`
     can also manually group images in `scenes/scene_name` folders and create  `scene_sequence.csv` with order of those scenes specifies
 
 
-run `story_gen/gen_transition_meta.py` <song_name>
-run `story_gen/examine_existing_transitions.py` <song_name>
+run `python story_gen/gen_transition_meta.py` <song_name>
+run `python story_gen/examine_existing_transitions.py` <song_name>
 
-geneate transitions `image_gen/gen_transitions.py <song_name>`
+geneate transitions `python image_gen/gen_transitions.py <song_name>`
 
 generate path and movie with `story_gen/gen_ss.sh <song_name>`
 
