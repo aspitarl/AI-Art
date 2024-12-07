@@ -10,7 +10,7 @@
         }
     },
     "default":{
-        "res_height": 564,
+        "res_height": 576,
         "res_width": 1024,
         "interpolation_steps": 10, 
         "model_string": "runwayml/stable-diffusion-v1-5",
@@ -19,7 +19,8 @@
             "num_inference_steps": 10,
             "control_guidance_start":0.1,
             "control_guidance_end":0.8,          
-            "controlnet_conditioning_scale":0.1
+            "controlnet_conditioning_scale":0.1,
+            "negative_prompt": "skin, white woman"
         }
     },
     "cell":{

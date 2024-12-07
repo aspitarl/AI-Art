@@ -1,0 +1,13 @@
+﻿name,prompt,seeds,guidance_scale,mask,cnet_scale
+dancing1,"an ethereal translucent whispy spirit dancing, border of roses","1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+dancing2,an ethereal translucent whispy spirit dancing,"1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+dancing3,"two ethereal spirits dancing, whispy, translucent","1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+dancing4,"an ethereal translucent whispy spirit dancing, flowing aqua silk, netting, deblurring","1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+dancing5,"two ethereal spirits dancing, whispy, flowing aqua silk, netting, deblurring","1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+dancing6,"two ethereal spirits dancing, whispy, flowing aqua silk, netting, deblurring, ghost","1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+dancing7,"two ethereal spirits dancing, whispy, flowing aqua silk, netting, deblurring, ghost, border of roses","1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+dancing8,"two ethereal spirits dancing with each other, dynamic dance photography, infared photography, exalted, flowing fabric","1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+dancing9,"two ethereal spirits dancing with each other, flowing aqua silk, dynamic dance photography, infared photography, exalted, flowing fabric","1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+rosering1,a artistic jacket laying on white sheets surrounded by a ring of roses,"1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+rosering2,an ethereal spirit laying on white sheets surrounded by a ring of roses,"1, 2, 3, 4, 5, 6, 7, 8",7.5,blank,0.5
+,,,,,
