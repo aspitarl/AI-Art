@@ -1,0 +1,2 @@
+name,prompt,seeds,guidance_scale,mask,cnet_scale
+luna,"image of the moon in the sky, mystical, brush strokes","6497, 3676, 3855, 3021",7.5,shapes/circle_full,0.5
