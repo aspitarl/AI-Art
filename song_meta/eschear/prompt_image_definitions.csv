@@ -1,44 +1,44 @@
 ﻿name,prompt,seeds,guidance_scale,mask,cnet_scale
-infinistair1,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide2,0.4
-infinistair2,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide3,0.4
-infinistair3,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide4,0.4
-infinistair4,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide5,0.4
-infinistair5,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide6,0.5
-infinistair6,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide7,0.5
-infinistair7,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide8,0.5
-infinistair8,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide9,0.5
-infinistair9,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide10,0.6
-infinistair10,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide11,0.6
-infinistair11,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide12,0.6
-infinistair12,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide13,0.6
+infinistair1,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide2,0.7
+infinistair2,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide3,0.7
+infinistair3,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide4,0.7
+infinistair4,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide5,0.7
+infinistair5,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide6,0.7
+infinistair6,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide7,0.7
+infinistair7,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide8,0.7
+infinistair8,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide9,0.7
+infinistair9,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide10,0.7
+infinistair10,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide11,0.7
+infinistair11,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide12,0.7
+infinistair12,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide13,0.7
 infinistair13,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide14,0.7
 infinistair14,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide15,0.7
-infinistair15,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide16,0.6
-infinistair16,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide17,0.5
-infinistair17,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide18,0.4
-infinistair18,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide19,0.3
-infinistair19,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide20,0.2
-infinistair_vine1,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938",7.5,Slide20,0.1
-infinistair_vine2,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","7669, 7938",7.5,Slide19,0.2
-infinistair_vine3,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938",7.5,Slide18,0.3
-infinistair_vine4,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938",7.5,Slide17,0.4
-infinistair_vine5,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide16,0.5
-infinistair_vine6,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide15,0.6
-infinistair_vine7,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide14,0.7
-infinistair_vine8,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide13,0.6
-infinistair_vine9,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide12,0.6
-infinistair_vine10,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide11,0.6
-infinistair_vine11,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide10,0.5
-infinistair_vine12,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide9,0.5
-infinistair_vine13,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide8,0.5
-infinistair_vine14,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide7,0.5
-infinistair_vine15,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide6,0.4
-infinistair_vine16,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide5,0.4
-infinistair_vine17,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide4,0.4
-infinistair_vine18,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938, 7821, 8235, 2352, 5456, 7089",7.5,Slide3,0.4
-infinistair_vine19,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938, 7821, 8235, 2352, 5456, 7089",7.5,Slide2,0.3
-infinistair_vine20,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938, 7821, 8235, 2352, 5456, 7089",7.5,Slide1,0.3
-person,"lithograph illustration of M.C. Escher stairs, person walking on stairs",,7.5,person,0.5
+infinistair15,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide16,0.7
+infinistair16,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide17,0.7
+infinistair17,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide18,0.7
+infinistair18,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide19,0.7
+infinistair19,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","6530, 7740, 7830",7.5,Slide20,0.7
+infinistair20,"lithograph illustration of M.C. Escher stairs, fractal, simplistic, anguished","7669, 7938",7.5,Slide20,0.7
+infinistair_vine0,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938",7.5,Slide20,0.7
+infinistair_vine1,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938",7.5,Slide22,0.7
+infinistair_vine2,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938",7.5,Slide23,0.7
+infinistair_vine3,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide24,0.7
+infinistair_vine4,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide25,0.7
+infinistair_vine5,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide26,0.7
+infinistair_vine6,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide27,0.7
+infinistair_vine7,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7821, 8235",7.5,Slide22,0.7
+infinistair_vine8,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide23,0.7
+infinistair_vine9,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide24,0.7
+infinistair_vine10,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide25,0.7
+infinistair_vine11,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide26,0.7
+infinistair_vine12,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide27,0.7
+infinistair_vine13,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide22,0.7
+infinistair_vine14,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide23,0.7
+infinistair_vine15,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","2352, 5456, 7089",7.5,Slide24,0.7
+infinistair_vine16,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938, 7821, 8235, 2352, 5456, 7089",7.5,Slide25,0.7
+infinistair_vine17,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938, 7821, 8235, 2352, 5456, 7089",7.5,Slide26,0.7
+infinistair_vine18,"M.C. Escher stairs made of thorny vines, fractal, simplistic, anguished","7669, 7938, 7821, 8235, 2352, 5456, 7089",7.5,Slide27,0.7
+person,"lithograph illustration of M.C. Escher stairs, person walking on stairs",,7.5,person,0.7
 ,,,,,
 ,,,,,
 ,,,,,
