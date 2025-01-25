@@ -1,20 +1,24 @@
-# cd ..
+# Create and activate venv
+# python -m venv .venv
 
-# python -m venv venv
+# install python extension
 
-# source /home/ubuntu/AI-Art/venv/bin/activate
-
-# cd lambda
-
+# choose requirements in reqs
 # pip install -r requirements.txt
 
-mkdir -p model_cache
-mkdir -p output
-mkdir -p transition_images
-mkdir -p transition_meta
+source .env
 
-git config user.email aspitarte@gmail.com
-git config user.name "Lee Aspitarte"
+# git config user.email $git_email
+# git config user.name $git_name
+
+# mkdir -p $media_dir
+# mkdir -p $model_cache_dir
+
+pushd scripts
+
+# pip install -e . 
 
 # Downloads models and final test
-python explore_prompts.py
+python image_gen/explore_prompts.py nspiral_test -p sunflower
+
+popd
