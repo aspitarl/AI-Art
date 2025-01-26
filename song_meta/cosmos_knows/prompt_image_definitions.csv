@@ -1,2 +1,6 @@
 name,prompt,seeds,guidance_scale,mask,cnet_scale
-luna,"image of the moon in the sky, mystical, brush strokes","6497, 3676, 3855, 3021",7.5,shapes/circle_full,0.5
+luna,"image of the moon in the sky, mystical, brush strokes","0001, 0002, 0003, 0004, 0005, 0006",7.5,shapes/circle_full,0.5
+p1,"Through the Shadow of ancient skies, moon in sky","0001, 0002, 0003, 0004, 0005, 0006",7.5,,
+p2,Two strangers gaze in the silver light of the moon,"0001, 0002, 0003, 0004, 0005, 0006",7.5,,
+p3,Two strangers gaze in the silver light of the moon and stars,"0001, 0002, 0003, 0004, 0005, 0006",7.5,,
+p4,"A tether eternal intertwined, a whisper a vision of timeless design","0001, 0002, 0003, 0004, 0005, 0006",7.5,,
