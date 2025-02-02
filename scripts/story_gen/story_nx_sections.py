@@ -287,7 +287,7 @@ s1_nodes
 path_edges = list(zip(path,path[1:]))
 path_section_list = path_section_list[1:]
 
-plot_scene_sequence(G_sequence, scene_sequence_list, scene_dict, path_edges=path_edges)
+plot_scene_sequence(G_sequence, scene_sequence_list, scene_to_file_dict, path_edges=path_edges)
 
 plt.tight_layout()
 

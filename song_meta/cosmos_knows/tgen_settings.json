@@ -12,7 +12,7 @@
             "controlnet_conditioning_scale":1.75
         }
     },
-    "v15_nocnet_hr":{
+    "default":{
         "res_height": 576,
         "res_width": 1024,
         "interpolation_steps": 30, 
