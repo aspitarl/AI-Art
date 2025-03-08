@@ -321,6 +321,7 @@ def gen_path_sequence_fullG(G, df_scene_sequence):
             # Go to a random node that is not already in path_edges
             existing_nodes_in_path = [n for e in path_edges for n in e]
             valid_nodes = [n for n in scene_G.nodes() if n not in existing_nodes_in_path]
+            valid_nodes = [n for n in valid_nodes if n != node_from]
 
             if len(valid_nodes) == 0:
                 print("No valid nodes found in scene {}, existing nodes in path: {}".format(scene_from, existing_nodes_in_path))
@@ -330,13 +331,11 @@ def gen_path_sequence_fullG(G, df_scene_sequence):
                 print("path_edges: {}".format(path_edges))
                 raise ValueError()
 
-
             node_to = np.random.choice(valid_nodes).item()
-            
 
-            # find a path between the two nodes
             path = nx.shortest_path(G, node_from, node_to)
-            assert len(path) == 2 # there should be a path to all nodes in the scene
+            if not len(path) == 2: # there should be a path to all nodes in the scene
+                raise ValueError("Could not find path between nodes {} and {} in scene {}".format(node_from, node_to, scene_from))
 
             # add the path to the list of path edges
             path_edges.extend([(path[i], path[i+1]) for i in range(len(path)-1)])
