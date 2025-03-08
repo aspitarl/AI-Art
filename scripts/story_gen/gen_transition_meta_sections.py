@@ -46,7 +46,7 @@ input_basedir = os.path.join(media_dir, '{}\scenes'.format(args.song))
 
 #%%
 
-from aa_utils.local import load_df_scene_sequence
+from aa_utils.fileio import load_df_scene_sequence
 df_scene_sequence = load_df_scene_sequence(args.scene_sequence, args.song).reset_index(drop=True)
 
 scene_sequence_list = df_scene_sequence['scene'].values.tolist()

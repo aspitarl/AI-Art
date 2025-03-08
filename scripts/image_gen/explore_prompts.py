@@ -2,7 +2,8 @@
 import os
 import pandas as pd
 from aa_utils.sd import image_grid, generate_latent, get_text_embed
-from aa_utils.cloud import load_df_prompt, gen_pipe, gen_pipe_kwargs_static
+from aa_utils.cloud import gen_pipe, gen_pipe_kwargs_static
+from aa_utils.fileio import load_df_prompt
 import torch
 from PIL import Image
 

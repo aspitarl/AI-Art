@@ -9,6 +9,7 @@ import pandas as pd
 import json
 import dotenv
 import argparse
+from aa_utils.fileio import load_df_prompt
 import torch
 from PIL import Image
 import itertools
@@ -16,7 +17,7 @@ import shutil
 from tqdm import tqdm
 
 from aa_utils.sd import generate_latent, get_text_embed
-from aa_utils.cloud import load_df_prompt, gen_pipe
+from aa_utils.cloud import gen_pipe
 
 dotenv.load_dotenv()
 

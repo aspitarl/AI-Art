@@ -31,10 +31,10 @@ import json
 from aa_utils.local import image_names_from_transition, build_graph_scenes, check_existing_transitions, gen_scene_dicts
 from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, generate_text_for_ffmpeg, generate_output_video
 from aa_utils.plot import plot_scene_sequence
-from aa_utils.local import load_df_scene_sequence
+from aa_utils.fileio import load_df_scene_sequence
 from aa_utils.local import build_graph_scenes, gen_path_sequence_fullG, gen_scene_dict_simple
 from aa_utils.plot import plot_scene_sequence
-from aa_utils.cloud import load_df_prompt, gen_pipe, gen_pipe_kwargs_static
+from aa_utils.fileio import load_df_prompt
 
 from dotenv import load_dotenv; load_dotenv(override=True)
 # %%

@@ -22,15 +22,6 @@ def gen_scene_dict_simple(df_scene_sequence, df_prompt):
     return scene_to_file_dict, file_to_scene_dict
 
 
-def load_df_scene_sequence(scene_sequence, song_name):
-    scene_sequence_name = "scene_sequence" if scene_sequence == '' else "scene_sequence_{}".format(scene_sequence)
-    fp_scene_sequence = pjoin(os.getenv('meta_dir'), song_name, '{}.csv'.format(scene_sequence_name))
-
-    print("loading scene sequence from {}".format(fp_scene_sequence))
-    df_scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)
-    return df_scene_sequence
-
-
 def gen_scene_dicts(scene_dir, scene_sequence, truncate_digits=None):
     """
     Generates a mapping from scene name to a list of filenames in that scene

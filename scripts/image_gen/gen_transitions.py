@@ -4,7 +4,8 @@ import pandas as pd
 import numpy as np
 from IPython.display import clear_output
 from aa_utils.sd import generate_latent, get_text_embed, slerp
-from aa_utils.cloud import load_df_transitions,load_df_prompt, gen_pipe, gen_pipe_kwargs_transition
+from aa_utils.cloud import gen_pipe, gen_pipe_kwargs_transition
+from aa_utils.fileio import load_df_prompt, load_df_transitions
 import torch
 import dotenv; dotenv.load_dotenv()
 import argparse

@@ -11,8 +11,8 @@ import json
 from aa_utils.local import gen_scene_dicts, image_names_from_transition, build_graph_scenes, check_existing_transitions
 from aa_utils.plot import plot_scene_sequence
 from aa_utils.local import build_graph_scenes, gen_scene_dict_simple
-from aa_utils.cloud import load_df_prompt
-from aa_utils.local import load_df_scene_sequence
+from aa_utils.fileio import load_df_prompt
+from aa_utils.fileio import load_df_scene_sequence
 
 from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
