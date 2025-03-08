@@ -13,7 +13,7 @@ from PIL import Image
 
 parser = argparse.ArgumentParser(description='Generate transitions between prompts')
 parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
-parser.add_argument('setting_name', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
+parser.add_argument('--setting_name', '-sn', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
 args = parser.parse_args()
 song_name = args.song_name
 setting_name = args.setting_name
@@ -25,13 +25,12 @@ dir_transition_meta = os.path.join(os.getenv('media_dir'), song_name, 'transitio
 song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 
 # load json file with song settings
-json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
-with open(json_fp, 'r') as f:
-    settings = json.load(f)
+with open(os.path.join(song_meta_dir, 'tgen_settings.json'), 'r') as f:
+    settings = json.load(f)[args.setting_name]
 
-settings = settings[setting_name]
+seed_delimiter = settings.get('seed_delimiter', ', ')
+df_prompt = load_df_prompt(song_meta_dir, seed_delimiter)
 
-df_prompt = load_df_prompt(song_meta_dir)
 df_transitions = load_df_transitions(dir_transition_meta)
 
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'

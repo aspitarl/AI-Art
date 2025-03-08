@@ -69,7 +69,7 @@ def load_df_transitions(dir_transition_meta):
         
     return df_transitions
 
-def load_df_prompt(song_meta_dir):
+def load_df_prompt(song_meta_dir, seed_delimiter=','):
     fp = os.path.join(song_meta_dir, 'prompt_image_definitions.csv')
     df_prompt = pd.read_csv(fp, index_col=0).dropna(how='all')
 
@@ -78,11 +78,23 @@ def load_df_prompt(song_meta_dir):
         print(df_prompt[df_prompt.index.duplicated()].index)
         df_prompt = df_prompt[~df_prompt.index.duplicated()]
 
+    df_prompt = df_prompt.rename(columns={
+        'seeds': 'seed_list_str'
+    })
+
     df_prompt = df_prompt.astype({
         'prompt': str,
-        'seeds': str,
+        'seed_list_str': str,
         'guidance_scale': float
     })
+
+    # Make a new column that is a list of seeds
+    df_prompt['seeds'] = df_prompt['seed_list_str'].str.split(seed_delimiter)
+    for idx, row in df_prompt.iterrows():
+        seeds = row['seeds']
+        seeds = [s.strip() for s in seeds]
+        seeds = [int(s) for s in seeds]
+        df_prompt.at[idx, 'seeds'] = seeds
 
     return df_prompt
 

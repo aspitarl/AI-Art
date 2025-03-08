@@ -26,6 +26,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import argparse
+import json
 
 from aa_utils.local import image_names_from_transition, build_graph_scenes, check_existing_transitions, gen_scene_dicts
 from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, generate_text_for_ffmpeg, generate_output_video
@@ -40,6 +41,7 @@ from dotenv import load_dotenv; load_dotenv(override=True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_full', nargs='?')
+parser.add_argument('--setting_name', '-sn', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
 parser.add_argument('--ss', default='', dest='scene_sequence')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
@@ -52,7 +54,12 @@ song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 df_scene_sequence = load_df_scene_sequence("", song_name)
 scene_sequence_list = df_scene_sequence['scene'].tolist()
 
-df_prompt = load_df_prompt(song_meta_dir)
+# load json file with song settings
+with open(os.path.join(song_meta_dir, 'tgen_settings.json'), 'r') as f:
+    settings = json.load(f)[args.setting_name]
+
+seed_delimiter = settings.get('seed_delimiter', ', ')
+df_prompt = load_df_prompt(song_meta_dir, seed_delimiter)
 
 scene_to_file_dict, file_to_scene_dict= gen_scene_dict_simple(df_scene_sequence, df_prompt)
 

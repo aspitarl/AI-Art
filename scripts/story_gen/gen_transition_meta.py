@@ -13,6 +13,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import argparse
+import json
 
 from aa_utils.local import build_graph_scenes, gen_path_sequence_fullG, gen_scene_dict_simple
 from aa_utils.plot import plot_scene_sequence
@@ -27,6 +28,7 @@ from dotenv import load_dotenv; load_dotenv(override=True)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
+parser.add_argument('--setting_name', '-sn', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
 parser.add_argument('--ss', default='', dest='scene_sequence')
 args = parser.parse_args()
 
@@ -38,7 +40,13 @@ song_meta_dir = os.path.join(os.getenv('meta_dir'), args.song)
 df_scene_sequence = load_df_scene_sequence("", args.song)
 scene_sequence_list = df_scene_sequence['scene'].tolist()
 
-df_prompt = load_df_prompt(song_meta_dir)
+# load json file with song settings
+with open(os.path.join(song_meta_dir, 'tgen_settings.json'), 'r') as f:
+    settings = json.load(f)[args.setting_name]
+
+seed_delimiter = settings.get('seed_delimiter', ', ')
+df_prompt = load_df_prompt(song_meta_dir, seed_delimiter)
+
 
 scene_to_file_dict, file_to_scene_dict= gen_scene_dict_simple(df_scene_sequence, df_prompt)
 # Old method baseed on files

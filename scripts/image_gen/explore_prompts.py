@@ -17,7 +17,7 @@ dotenv.load_dotenv()
 
 parser = argparse.ArgumentParser(description='Generate transitions between prompts')
 parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
-parser.add_argument('--setting_name', '-s', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
+parser.add_argument('--setting_name', '-sn', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
 parser.add_argument('--prompt_name', '-p', type=str, default="geo1")
 parser.add_argument('--num_images', '-n', type=int, default=4)
 args = parser.parse_args()
@@ -31,14 +31,12 @@ num_images = args.num_images if args.num_images else 4
 #%%
 song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 
-df_prompt = load_df_prompt(song_meta_dir)
-
 # load json file with song settings
-json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
-with open(json_fp, 'r') as f:
-    settings = json.load(f)
+with open(os.path.join(song_meta_dir, 'tgen_settings.json'), 'r') as f:
+    settings = json.load(f)[args.setting_name]
 
-settings = settings[args.setting_name]
+seed_delimiter = settings.get('seed_delimiter', ', ')
+df_prompt = load_df_prompt(song_meta_dir, seed_delimiter)
 
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)

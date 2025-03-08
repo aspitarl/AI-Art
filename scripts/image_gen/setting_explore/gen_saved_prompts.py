@@ -40,10 +40,13 @@ song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 json_fp = os.path.join(song_meta_dir, 'tgen_settings.json')
 shutil.copy(json_fp, os.path.join(output_basedir, 'tgen_settings.json'))
 
-with open(json_fp, 'r') as f:
-    settings = json.load(f)
+# load json file with song settings
+with open(os.path.join(song_meta_dir, 'tgen_settings.json'), 'r') as f:
+    settings = json.load(f)[args.setting_name]
 
-df_prompt = load_df_prompt(song_meta_dir)
+seed_delimiter = settings.get('seed_delimiter', ', ')
+df_prompt = load_df_prompt(song_meta_dir, seed_delimiter)
+
 
 pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
 pipe = gen_pipe(pipe_name, settings)
@@ -53,12 +56,6 @@ pipe = gen_pipe(pipe_name, settings)
 # # Iterate through prompts and seeds, outputting an image for both
 
 # %%
-
-if 'seed_delimiter' not in settings:
-    seed_delimiter = ', '
-else:
-    seed_delimiter = settings['seed_delimiter']
-
 
 # %%
 device = "cuda"
@@ -91,9 +88,7 @@ if not os.path.exists(image_output_dir): os.makedirs(image_output_dir)
 
 for name, row in df_prompt.iterrows():
 
-    seeds = row['seeds'].split(seed_delimiter)
-    seeds = [s.strip() for s in seeds]
-    seeds = [int(s) for s in seeds]
+    seeds = row['seeds']
 
     seeds = [seeds[0]] # Keep only the first seed 
 

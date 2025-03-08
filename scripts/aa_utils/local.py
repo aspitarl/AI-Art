@@ -11,8 +11,8 @@ def gen_scene_dict_simple(df_scene_sequence, df_prompt):
 
     # {'scene': ['scene-seed1', 'scene-seed2', ...]}
     for scene in scene_sequence:
-        seeds = df_prompt.loc[scene, 'seeds'].split(',')
-        scene_to_file_dict[scene] = [f'{scene}-{seed.strip()}' for seed in seeds]
+        seeds = df_prompt.loc[scene, 'seeds']
+        scene_to_file_dict[scene] = [f'{scene}-{seed}' for seed in seeds]
 
     # Invert scene_dict to make a mapping from file to folder name
     file_to_scene_dict = {}
