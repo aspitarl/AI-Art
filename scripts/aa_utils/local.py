@@ -4,7 +4,11 @@ from os.path import join as pjoin
 import networkx as nx
 from collections import OrderedDict
 
-def gen_scene_dict_simple(df_scene_sequence, df_prompt):
+def gen_scene_dict_simple(
+        df_scene_sequence, 
+        df_prompt,
+        seed_len_truncate=4
+        ):
     scene_to_file_dict = OrderedDict()
 
     scene_sequence = df_scene_sequence['scene'].values.tolist()
@@ -12,7 +16,11 @@ def gen_scene_dict_simple(df_scene_sequence, df_prompt):
     # {'scene': ['scene-seed1', 'scene-seed2', ...]}
     for scene in scene_sequence:
         seeds = df_prompt.loc[scene, 'seeds']
-        scene_to_file_dict[scene] = [f'{scene}-{seed}' for seed in seeds]
+        d_out = {}
+        for seed in seeds:
+            seed_str = str(seed)[:seed_len_truncate]
+            d_out[f'{scene}-{seed_str}'] = seed
+        scene_to_file_dict[scene] = d_out
 
     # Invert scene_dict to make a mapping from file to folder name
     file_to_scene_dict = {}
