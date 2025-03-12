@@ -18,6 +18,8 @@ def load_df_prompt(song_meta_dir, seed_delimiter=','):
         'seeds': 'seed_list_str'
     })
 
+    df_prompt['seed_list_str'] = df_prompt['seed_list_str'].fillna('0001')
+
     df_prompt = df_prompt.astype({
         'prompt': str,
         'seed_list_str': str,
@@ -29,7 +31,7 @@ def load_df_prompt(song_meta_dir, seed_delimiter=','):
     for idx, row in df_prompt.iterrows():
         seeds = row['seeds']
         seeds = [s.strip() for s in seeds]
-        seeds = [int(s) for s in seeds]
+        seeds = [int(float(s)) for s in seeds]
         df_prompt.at[idx, 'seeds'] = seeds
 
     return df_prompt
