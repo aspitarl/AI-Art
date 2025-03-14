@@ -53,7 +53,7 @@ settings['pipe_kwargs'].update(pipe_kwargs)
 col_wrap = 2 
 # rows X cols of images. Reduce for speed and memory issues.
 rows = 2
-cols = 2
+cols = 3
 
 def calculate_rows_cols(num_images, col_wrap):
     cols = col_wrap
