@@ -17,7 +17,7 @@
         "res_width": 1024,
         "interpolation_steps": 30, 
         "model_string": "runwayml/stable-diffusion-v1-5",
-        "seed_delimiter": " ",
+        "seed_delimiter": ", ",
         "pipe_kwargs":{
             "num_inference_steps": 30
         }
