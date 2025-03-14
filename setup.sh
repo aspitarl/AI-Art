@@ -11,12 +11,12 @@ source .env
 # git config user.email $git_email
 # git config user.name $git_name
 
-# mkdir -p $media_dir
-# mkdir -p $model_cache_dir
+mkdir -p $media_dir
+mkdir -p $model_cache_dir
 
 pushd scripts
 
-# pip install -e . 
+pip install -e . 
 
 # Downloads models and final test
 python image_gen/explore_prompts.py nspiral_test -p sunflower
