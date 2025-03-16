@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("song", default='cycle_mask_test', nargs='?')
 parser.add_argument('-i', default='', dest='input_transitions_filename')
 parser.add_argument('-o', default='base', dest='output_folder')
+parser.add_argument('-of', dest='output_format', default='mov', choices=['mov', 'mp4'])
 parser.add_argument('--fps', default=10, type=int, dest='fps')
 args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
@@ -20,9 +21,6 @@ media_dir = os.getenv('media_dir')
 meta_dir = os.getenv('meta_dir')
 
 print(media_dir)
-
-settings = load_settings_json(os.path.join(meta_dir, args.song), setting_name='default')
-
 
 song_basedir = os.path.join(media_dir, args.song)
 story_dir = os.path.join(song_basedir, 'story')
@@ -110,13 +108,13 @@ with open(os.path.join(out_dir, 'videos.txt'), 'w') as f:
 
 os.chdir(out_dir)
 
-if settings['combined_movie_format'] == 'mov':
+output_format = args.output_format
+
+if output_format == 'mov':
     # mjepg codec for playback in touchdesigner
     fn_out = '{}/{}_{}_combined.mov'.format(out_dir, args.song, args.output_folder)
     subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-c', 'mjpeg', '-q:v', '3', '-r', str(args.fps), fn_out ])
-elif settings['combined_movie_format'] == 'mp4':
+elif output_format == 'mp4':
     # Without mjpeg codec, can be played in vscode
     fn_out = '{}/{}_{}_combined.mp4'.format(out_dir, args.song, args.output_folder)
     subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-q:v', '3', '-r', str(args.fps), fn_out ])
-else:
-    raise ValueError("Invalid movie format found in settings json")
