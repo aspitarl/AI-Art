@@ -22,6 +22,8 @@ parser.add_argument('song_name', type=str, help='The name of the song to generat
 parser.add_argument('--prompt_names', '-p', type=str, required=True, nargs='+', help='List of prompt names to generate images for')
 parser.add_argument('--setting_name', '-sn', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
 parser.add_argument('--num_images', '-n', type=int, default=4)
+# add a all sub prompts flag, stores True to an argument that will iterate through all subprompts (promt_base_substr)
+parser.add_argument('--all_subprompts', '-a', action='store_true', help='Generate images for all subprompts')
 args = parser.parse_args()
 # args=None
 
@@ -57,12 +59,22 @@ seeds = [int(str(seed)[:4]) for seed in seeds]
 
 generator = [torch.Generator(device="cuda").manual_seed(seed) for seed in seeds]
 
-for prompt_name in args.prompt_names:
+# Make a dataframe to iterate over, either all subprompts or just the ones specified
+if args.all_subprompts:
+    prompt_names = df_prompt.index
+    prompt_names = [prompt_name for prompt_name in prompt_names if prompt_name.startswith(args.prompt_names[0])]
+else:
+    prompt_names = args.prompt_names
+
+print("Iterating over prompts: {}\n".format(prompt_names))
+
+for prompt_name in prompt_names:
     prompt = df_prompt['prompt'][prompt_name]
 
     pipe_kwargs = gen_pipe_kwargs_static(df_prompt.loc[prompt_name], settings['pipe_name'], args.song_name)
     settings['pipe_kwargs'].update(pipe_kwargs)
 
+    print("\nPrompt name: {}".format(prompt_name))
     print("Prompt: {}".format(prompt))
     print("Seeds: {}".format(seeds))
 
