@@ -111,3 +111,20 @@ def load_df_scene_sequence(scene_sequence, song_name):
     print("loading scene sequence from {}".format(fp_scene_sequence))
     df_scene_sequence = pd.read_csv(fp_scene_sequence , index_col=0)
     return df_scene_sequence
+
+
+import json
+
+def load_settings_json(song_meta_dir, setting_name='default'):
+    # load json file with song settings
+    with open(os.path.join(song_meta_dir, 'tgen_settings.json'), 'r') as f:
+        settings = json.load(f)[setting_name]
+
+    if 'seed_delimiter' not in settings:
+        settings['seed_delimiter'] = ','
+
+    if 'pipe_name' not in settings:
+        pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
+        settings['pipe_name'] = pipe_name
+
+    return settings

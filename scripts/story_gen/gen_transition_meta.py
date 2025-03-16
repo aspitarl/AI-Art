@@ -20,8 +20,10 @@ from aa_utils.plot import plot_scene_sequence
 from aa_utils.fileio import load_df_prompt
 
 from aa_utils.local import gen_scene_dicts, gen_path_sequence_fullG, build_graph_scenes, image_names_from_transition, check_existing_transitions
+from aa_utils.local import gen_df_transitions
 from aa_utils.plot import plot_scene_sequence
 from aa_utils.fileio import load_df_scene_sequence
+from aa_utils.fileio import load_settings_json
 
 from dotenv import load_dotenv; load_dotenv(override=True)
 # %%
@@ -40,12 +42,9 @@ song_meta_dir = os.path.join(os.getenv('meta_dir'), args.song)
 df_scene_sequence = load_df_scene_sequence("", args.song)
 scene_sequence_list = df_scene_sequence['scene'].tolist()
 
-# load json file with song settings
-with open(os.path.join(song_meta_dir, 'tgen_settings.json'), 'r') as f:
-    settings = json.load(f)[args.setting_name]
+settings = load_settings_json(song_meta_dir, setting_name=args.setting_name)
 
-seed_delimiter = settings.get('seed_delimiter', ', ')
-df_prompt = load_df_prompt(song_meta_dir, seed_delimiter)
+df_prompt = load_df_prompt(song_meta_dir, seed_delimiter=settings['seed_delimiter'])
 
 
 scene_to_file_dict, file_to_scene_dict= gen_scene_dict_simple(df_scene_sequence, df_prompt)
@@ -102,7 +101,6 @@ if not os.path.exists(pjoin(media_dir, args.song, 'story')): os.makedirs(pjoin(m
 plt.savefig(pjoin(media_dir, args.song, 'story', 'story_transition_gen.png'))
 
 # %%
-from aa_utils.local import gen_df_transitions
 
 song_basedir = os.path.join(media_dir, args.song)
 out_dir = os.path.join(song_basedir, 'story')

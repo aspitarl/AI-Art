@@ -74,7 +74,9 @@ import torch
 
 MODEL_CACHE_DIR = os.getenv('model_cache_dir')
 
-def gen_pipe(pipe_name, settings):
+def gen_pipe(settings):
+
+    pipe_name = settings['pipe_name']
 
     if pipe_name == 'basic':
         pipe = StableDiffusionPipeline.from_pretrained(

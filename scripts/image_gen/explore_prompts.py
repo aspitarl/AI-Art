@@ -4,6 +4,7 @@ import pandas as pd
 from aa_utils.sd import image_grid, generate_latent, get_text_embed
 from aa_utils.cloud import gen_pipe, gen_pipe_kwargs_static
 from aa_utils.fileio import load_df_prompt
+from aa_utils.fileio import load_settings_json
 import torch
 from PIL import Image
 
@@ -32,22 +33,18 @@ num_images = args.num_images if args.num_images else 4
 #%%
 song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 
-# load json file with song settings
-with open(os.path.join(song_meta_dir, 'tgen_settings.json'), 'r') as f:
-    settings = json.load(f)[args.setting_name]
+settings = load_settings_json(song_meta_dir, setting_name=args.setting_name)
 
-seed_delimiter = settings.get('seed_delimiter', ', ')
-df_prompt = load_df_prompt(song_meta_dir, seed_delimiter)
+df_prompt = load_df_prompt(song_meta_dir, seed_delimiter=settings['seed_delimiter'])
 
-pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
-pipe = gen_pipe(pipe_name, settings)
+pipe = gen_pipe(settings)
 
 default_prompt = 'geo1'
 name_sel = args.prompt_name if args.prompt_name else default_prompt
 
 prompt = df_prompt['prompt'][name_sel]
 
-pipe_kwargs = gen_pipe_kwargs_static(df_prompt.loc[name_sel], pipe_name, song_name)
+pipe_kwargs = gen_pipe_kwargs_static(df_prompt.loc[name_sel], settings['pipe_name'], song_name)
 settings['pipe_kwargs'].update(pipe_kwargs)
 
 col_wrap = 2 

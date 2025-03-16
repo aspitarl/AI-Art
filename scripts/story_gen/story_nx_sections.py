@@ -32,6 +32,7 @@ from aa_utils.local import image_names_from_transition, build_graph_scenes, chec
 from aa_utils.story import downselect_to_scene_sequence, gen_path_edges_short, generate_text_for_ffmpeg, generate_output_video
 from aa_utils.plot import plot_scene_sequence
 from aa_utils.fileio import load_df_scene_sequence
+from aa_utils.fileio import load_settings_json
 from aa_utils.local import build_graph_scenes, gen_path_sequence_fullG, gen_scene_dict_simple
 from aa_utils.plot import plot_scene_sequence
 from aa_utils.fileio import load_df_prompt
@@ -54,12 +55,9 @@ song_meta_dir = os.path.join(os.getenv('meta_dir'), song_name)
 df_scene_sequence = load_df_scene_sequence("", song_name)
 scene_sequence_list = df_scene_sequence['scene'].tolist()
 
-# load json file with song settings
-with open(os.path.join(song_meta_dir, 'tgen_settings.json'), 'r') as f:
-    settings = json.load(f)[args.setting_name]
+settings = load_settings_json(song_meta_dir, setting_name=args.setting_name)
 
-seed_delimiter = settings.get('seed_delimiter', ', ')
-df_prompt = load_df_prompt(song_meta_dir, seed_delimiter)
+df_prompt = load_df_prompt(song_meta_dir, seed_delimiter=settings['seed_delimiter'])
 
 scene_to_file_dict, file_to_scene_dict= gen_scene_dict_simple(df_scene_sequence, df_prompt)
 
