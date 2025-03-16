@@ -34,6 +34,9 @@ for f in os.listdir(image_folder):
         image_path = os.path.join(image_folder, f)
         break
 
+# Manual selection
+# filename=  'vaporwave-office.jpg'
+# image_path = os.path.join(os.getenv('media_dir'), song_name, 'inspo', filename)
 
 """
 CLIP Interrogator uses OpenCLIP which supports many different pretrained CLIP models. For the best prompts for Stable Diffusion 1.X use ViT-L-14/openai for clip_model_name. For Stable Diffusion 2.0 use ViT-H-14/laion2b_s32b_b79k
