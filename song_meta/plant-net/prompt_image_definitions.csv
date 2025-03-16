@@ -1,0 +1,21 @@
+name,prompt,seeds,guidance_scale,mask,cnet_scale
+stage_bear_bef,"grizzly bear on stage twirling a baton, lowpoly, vaporwave nightclub","3048, 6365, 3696, 6354, 2623",10,shapes/hex,0
+stage_bear1,"grizzly bear on stage twirling a baton, lowpoly, vaporwave nightclub","3048, 6365, 3696, 6354, 2623",10,shapes/hex,0
+stage_gorilla1,"a circus gorilla on stage spinning fire, lowpoly, Futurism Painting, vaporwave nightclub, ","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+stage_elephant1,"a circus elephant on stage breathing fire, vaporwave nightclub, SNES style, Dadaism Painting","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+stage_bear2,"grizzly bear on stage twirling a baton, pixelart, Dadaism Painting, vaporwave nightclub","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+stage_gorilla2,"a circus gorilla on stage spinning fire, pixelart, Dadaism Painting, vaporwave nightclub, ","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+stage_elephant2,"a circus elephant on stage breathing fire, vaporwave nightclub, Pixelart, futurism","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+stage_bear3,"grizzly bear on stage twirling a baton, SNES Style, lowpoly, vaporwave nightclub","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+stage_gorilla3,"a circus gorilla on stage spinning fire, SNES Style, lowpoly, vaporwave nightclub","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+stage_elephant3,"a circus elephant on stage breathing fire, vaporwave nightclub, Pixelart, Futurism","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+detroit_house2,"circus animals wearing turtlenecks in a vaporwave nightclub","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/pentagon,0
+office_pixel1,"animals wearing suits and turtlenecks in a 80s office setting. old CRT monitors, vaporwave, game show, circus, slightly pixelated","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+office_pixel2,"animals wearing suits and turtlenecks in a 80s office setting. old CRT monitors, vaporwave, game show, circus","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+office_pixel3,"pixel art animals in a 80s office setting. old CRT monitors, vaporwave, game show, circus","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+office1,"circus animals working in a 80s office setting, CRT monitors with command prompt, nighttime vaporwave, game show, dark nighttime","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+office2,"animals working behind desks in an 80s office at nighttime, working late, nighttime lofi vaporwave, dark nighttimes","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+office3,"circus animals, maximalist maximalism vaporwave, neon inc, comforting and familiar,","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+office4,"circus animals, tokyo, sunset illustration, twilight city in the background, detailed matte painting","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
+office_plant,"plants and animals in a 80s office setting. old CRT monitors, game show, circus","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/square,0
+office_plant_aft,"plants and animals in a 80s office setting. old CRT monitors, game show, circus","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/square,0
