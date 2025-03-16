@@ -19,7 +19,7 @@ dotenv.load_dotenv()
 
 parser = argparse.ArgumentParser(description='Generate transitions between prompts')
 parser.add_argument('song_name', type=str, help='The name of the song to generate transitions for')
-parser.add_argument('--prompt_name', '-p', type=str, required=True)
+parser.add_argument('--prompt_names', '-p', type=str, required=True, nargs='+', help='List of prompt names to generate images for')
 parser.add_argument('--setting_name', '-sn', type=str, default='default', nargs='?', help='Name of top-level key in settings json')
 parser.add_argument('--num_images', '-n', type=int, default=4)
 args = parser.parse_args()
@@ -33,11 +33,6 @@ settings = load_settings_json(song_meta_dir, setting_name=args.setting_name)
 df_prompt = load_df_prompt(song_meta_dir, seed_delimiter=settings['seed_delimiter'])
 
 pipe = gen_pipe(settings)
-
-prompt = df_prompt['prompt'][args.prompt_name]
-
-pipe_kwargs = gen_pipe_kwargs_static(df_prompt.loc[args.prompt_name], settings['pipe_name'], args.song_name)
-settings['pipe_kwargs'].update(pipe_kwargs)
 
 col_wrap = 2 
 # rows X cols of images. Reduce for speed and memory issues.
@@ -62,25 +57,31 @@ seeds = [int(str(seed)[:4]) for seed in seeds]
 
 generator = [torch.Generator(device="cuda").manual_seed(seed) for seed in seeds]
 
-print("Prompt: {}".format(prompt))
-print("Seeds: {}".format(seeds))
+for prompt_name in args.prompt_names:
+    prompt = df_prompt['prompt'][prompt_name]
 
-images = pipe(
-    prompt, 
-    generator=generator, 
-    num_images_per_prompt=rows*cols, 
-    width=settings['res_width'],
-    height=settings['res_height'],
-    **settings['pipe_kwargs']
-    ).images
+    pipe_kwargs = gen_pipe_kwargs_static(df_prompt.loc[prompt_name], settings['pipe_name'], args.song_name)
+    settings['pipe_kwargs'].update(pipe_kwargs)
 
-grid = image_grid(images, rows=rows, cols=cols)
+    print("Prompt: {}".format(prompt))
+    print("Seeds: {}".format(seeds))
 
-output_dir = os.path.join(os.getenv('media_dir'), args.song_name, 'explore_images', args.prompt_name)
-if not os.path.exists(output_dir): os.makedirs(output_dir)
+    images = pipe(
+        prompt, 
+        generator=generator, 
+        num_images_per_prompt=rows*cols, 
+        width=settings['res_width'],
+        height=settings['res_height'],
+        **settings['pipe_kwargs']
+        ).images
 
-grid.save(os.path.join(output_dir, 'image_grid.png'))
+    grid = image_grid(images, rows=rows, cols=cols)
 
-for i, image in enumerate(images):
-    image.save(os.path.join(output_dir, 'image_{}.png'.format(i)))
+    output_dir = os.path.join(os.getenv('media_dir'), args.song_name, 'explore_images', prompt_name)
+    if not os.path.exists(output_dir): os.makedirs(output_dir)
+
+    grid.save(os.path.join(output_dir, 'image_grid.png'))
+
+    for i, image in enumerate(images):
+        image.save(os.path.join(output_dir, 'image_{}.png'.format(i)))
 # %%
