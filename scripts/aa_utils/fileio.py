@@ -127,4 +127,7 @@ def load_settings_json(song_meta_dir, setting_name='default'):
         pipe_name = 'controlnet' if 'controlnet_string' in settings else 'basic'
         settings['pipe_name'] = pipe_name
 
+    if 'combined_movie_format' not in settings:
+        settings['combined_movie_format'] = 'mov'
+
     return settings

@@ -4,6 +4,7 @@ import pandas as pd
 import argparse
 
 from aa_utils.story import generate_text_for_ffmpeg, generate_output_video
+from aa_utils.fileio import load_settings_json
 
 from dotenv import load_dotenv; load_dotenv(override=True)
 
@@ -16,8 +17,11 @@ args = parser.parse_args()
 # args = parser.parse_args("") # Needed for jupyter notebook
 
 media_dir = os.getenv('media_dir')
+meta_dir = os.getenv('meta_dir')
 
 print(media_dir)
+
+settings = load_settings_json(os.path.join(meta_dir, args.song), setting_name='default')
 
 
 song_basedir = os.path.join(media_dir, args.song)
@@ -106,5 +110,13 @@ with open(os.path.join(out_dir, 'videos.txt'), 'w') as f:
 
 os.chdir(out_dir)
 
-subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-c', 'mjpeg', '-q:v', '3', '-r', str(args.fps), '{}/{}_combined.mov'.format(out_dir, args.output_folder)])
-
+if settings['combined_movie_format'] == 'mov':
+    # mjepg codec for playback in touchdesigner
+    fn_out = '{}/{}_{}_combined.mov'.format(out_dir, args.song, args.output_folder)
+    subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-c', 'mjpeg', '-q:v', '3', '-r', str(args.fps), fn_out ])
+elif settings['combined_movie_format'] == 'mp4':
+    # Without mjpeg codec, can be played in vscode
+    fn_out = '{}/{}_{}_combined.mp4'.format(out_dir, args.song, args.output_folder)
+    subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-q:v', '3', '-r', str(args.fps), fn_out ])
+else:
+    raise ValueError("Invalid movie format found in settings json")
