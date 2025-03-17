@@ -20,10 +20,10 @@
 ,detroit_house9,1,2,
 ,detroit_house10,1,2,
 ,office1,1,3,random
-,office2,1,3,
-,office_pixel1,1,3,
-,office_pixel2,1,3,
-,office_pixel3,1,3,
+,office2,2,3,
+,office_pixel1,2,3,
+,office_pixel2,2,3,
+,office_pixel3,2,3,
 ,nature_doc1,1,4,random
 ,nature_doc2,1,4,
 ,nature_doc3,1,4,
@@ -33,5 +33,5 @@
 ,nature_doc7,1,4,
 ,nature_doc8,1,4,
 ,nature_doc9,1,4,random
-,office_plant,1,4,
+,office_plant,4,4,
 ,end_dummy,1,4,

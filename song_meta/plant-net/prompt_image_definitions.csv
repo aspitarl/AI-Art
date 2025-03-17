@@ -1,5 +1,5 @@
 name,prompt,seeds,guidance_scale,mask,cnet_scale
-begin_dummy,"a circus bear on stage twirling a baton, pixelart, lowpoly, vaporwave nightclub","3048, 6365, 3696, 6354, 2623, 3263, 2809",10,shapes/hex,0
+begin_dummy,"a circus bear on stage twirling a baton, pixelart, lowpoly, vaporwave nightclub","1001, 2001, 3001, 4001, 5001",10,shapes/hex,0
 stage_animal1,"a circus bear on stage twirling a baton, pixelart, lowpoly, vaporwave nightclub","3048, 6365, 3696, 6354, 2623, 3263, 2809",10,shapes/hex,0
 stage_animal2,"a circus gorilla on stage spinning fire, pixelart, lowpoly, Futurism Painting, vaporwave nightclub, ","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
 stage_animal3,"a circus elephant on stage breathing fire, vaporwave nightclub,lowpoly, SNES style, Futurism Painting","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
@@ -40,4 +40,4 @@ nature_doc7,"animal nature documentary, creatures, vaporwave, information superh
 nature_doc8,"animal nature documentary, small creatures, vaporwave, information superhighway, lowpoly, Dadaism Painting","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
 nature_doc9,"animal nature documentary, small creatures, vaporwave, information superhighway, lowpoly, Futurism Painting","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/hex,0
 office_plant,"plants and animals in a 80s office setting. old CRT monitors, game show, circus","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/square,0
-end_dummy,"plants and animals in a 80s office setting. old CRT monitors, game show, circus","1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000",10,shapes/square,0
+end_dummy,"plants and animals in a 80s office setting. old CRT monitors, game show, circus","1001, 2001, 3001, 4001, 5001",10,shapes/square,0
