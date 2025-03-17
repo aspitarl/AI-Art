@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import argparse
 
-from aa_utils.story import generate_text_for_ffmpeg, generate_output_video
+from aa_utils.story import generate_subtitles_for_ffmpeg, generate_text_for_ffmpeg, generate_output_video
 from aa_utils.fileio import load_settings_json
 
 from dotenv import load_dotenv; load_dotenv(override=True)
@@ -80,12 +80,14 @@ for section, df in df_transitions.groupby('section'):
 
     out_txt = generate_text_for_ffmpeg(df, fps=args.fps)
 
+    subtitle_txt = generate_subtitles_for_ffmpeg(df, fps=args.fps)
+    
     # use out_text to make a text file that can be used by ffmpeg to make a movie
 
     with open(os.path.join(out_dir, 'videos.txt'), 'w') as f:
         f.write(out_txt)
 
-    generate_output_video(args.fps, out_dir, "{}/section_{}.mov".format(sections_subfolder, section))
+    generate_output_video(args.fps, out_dir, "{}/section_{}.mov".format(sections_subfolder, section), subtitle_txt=subtitle_txt)
 
 
 #%%
@@ -113,8 +115,8 @@ output_format = args.output_format
 if output_format == 'mov':
     # mjepg codec for playback in touchdesigner
     fn_out = '{}/{}_{}_combined.mov'.format(out_dir, args.song, args.output_folder)
-    subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-c', 'mjpeg', '-q:v', '3', '-r', str(args.fps), fn_out ])
+    subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-c', 'mjpeg', '-q:v', '3', '-r', str(args.fps), '-c:s', 'mov_text', fn_out ])
 elif output_format == 'mp4':
     # Without mjpeg codec, can be played in vscode
     fn_out = '{}/{}_{}_combined.mp4'.format(out_dir, args.song, args.output_folder)
-    subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-q:v', '3', '-r', str(args.fps), fn_out ])
+    subprocess.call(['ffmpeg', '-f', 'concat', '-safe', '0', '-i', 'videos.txt', '-y', '-q:v', '3', '-r', str(args.fps), '-c:s', 'mov_text', fn_out ])

@@ -1,4 +1,3 @@
-
 # Add missing imports 
 
 import os
@@ -76,8 +75,49 @@ def generate_text_for_ffmpeg(df_transitions, fps):
 
     return out_txt
 
+#TOOD: refactor this to use the generate_text_for_ffmpeg function. Make a class?
+def generate_subtitles_for_ffmpeg(df_transitions, fps):
+    # generates text for a .srt file that lines up with the video input text file
+    
+    out_txt = ''
+    image_duration = 1/fps
+    start_time = 0
+    subtitle_index = 1
 
+    for _, row in df_transitions.iterrows():
+        folder = row['input_image_folder']
+        images = sorted([fn for fn in os.listdir(folder) if fn.endswith('.png')])
+        if row['reversed']:
+            images = images[::-1]
+        images = images[:-1]
+        image_fps = [os.path.join(folder, fn) for fn in images]
+        for fp in image_fps:
+            end_time = start_time + image_duration
+            out_txt += f"{subtitle_index}\n"
+            out_txt += f"{format_time(start_time)} --> {format_time(end_time)}\n"
+            out_txt += f"{os.path.basename(folder)}\n\n"
+            start_time = end_time
+            subtitle_index += 1
+    
+    return out_txt
 
-def generate_output_video(fps, out_dir, output_filename):
+def format_time(seconds):
+    milliseconds = int((seconds % 1) * 1000)
+    seconds = int(seconds)
+    minutes = seconds // 60
+    seconds = seconds % 60
+    hours = minutes // 60
+    minutes = minutes % 60
+    return f"{hours:02}:{minutes:02}:{seconds:02},{milliseconds:03}"
+
+def generate_output_video(fps, out_dir, output_filename, subtitle_txt=None):
     os.chdir(out_dir)
-    os.system(f"ffmpeg -f concat -safe 0 -i videos.txt -y -c mjpeg -q:v 3 -r {fps} {output_filename}")
+
+    if subtitle_txt is not None:
+        print(subtitle_txt)
+        with open(os.path.join(out_dir, 'subtitles.srt'), 'w') as f:
+            f.write(subtitle_txt)
+
+        os.system(f"ffmpeg -f concat -safe 0 -i videos.txt -i subtitles.srt -y -c:v mjpeg -q:v 3 -r {fps} -c:s mov_text -metadata:s:s:0 language=eng {output_filename}")
+    else:
+        os.system(f"ffmpeg -f concat -safe 0 -i videos.txt -y -c:v mjpeg -q:v 3 -r {fps} {output_filename}")
