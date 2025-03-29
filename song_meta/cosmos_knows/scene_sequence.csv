@@ -1,6 +1,7 @@
 ,scene,duration,section,start
 1,start_dummy,0,1,random
 1,luna,5,1,
+,rising,4,1,
 2,energy,3,1,
 3,figures,2,2,random
 4,shadow,2,2,

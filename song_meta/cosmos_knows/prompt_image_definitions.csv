@@ -1,6 +1,7 @@
 name,prompt,seeds,guidance_scale,mask,cnet_scale
 start_dummy,"the moon, she is rising, la luna, ancient cosmic design","1000, 2000, 3000, 4000, 5000, 6000, 7000",7.5,,
 luna,"the moon, she is rising, la luna, ancient cosmic design","3567, 7442, 6141, 5470, 6090, 1350, 5906",7.5,,
+rising,"arafed view one full moon with trees in the foreground, one single moon in the sky setting over the summer horizon, Digital Painting, nasa photograph, full width, night time, the big bang","5075, 7108, 1874, 1394, 4217, 2181, 6270",7.5,,
 energy,"energy never dies, it just shifts and reforms, ancient cosmic design","2304, 4327, 8796, 8114,  2871, 8085, 5899",7.5,,
 figures,"two ethereal figures with a reverberating sphere between them, cosmos, lightyears","7112, 2605, 4638, 2350, 5332, 2606, 5936",7.5,,
 shadow,"through the shadow of ancient skies, feel her pull, the ages flow, in and out, day and night, only the cosmos knows","3272, 7955, 2067, 6253, 2882, 4408, 5067, 8911",7.5,,
